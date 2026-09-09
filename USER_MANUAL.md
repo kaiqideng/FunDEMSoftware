@@ -1,10 +1,10 @@
 # FunDEM Workbench User Manual
 
-This manual describes the Windows release of FunDEM Workbench. The application is a native Qt desktop program that calls the FunDEMBeta C++ core in-process. The project document owns the editable model. FunDEM containers are created transactionally only when **Run** or **Single Step** is requested, so adding, removing, or renaming editable objects cannot directly corrupt solver indices.
+This manual describes the shared FunDEM Workbench interface and simulation workflow. The application is a native Qt desktop program that calls the FunDEMBeta C++ core in-process. The project document owns the editable model. FunDEM containers are created transactionally only when **Run** or **Single Step** is requested, so adding, removing, or renaming editable objects cannot directly corrupt solver indices. Windows startup is described below; Apple Silicon Mac users should also read the [macOS guide](MACOS_GUIDE.md) for installation and platform-specific paths.
 
 ## 1. Release folder and startup
 
-A complete portable release contains at least:
+A complete portable Windows release contains at least:
 
 ```text
 FunDEM.exe
@@ -39,7 +39,7 @@ Start the program in one of these ways:
 .\FunDEM.exe .\examples\gombocSelfRighting.fundem.json
 ```
 
-Relative result paths are resolved from the executable folder, not from the project-file folder. Use a separate absolute result directory for every production simulation.
+On Windows, relative result paths are resolved from the executable folder, not from the project-file folder. On macOS, relative result paths are placed under `Documents/FunDEM` rather than inside the signed `.app` bundle. Explicit absolute output paths are preserved on both platforms. Use a separate absolute result directory for every production simulation.
 
 ## 2. Main-window organization
 
@@ -553,7 +553,7 @@ One common presentation timeline is calculated from the original simulation time
 
 - **Animated PNG (`*.png`, `*.apng`)** stores the calculated duration with each lossless, full-color frame. Both extensions contain identical APNG data. The embedded play count is the only format-level Loop behavior provided by the application.
 - **Motion-JPEG AVI (`*.avi`)** JPEG-compresses every image independently at quality 90. AVI uses a fixed time base, so the writer repeats frames as needed to approximate the calculated per-frame holds; this can introduce small timing quantization and can increase the encoded frame count. The Qt JPEG image-format plugin must be available. AVI 1.0 output is limited to 4 GiB, and exceptionally long or highly irregular timelines can exceed its internal expanded-frame limit.
-- **H.264 MP4 (`*.mp4`)** stores lossy H.264 video with the calculated presentation timestamps and durations. It usually produces the smallest delivery file. This encoder uses Windows Media Foundation and is therefore offered only by the Windows build; it does not require FFmpeg.
+- **H.264 MP4 (`*.mp4`)** stores lossy H.264 video with the calculated presentation timestamps and durations. It usually produces the smallest delivery file. The encoder uses Media Foundation on Windows and AVFoundation on macOS; neither requires FFmpeg.
 
 The summary reports:
 
@@ -578,7 +578,7 @@ The Windows application can run a complete project and export its recorded histo
 & 'C:\FunDEM\FunDEM.exe' --run-project-fluid-video 'C:\FunDEM\examples\damBreakSquareColumn.fundem.json' 'C:\Videos\damBreak.mp4'
 ```
 
-Both commands use a real `1920 x 1080` render window, export every recorded frame with stride 1, and retain the original simulation timeline at playback rate 1. The fluid command prepares the recorded SPH surfaces after calculation, then exports from that cache; the ordinary command uses particle visualization. This is not a headless solver: Qt/OpenGL rendering and Windows H.264 support are required. Closing its render window cancels the job.
+Both commands use a real `1920 x 1080` render window, export every recorded frame with stride 1, and retain the original simulation timeline at playback rate 1. The fluid command prepares the recorded SPH surfaces after calculation, then exports from that cache; the ordinary command uses particle visualization. This is not a headless solver: Qt/OpenGL rendering and the platform's native H.264 support are required. Closing its render window cancels the job.
 
 For `gomboc.mp4`, the runner also creates `gomboc.mp4.json` with progress, timings, frame counts, and completion/error status, plus `gomboc.mp4.first.png`, `.middle.png`, and `.last.png`. It refuses to replace an existing video, report, or keyframe. Check the report's `completed` value and process exit code: `0` means success, `2` means failure. A retained failure report is diagnostic data, not a completed video.
 
