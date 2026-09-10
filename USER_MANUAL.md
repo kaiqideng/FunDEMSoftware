@@ -52,7 +52,23 @@ The main window has four stable regions:
 
 The playback bar is below the viewport. It remains inactive until output frames exist. After calculation, it can select frames, step backward or forward, or play them according to simulation time.
 
-The **Live Monitor > FunDEM CPU (%)** row measures the current FunDEM process, including its solver, rendering, and background threads. It is not the computer's total CPU load. Usage is averaged over approximately 0.75 seconds and normalized to all online logical processors: one fully busy core on a 16-logical-processor machine is about 6.25%, and all 16 fully busy cores are 100%. The first valid sample appears after a short sampling window; an unavailable sample is shown as a dash. Sampling uses its own non-blocking UI timer, so it continues before compilation, while paused, during playback, surface preparation, and animation export. If the UI event loop is busy, the next sample covers the longer elapsed interval rather than blocking the application. Reset clears simulation quantities without clearing this live process indicator.
+Simulation statistics are consolidated in **Live Monitor**. The viewport does not overlay a **Displayed samples** counter, and the bottom-right status area does not duplicate Step, simulation time, or CPU usage. State labels and operation/loading notices remain in the status bar; scientific legends and explicitly enabled per-Packing bounds and dimensions remain available in the viewport.
+
+The **Live Monitor > FunDEM CPU (%)** row measures the current FunDEM process, including its solver, rendering, and background threads. It is not the computer's total CPU load. Usage is averaged over approximately 0.75 seconds and normalized to all online logical processors: one fully busy core on a 16-logical-processor machine is about 6.25%, and all 16 fully busy cores are 100%. The first valid sample appears after a short sampling window; an unavailable sample is shown as a dash. Sampling uses its own non-blocking UI timer, so it continues before compilation, while paused, during playback and animation export. If the UI event loop is busy, the next sample covers the longer elapsed interval rather than blocking the application. Reset clears simulation quantities without clearing this live process indicator.
+
+The **Bonds** row immediately follows **Contacts** and reports the stored bond count in the current frame. Hiding Bond Packings does not change this count.
+
+### 2.1 Background operations and progress
+
+All operations report progress in **Output > Console** without opening a progress window. This includes parameter changes that rebuild the preview, creating/opening/saving a project, importing a force module, exporting a playback-frame project, building an SDF, and preparing or controlling the solver with Run/Pause/Single Step/Reset. Animation export also reports its frame progress in the Console. The current scene remains visible while work proceeds, and the normal file chooser, animation settings, unsaved-change confirmation, error messages, and completed SDF viewer still appear when needed.
+
+The Console reports descriptive operation stages, such as **Preparing geometries** and **Scene preview completed**, followed by completion, cancellation, or failure with elapsed time. Background operations do not append generic item counters to these messages. Animation export retains completed/total frame progress.
+
+The workspace is temporarily locked during background preparation, import/export, and file operations, including model editors, menus, toolbars, camera and Post-processing controls, and playback navigation. The Output dock is shown with Console selected, and progress continues to display while the operation runs. The normal controls are restored after completion, failure, or safe cancellation. Once solver preparation finishes and normal calculation begins, camera and display-only controls become available again under the usual calculation-state rules.
+
+Cancellation is cooperative. Closing the application requests cancellation when supported or waits for safe completion. A long geometry routine may need to finish its current stage before acknowledging cancellation, and solver-state changes and file writes must finish safely. Read-only results are checked again for cancellation before being applied.
+
+Failed or canceled project loading does not replace the current document or scene. Saving writes a snapshot taken when the operation starts and marks it clean only if the document revision is still current. Before discarding or closing a project, the normal Save/Discard/Cancel confirmation still applies.
 
 ## 3. Recommended modeling order
 
@@ -245,13 +261,16 @@ Displacement amplitude is measured in metres, frequency in hertz, and phase in r
 - **Eye** controls whether the Packing is shown and remains available during calculation.
 - **Opacity** uses a slider and remains editable during calculation.
 - **Coloring** selects **Particle type (default)**, **Packing color**, or **Velocity magnitude**. Choose Packing color to display the custom RGB picker; the other modes do not expose an inactive color control.
-- **Move in View** is available only for an editable model. Drag the Packing-bounds center handle to translate the group. Left-dragging elsewhere continues to orbit the camera.
+- **Packing Bounds > Visible** shows this Packing's bounding box. **Bounding-box dimensions** adds its X/Y/Z lengths in metres only when both switches are on; its editor is disabled while Visible is off. Both switches are off by default and are saved independently for each Sphere, LSParticle, or SPH Packing.
+- **Move in View** is a preprocessing operation available only for an editable model. Select the Packing in the model tree and enable this action to show its bounding box and move handle, even when its Post-processing bounds switch is off. Drag the center handle to translate the group. Left-dragging elsewhere continues to orbit the camera.
 
-Particle-type coloring gives every Packing referencing the same Sphere Type or LSParticle Type the same default color, independent of its position in the Packing list. All SPH Blocks and Jets share the default color of their single global SPH type. Choose Packing color to override one Packing without changing another; returning to Particle type restores automatic type coloring. Infinite-mass particles always use light gray. Selecting a Packing displays one group bounding box rather than one selection ring per particle.
+Particle-type coloring gives every Packing referencing the same Sphere Type or LSParticle Type the same default color, independent of its position in the Packing list. All SPH Blocks and Jets share the default color of their single global SPH type. Choose Packing color to override one Packing without changing another; returning to Particle type restores automatic type coloring. Infinite-mass particles always use light gray.
+
+Select Packings in the tree, not by clicking particles in the viewport. Tree selection in either preprocessing or Post-processing does not automatically display a bounding box. Explicitly enabled boxes remain visible when another tree item is selected. A hidden Packing or one with zero opacity displays neither its box nor its dimension labels.
 
 Saved explicit Packing colors remain unchanged when old projects are opened. A legacy display with no color and no color mode adopts Particle type; a legacy explicit RGB with no mode remains Packing color. The selected coloring mode is saved with the project and survives frame export and restart.
 
-Sphere Packing bounds use particle positions plus or minus physical radii. LSParticle Packing bounds are the union of every transformed display-surface point. They do not substitute the LS bounding sphere for the actual geometry bounds.
+Sphere Packing bounds use particle positions plus or minus physical radii. LSParticle Packing bounds use the minimum and maximum of all surface-node positions after each particle's position and orientation are applied; neither the LS bounding sphere nor a display sample substitutes for these points. Box edges obey the same world-space depth test as other geometry and can be occluded by objects in front.
 
 ## 9. SPH Blocks and Jets
 
@@ -267,25 +286,11 @@ A Jet uses inlet position, inlet velocity, radius, and length to create a cylind
 
 While a generated jet particle remains inside its active virtual inlet pipe, FunDEMBeta marks it as constrained and restores the prescribed inlet velocity. A constrained particle keeps its current density: density reinitialization, density-rate evaluation, and density integration are skipped for that particle. It still participates normally as a neighbor in the pressure, viscosity, and density calculations of unconstrained particles. The constraint clears automatically when the particle leaves the pipe or the finite jet duration ends.
 
-### 9.3 SPH Fluid Surface filter
+### 9.3 SPH particle display
 
-**Post-processing > Filters > SPH Fluid Surface** provides an explicit **Rebuild SPH Fluid Surfaces** button. Pause calculation or wait for completion, choose the desired Packing visibility, colors, opacity, and Clip Plane, and press this button to prepare every recorded frame from index 0 through the latest frame. Preparation is incremental: each frame reuses a cached mesh when its complete reconstruction content matches, and only missing or changed content is reconstructed. The cancellable progress window reports completion; it does not start playback automatically. Pressing the button again preserves completed cache entries rather than rebuilding them unnecessarily.
+SPH Block and Jet Packings use depth-correct particle impostors in preview, calculation, recorded playback, and animation export. Use the Packing's controls under **Post-processing > Packings** to select visibility, color, opacity, and velocity-magnitude coloring. **Clip Plane** selects particles by their center positions.
 
-Canceling preparation keeps surfaces already completed in the current session. Press **Rebuild SPH Fluid Surfaces** again to revisit the history, reuse those matching results, and prepare what is still missing. This is content-based reuse, not a saved progress position: changes to display inputs can require new meshes even for previously visited frames.
-
-**Clear SPH Surface Cache** cancels surface preparation, removes cached liquid meshes, and returns to particle display. It does not reset the solver or delete recorded frames. Use it when you deliberately want to discard old surface variants and reclaim their cache storage; this is separate from both **Show SPH Particles**, which retains the cache, and the main **Reset** command.
-
-**Show SPH Particles** returns to the particle representation without starting reconstruction. Calculation, ordinary preview, scrubbing, Play, and animation export never rebuild a missing surface. Active calculation and Packing dragging use particle impostors. For liquid playback, prepare the recording with **Rebuild SPH Fluid Surfaces** first, then select **Play**. A missing or outdated cache reports that preparation is required instead of silently reconstructing. The previous complete scene stays visible while a cached frame loads and uploads. Camera rotation and zoom reuse the same world-space meshes. See [Playback](#16-playback) for cache limits and timing.
-
-Reconstruction combines complete, unsampled data from all visible SPH Packings into one field, avoiding seams between Packings. It uses weighted-PCA **anisotropic kernels** based on [Yu and Turk (2010)](https://faculty.cc.gatech.edu/~turk/my_papers/sph_surfaces.pdf): local neighbor positions determine the direction and shape of each ellipsoidal Wendland C2 kernel. Kernels flatten across thin sheets and follow thin streams; sparse isolated samples use compact spherical kernels. Centers are smoothed only in temporary display data, with displacement capped at one quarter of the particle spacing. The solver positions, forces, density, VTU data, and restart state do not change.
-
-Physical particle volume `m / rho`, the kernel determinant, and a reference-lattice normalization control field contributions. The `0.5` isosurface is extracted with a consistent tetrahedral layout across neighboring grid cells. The same ellipsoidal kernels determine the field, analytic normals, Packing/velocity color, and opacity. Clip Plane filtering and the shared transparency policy remain active. Display changes affecting the field require another explicit rebuild; **Move in View** does not rebuild automatically after release.
-
-The fluid grid starts with a sampling interval of `0.5` times the SPH particle spacing to better resolve thin layers. It coarsens isotropically when its per-axis or total-node budget would otherwise be exceeded. If the triangle budget is exceeded, reconstruction retries on a coarser grid instead of returning a cut-off surface. The filter provides an interpolated continuous presentation, not an identical implementation of ParaView's SPHVolumeInterpolator. Select **Show SPH Particles** to inspect individual samples and use binary VTU plus ParaView for unrestricted scientific post-processing. Legacy saved fluid-display settings remain readable but do not authorize automatic reconstruction.
-
-Anisotropy improves supported thin sheets and streams; it does not guarantee a closed fluid region across genuinely missing samples or large gaps. Limited grid resolution can still lose sub-grid features. Kernels have bounded axis lengths to avoid extreme stretching and false connections, and the display neither adds wall virtual particles to fluid volume nor inserts artificial fluid particles. Smoothing and isosurface extraction are visual approximations, not an exact physical-volume measurement. Old isotropic cache data cannot be reused by this algorithm: press **Rebuild SPH Fluid Surfaces** to prepare the recording again.
-
-Default scientific SPH output includes position, velocity, mass, and density. A simplified viewport representation does not replace VTU output.
+The application does not expose liquid-surface reconstruction. Recorded SPH frames can be inspected, played, or exported directly; no surface preparation or mesh cache is required. These display choices do not alter the SPH state or scientific output. The default SPH VTU fields remain position, velocity, mass, and density.
 
 ## 10. Bond Packings
 
@@ -324,13 +329,21 @@ The viewport renders each Bond as a cylinder:
 
 ### 10.4 Selecting Bond Packings for display
 
-In the project tree, select **Post-processing > Packings > Bonds**, then use **Select Bond Packings...**:
+Each Bond Packing appears by name directly under **Post-processing > Packings**. Use its Eye button or select that Packing and change **Visible** and **Opacity**. The live frame, preview, and playback frames use those same per-Packing settings.
 
-1. Check each Bond Packing to display.
-2. Select **Apply**.
-3. The live frame, preview, and playback frames immediately use the same selection.
+Bond Packing visibility is independent of the Force Chain selection. It affects only the viewport and never deletes Bonds, changes mechanics, or changes VTU output.
 
-This selection is independent of the Force Chain selection. It affects only the viewport and never deletes Bonds, changes mechanics, or changes VTU output.
+### 10.5 Bond elastic-energy coloring
+
+Select a Bond Packing under **Post-processing > Packings** and set **Coloring** to **Uniform** or **Total elastic energy**. Uniform uses the Packing's configured color. Total elastic energy maps each Bond's current stored elastic energy to the shared scalar palette:
+
+`E = E_normal + E_shear + E_bending + E_torsional` in joules.
+
+This is the total for one Bond, not the sum over its Packing. The four components follow the solver's energy calculation; the display does not multiply them by `1 - damageFactor` again. The cylinder's effective area still follows the damage-based rule in Section 10.3, independently of its color.
+
+Under **Post-processing > Legends > Bond Total Elastic Energy**, choose **Range > Historical maximum** or **Custom**. Historical maximum uses one common scale for the visible Bond Packings that enable energy coloring. Changing this scope uses the maxima already accumulated for those Packings during the current session, including state captured before energy coloring was enabled. Custom exposes **Minimum (J)** and **Maximum (J)** and overrides the automatic range.
+
+Bond Packing visibility, opacity, and uniform-color settings remain available. Coloring and legend-range changes affect only Post-processing; they do not change Bond stiffness, damage, forces, or scientific output.
 
 ## 11. Force Chain display
 
@@ -342,9 +355,9 @@ When a sphere pair has multiple low-level Contacts, the viewport sums their norm
 r=r_{min}+(r_{max}-r_{min})\sqrt{\frac{F_n-F_{min}}{F_{max}-F_{min}}}
 \]
 
-Color and width use the same normal-force magnitude. The color-bar maximum is the historical maximum observed for the currently selected Sphere Packing scope. Changing that selection resets the corresponding history.
+Color and width use the same normal-force magnitude. The color-bar maximum is the historical maximum observed for the currently selected Sphere Packing scope. Changing that selection uses the accumulated history of the newly selected Packings, rather than starting their history at the moment they are selected.
 
-In the project tree, select **Post-processing > Interactions**, then use **Select Force-chain Packings...**. A chain is shown when either sphere endpoint belongs to a selected Sphere Packing. LSParticle Packings are intentionally absent from the dialog.
+In the project tree, select **Post-processing > Contacts**, then use **Select Force-chain Packings...**. A chain is shown when either sphere endpoint belongs to a selected Sphere Packing. LSParticle Packings are intentionally absent from the dialog.
 
 ## 12. Post-processing and camera controls
 
@@ -352,21 +365,22 @@ In the project tree, select **Post-processing > Interactions**, then use **Selec
 
 There is no View menu or View item in the project tree. Display controls are organized as follows:
 
-- **Post-processing > Packings** in the project tree contains every rigid-particle Packing and SPH Block/Jet display page, plus the **Bonds** page.
-- **Post-processing > Interactions** contains Force Chain visibility and Sphere Packing scope.
-- **Post-processing > Filters** contains the global coordinate axes, SPH Fluid Surface, and Clip Plane.
-- **Post-processing > Legends** contains scalar-range controls, including Velocity Magnitude, and **Packing Bounds > Bounding-box dimensions**.
-- The top **Post-processing** menu provides the quick toggles **Packings > Show Bonds** and **Interactions > Show Force Chains**, plus **Maximum Display Storage** and workspace-dock controls.
+- **Post-processing > Packings** in the project tree contains every rigid-particle Packing, SPH Block/Jet, and Bond Packing display page, with an Eye button for each Packing.
+- **Post-processing > Contacts** contains Force Chain visibility and Sphere Packing scope.
+- **Post-processing > Filters** contains the global coordinate axes and Clip Plane.
+- **Post-processing > Legends** contains the three shared scalar-range controls: **Velocity Magnitude**, **Force Chain Magnitude**, and **Bond Total Elastic Energy**. Packing-bounds controls belong to each Packing's display page, not to Legends.
+- The top **Settings** menu contains only **Display Storage** and **Workspace**. Use **Settings > Display Storage** for the presentation-memory budget and **Settings > Workspace** to show or hide workspace panels. Bond and Force Chain visibility controls remain in the Post-processing tree.
 
-Camera controls do not appear in the Post-processing tree or menu. The camera-icon button immediately after **Reset** on the Simulation toolbar is the only Camera menu.
+Camera controls do not appear in the Post-processing tree or Settings menu. The camera-icon button immediately after **Reset** on the Simulation toolbar is the only Camera menu.
 
 ### 12.2 Default state
 
-Global coordinate axes, Force Chains, Bonds, SPH Fluid Surface, Clip Plane filtering, **Show plane**, and **Packing Bounds > Bounding-box dimensions** all start disabled in a new project. Enable the axes manually under **Post-processing > Filters** when needed. Each Particle Packing, SPH Block, or Jet owns its own Eye and opacity controls.
+Global coordinate axes, Force Chains, Clip Plane filtering, and **Show plane** all start disabled in a new project. Enable the axes manually under **Post-processing > Filters** when needed. Each Particle Packing, SPH Block, Jet, and Bond Packing owns its own Eye and opacity controls, initially visible and fully opaque. Particle Packings additionally have **Packing Bounds > Visible** and **Bounding-box dimensions** switches, both off by default; selecting a tree item does not change them.
 
 ### 12.3 Camera
 
 - Left drag orbits without an artificial vertical-angle limit.
+- Clicking inside the viewport does not select a Packing; use the tree to choose the target for preprocessing or Post-processing controls.
 - Right or middle drag pans.
 - The mouse wheel zooms.
 - Open the camera-icon menu immediately after **Reset** to use **Fit Scene** or a preset.
@@ -377,9 +391,9 @@ Camera changes affect only viewport and projection matrices. They do not alter p
 
 ### 12.4 Scene bounds
 
-Scene bounds are the union of the true bounds of every Particle Packing, SPH Block, and Jet, independent of visibility and Activation step. During calculation and playback, the full unsampled current-particle AABB is included so moving particles remain inside the fitted scene. Force Chains, Bonds, axes, and the Clip Plane do not enlarge the scene. The bounds drive camera fitting, projection, axis length, and clip ranges; no separate grid or bounds-box object is drawn. The global coordinate axes always begin at world origin `(0, 0, 0)`, not at the minimum corner of a Packing or the scene. Only their length scales with scene size. Axis lines and X/Y/Z labels share this origin in the viewport; an origin outside the camera view is not moved into the frame. Both lines and labels are omitted from recorded animations and their exported PNG keyframes, without changing the viewport visibility setting.
+Scene bounds are the union of the true bounds of every Particle Packing, SPH Block, and Jet, independent of visibility and Activation step. During calculation and playback, the full unsampled current-particle AABB is included so moving particles remain inside the fitted scene. Force Chains, Bonds, axes, and the Clip Plane do not enlarge the scene. These bounds drive camera fitting, projection, axis length, and clip ranges; no global grid or scene-bounds box is drawn. Explicitly enabled per-Packing boxes are separate display aids. The global coordinate axes always begin at world origin `(0, 0, 0)`, not at the minimum corner of a Packing or the scene. Only their length scales with scene size. Axis lines and X/Y/Z labels share this origin in the viewport; an origin outside the camera view is not moved into the frame. Both lines and labels are omitted from recorded animations and their exported PNG keyframes, without changing the viewport visibility setting.
 
-Selecting a Particle Packing provides one editing selection box for the complete Packing. **Post-processing > Legends > Packing Bounds > Bounding-box dimensions** controls only the X/Y/Z length annotations in metres. Turning the annotation off does not remove the selection box, disable its placement handle, or change scene fitting. The setting is persistent in the project and is off by default.
+Each Sphere, LSParticle, and SPH Packing has its own **Packing Bounds** section under **Post-processing > Packings**. **Visible** controls its box, and **Bounding-box dimensions** controls the X/Y/Z length labels in metres. The stored fields are `boundsVisible` and `boundsDimensionsVisible`, both defaulting to `false`. Dimensions require both switches, and their editor is disabled while Visible is off. These values persist independently of tree selection and do not change scene fitting. Eye-off and zero-opacity Packings suppress both box and labels. The only automatic box is the temporary placement aid required by preprocessing **Move in View**; Move does not enable dimension labels, and disabling it returns to the Packing's saved Post-processing bounds settings.
 
 ### 12.5 Transparency and depth
 
@@ -388,8 +402,8 @@ Every physical object uses one perspective and depth convention:
 1. Opaque surfaces render first and write depth.
 2. Transparent surfaces blend from back to front without writing depth.
 3. A closed transparent boundary is split into far and near surface layers so internal particles are rendered between them.
-4. Edges, Bond cylinders, and Force Chains obey world-space depth.
-5. Only text, numeric overlays, selection indicators, and manipulation handles use the final screen overlay.
+4. Edges, Packing bounding boxes, Bond cylinders, and Force Chains obey world-space depth.
+5. Text, numeric annotations, and manipulation handles use the final screen overlay; Packing-box edges are not an always-on-top overlay.
 
 This policy prevents a boundary edge from appearing permanently in front of particles and prevents a transparent wall from applying inconsistent colors to members of one Packing.
 
@@ -403,21 +417,19 @@ This policy prevents a boundary edge from appearing permanently in front of part
 
 Particles are retained or hidden as complete objects according to their center positions; triangles are not physically cut. A Force Chain is classified using its force-weighted representative Contact point. A Bond is classified using its Bond point. Drag the orange center handle to move the plane along its normal.
 
-### 12.7 Controls available during calculation
+### 12.7 Controls available during calculation and background work
 
 After the solver starts, every control that changes mechanics, references, or solver parameters remains locked until Reset. The following viewport-only controls remain available:
 
 - camera orbit, pan, zoom, Fit Scene, and standard views;
 - Packing Eye, opacity, and color mode;
-- SPH representation;
 - axes, Force Chains, and Bonds visibility;
 - Sphere Packing scope for Force Chains;
-- Bond Packing scope for Bonds;
+- each Bond Packing's Eye, visibility, opacity, and coloring;
 - Clip Plane settings and manipulation;
-- Packing bounding-box dimension annotations;
-- playback-frame selection.
+- each Packing's bounding-box visibility and dimension annotations.
 
-These controls modify camera state or separate presentation descriptions and masks. They do not regenerate, reorder, or resize solver particle arrays, Contact/Bond arrays, or recorded playback-history arrays. **Maximum Display Storage** changes only the number of particle instances sampled for presentation.
+These controls modify camera state or separate presentation descriptions and masks. They do not regenerate, reorder, or resize solver particle arrays, Contact/Bond arrays, or recorded playback-history arrays. Background preparation, project file operations, import, and export temporarily lock the workspace until they finish; the controls above become available again during normal calculation. Packing placement is a model change, not a display setting, so it remains locked. Playback navigation is available only when calculation and background work are idle. **Settings > Display Storage** changes only the number of particle instances sampled for presentation.
 
 ## 13. Particle Force Modules
 
@@ -474,7 +486,7 @@ Even a nominally nondissipative model can show integration error from finite tim
 
 ### 15.1 First Run
 
-The first Run:
+The first Run performs its expensive preparation in the background and reports each available stage in **Output > Console**:
 
 1. validates every stable ID and reference;
 2. expands Packings;
@@ -485,6 +497,8 @@ The first Run:
 7. advances by Total steps.
 
 A later Run continues from the current state for another requested round. Time, global step, output numbering, and playback history remain continuous, and the output directory is not cleared again.
+
+The window does not wait through a nested UI event loop while geometry, containers, initial Contacts, or the first output frame are being prepared. A preparation failure is reported without starting the requested continuous calculation.
 
 ### 15.2 Pause
 
@@ -510,20 +524,13 @@ Every playback frame corresponds to one output event. The playback tools can:
 - pause and inspect from any camera;
 - change Post-processing settings while playing.
 
-Playback never reruns the solver. A large Output interval causes visible jumps between frames. Reduce the interval when smoother animation is required. Fluid surfaces are reconstructed independently for each recorded frame; vertices are not interpolated between changing mesh topologies.
+Playback never reruns the solver. A large Output interval causes visible jumps between frames. Reduce the interval when smoother animation is required.
 
-### 16.1 Fluid-surface playback
+### 16.1 SPH particle playback
 
-1. Pause the calculation or wait for it to complete.
-2. In **Post-processing > Filters > SPH Fluid Surface**, choose the visible SPH Packings, colors, opacity, and Clip Plane.
-3. Press **Rebuild SPH Fluid Surfaces**. This visits every recorded frame from 0 to the latest, regardless of the currently selected frame, reusing matching cached meshes and reconstructing only missing or changed content. Cancel preserves completed cache entries without changing solver data; another press resumes preparation by matching content across the history.
-4. After preparation completes, select **Play**. Playback only loads cached surfaces; it never reconstructs a missing mesh. The last complete scene stays visible until the next surface finishes loading and uploading. The camera remains interactive.
+Pause or finish the calculation, select the visible SPH Packings under **Post-processing > Packings**, then scrub the recorded frames or press **Play**. SPH particles use the same recorded-time playback path as rigid particles. No reconstruction, preparation pass, or surface cache is required.
 
-The cache is content-based. Replaying unchanged data reuses its surfaces. Changed particle positions/volumes, visible Packing selection, colors, opacity, velocity-color range, or Clip Plane selection require another **Rebuild SPH Fluid Surfaces** operation; rotating or zooming the camera does not. Continuing calculation can add new unprepared frames, so prepare afterward before liquid playback of the longer history. Existing frames with unchanged content are reused, while the new or changed frames are reconstructed. Turning the filter off and on does not discard completed cache entries. Cache storage is separate from **Maximum Display Storage**, and neither cache changes VTU output, restart files, or scientific state.
-
-Surface storage uses a 128 MiB in-memory least-recently-used cache backed by a temporary disk cache limited to 2 GiB. Evicted memory entries can be loaded from disk without rebuilding the scalar field. Disk entries are not silently evicted from a prepared recording: if the disk budget is exhausted, preparation reports the limit. Select **Show SPH Particles** to continue inspecting the recording without liquid meshes. Retained variants from different display settings share the same budget; another rebuild does not clear those variants or increase capacity. To reclaim their storage without losing recorded frames, press **Clear SPH Surface Cache**, reduce the visible SPH Packings if needed, and then press **Rebuild SPH Fluid Surfaces**. The new recording's surface content must still fit the same budget. The budget covers cache-owned meshes, not the current reconstruction workspace or GPU buffers.
-
-Cache files belong to the current session. **Clear SPH Surface Cache**, an actual solver/project reset, or closing the application clears them; merely continuing calculation, canceling preparation, or requesting another rebuild does not. The main **Reset** command also resets the calculation/history, whereas **Clear SPH Surface Cache** removes presentation data only. Surfaces are not embedded in project JSON or restored after restarting the application. Normal playback follows recorded simulation time, but disk loading and GPU upload can delay presentation on a slow system; output-frame density and hardware still limit smoothness.
+Visibility, opacity, color, velocity-magnitude coloring, and Clip Plane settings affect presentation only. Playback smoothness depends on the recorded Output interval and the rendering capacity of the machine.
 
 ## 17. Saving an animation
 
@@ -531,16 +538,16 @@ Cache files belong to the current session. **Clear SPH Surface Cache**, an actua
 
 ### 17.1 Procedure
 
-1. Set the viewport camera and every required Post-processing option before starting the export. Packing visibility, colors, opacity and velocity coloring, Force Chains, Bonds, their Packing scopes, legends, and the Clip Plane are captured as currently configured. Global coordinate-axis lines and X/Y/Z labels are always omitted from recordings, while their normal View setting remains unchanged. Transient editing aids such as selection rings, Packing bounds, dimension labels, alignment guides, and manipulation handles are also omitted.
+1. Set the viewport camera and every required Post-processing option before starting the export. Packing visibility, colors, opacity and velocity coloring, Force Chains, Bonds, their Packing scopes, legends, the Clip Plane, and explicitly enabled per-Packing bounds and dimensions are captured as currently configured. Global coordinate-axis lines and X/Y/Z labels are always omitted from recordings, while their normal View setting remains unchanged. Transient editing aids, including Move-only Packing boxes, alignment guides, and manipulation handles, are also omitted.
 2. Choose **File > Save Animation...**.
 3. Select **Format**, then set **First frame**, **Last frame**, **Frame stride**, and **Playback rate**. **Loop playback** is available only for Animated PNG.
 4. Check the live **Output summary**.
 5. Select **Save Animation**, then choose the destination. The file dialog uses the extension of the selected encoder: `*.png`/`*.apng`, `*.avi`, or `*.mp4`.
-6. Follow progress in the modal task window. Select **Cancel** if the export is no longer required.
+6. Follow frame progress in **Output > Console**. The workspace is temporarily locked until export finishes; no progress window opens.
 
 The source canvas is the current viewport size in physical display pixels, including operating-system display scaling. Resize the viewport before opening the dialog when a different output resolution is required. Every frame uses the same canvas; export never scales or crops a frame. APNG and AVI preserve the source dimensions exactly. H.264 requires even dimensions, so an odd width or height is increased by one pixel by extending the outermost source edge; scene content is not rescaled.
 
-When **SPH Fluid Surface** is enabled, run **Rebuild SPH Fluid Surfaces** before exporting. Export reads matching cached meshes and waits for loading and GPU upload, but never reconstructs missing surfaces. A missing cache is reported as an error rather than waiting indefinitely; disable the filter to export particle images instead. The progress window remains responsive and cancellable.
+SPH Packings are exported as particles using the current Post-processing settings. No liquid-surface preparation is needed.
 
 ### 17.2 Frame selection and timing
 
@@ -567,7 +574,7 @@ The summary reports:
 
 APNG is the lossless archival choice, Motion-JPEG AVI favors simple independently decodable frames, and H.264 MP4 is the compact delivery choice. High-resolution APNG and AVI output can be substantially larger than MP4. Use a narrower frame range, a larger stride, or a smaller viewport when file size matters. Every format contains presentation pixels only; use VTU, `energy.dat`, or an exported frame project for quantitative data and restart state.
 
-The destination is written atomically. Canceling the progress window or encountering an encoding error discards the temporary output; no partial animation replaces the requested file. While export is active, playback and conflicting project/file commands are temporarily disabled. When export finishes, fails, or is canceled, the application restores the previously selected live or playback frame, resumes the snapshot polling state, and resumes recorded playback when it had been active before export.
+The destination is written atomically. Cancellation or an encoding error discards the temporary output; no partial animation replaces the requested file. While export is active, the workspace is temporarily locked, preserving the selected camera and display settings. Closing the main window requests cancellation at a safe frame boundary and leaves the application open until export cleanup completes. When export finishes, fails, or is canceled, the application restores the previously selected live or playback frame, resumes the snapshot polling state, restores the normal controls, and resumes recorded playback when it had been active before export.
 
 ### 17.4 Running a project directly to MP4
 
@@ -575,10 +582,10 @@ The Windows application can run a complete project and export its recorded histo
 
 ```powershell
 & 'C:\FunDEM\FunDEM.exe' --run-project-video 'C:\FunDEM\examples\gombocSelfRighting.fundem.json' 'C:\Videos\gomboc.mp4'
-& 'C:\FunDEM\FunDEM.exe' --run-project-fluid-video 'C:\FunDEM\examples\damBreakSquareColumn.fundem.json' 'C:\Videos\damBreak.mp4'
+& 'C:\FunDEM\FunDEM.exe' --run-project-video 'C:\FunDEM\examples\damBreakSquareColumn.fundem.json' 'C:\Videos\damBreak.mp4'
 ```
 
-Both commands use a real `1920 x 1080` render window, export every recorded frame with stride 1, and retain the original simulation timeline at playback rate 1. The fluid command prepares the recorded SPH surfaces after calculation, then exports from that cache; the ordinary command uses particle visualization. This is not a headless solver: Qt/OpenGL rendering and the platform's native H.264 support are required. Closing its render window cancels the job.
+Both commands use a real `1920 x 1080` render window, export every recorded frame with stride 1, and retain the original simulation timeline at playback rate 1. SPH projects use particle visualization, just like interactive playback. This is not a headless solver: Qt/OpenGL rendering and the platform's native H.264 support are required. Closing its render window cancels the job.
 
 For `gomboc.mp4`, the runner also creates `gomboc.mp4.json` with progress, timings, frame counts, and completion/error status, plus `gomboc.mp4.first.png`, `.middle.png`, and `.last.png`. It refuses to replace an existing video, report, or keyframe. Check the report's `completed` value and process exit code: `0` means success, `2` means failure. A retained failure report is diagnostic data, not a completed video.
 
@@ -588,9 +595,9 @@ To run all six bundled examples, invoke the reusable script from the source chec
 .\scripts\run-example-videos.ps1 -PackageDirectory 'C:\FunDEM' -DestinationDirectory 'C:\Videos\FunDEM-run1'
 ```
 
-The destination must not exist. The script archives exact project files and their assets under `projects`, records executable/project hashes in `run-manifest.json`, and saves per-case logs. It defaults to two concurrent runs with eight OpenMP threads each; use `-ConcurrentRuns 1 -ThreadsPerRun 4` to reduce resource usage. SPH projects automatically select fluid-surface export.
+The destination must not exist. The script archives exact project files and their assets under `projects`, records executable/project hashes in `run-manifest.json`, and saves per-case logs. It defaults to two concurrent runs with eight OpenMP threads each; use `-ConcurrentRuns 1 -ThreadsPerRun 4` to reduce resource usage. SPH projects use the same particle-rendering export path.
 
-Scientific output still follows the project's configured directory, normally beside the executable—not inside the video destination. Normal first-run VTU/DAT cleanup still applies; preserve previous scientific results and do not run competing jobs against the same output directory. Physical simulation duration is not wall-clock execution time: calculation, surface preparation, and video encoding can take substantially longer.
+Scientific output still follows the project's configured directory, normally beside the executable—not inside the video destination. Normal first-run VTU/DAT cleanup still applies; preserve previous scientific results and do not run competing jobs against the same output directory. Physical simulation duration is not wall-clock execution time: calculation and video encoding can take substantially longer.
 
 ## 18. Exporting a frame and continuing calculation
 
@@ -630,15 +637,15 @@ Dragging a Packing creates one history operation when the drag ends. Camera moti
 
 ## 20. Performance and display quality
 
-### 20.1 Maximum Display Storage
+### 20.1 Display Storage
 
-Use **Post-processing > Maximum Display Storage** to select a 128 MiB to 4 GiB presentation budget. It limits display instances, not particles in the solver. When demand exceeds the budget, sampling is allocated fairly by visible Packing: each non-empty visible Packing receives representation when capacity permits, then remaining capacity is distributed in proportion to its remaining particle count. Calculation, Contacts, Bonds, VTU output, and playback-history particle arrays still retain every particle.
+Use **Settings > Display Storage** to select a 128 MiB to 4 GiB presentation budget. It limits display instances, not particles in the solver. When demand exceeds the budget, sampling is allocated fairly across all Packings, including hidden ones: each non-empty Packing receives representation when capacity permits, then remaining capacity is distributed in proportion to its remaining particle count. Hidden instances remain in the budgeted presentation cache, so reopening a Packing's Eye reveals its retained samples immediately without regenerating the Packing. Calculation, Contacts, Bonds, VTU output, and playback-history particle arrays still retain every particle.
 
 ### 20.2 Sphere and SPH display
 
-Sphere and SPH particles use depth-correct two-triangle GPU impostors during calculation and when fluid-surface playback is disabled. They do not construct a traditional sphere mesh per particle and are therefore suitable for high instance counts.
+Sphere and SPH particles use depth-correct two-triangle GPU impostors during preview, calculation, recorded playback, and animation export. They do not construct a traditional sphere mesh per particle and are therefore suitable for high instance counts.
 
-The **SPH Fluid Surface** filter uses complete SPH data independently of **Maximum Display Storage**, so display sampling cannot remove spatial coverage from the fluid field. Only **Rebuild SPH Fluid Surfaces** requests reconstruction; calculation, ordinary static inspection, playback, and export do not. For uncached content, cost scales with the full visible SPH particle count, adaptive scalar-grid node count, and extracted triangle count. A single cancellable worker visits the history and reuses matching content from the bounded memory/disk cache; GPU uploads are spread across display frames. The grid is capped at 512 nodes per axis, 1,250,000 nodes in total, and 2,000,000 triangles; a grid or triangle-budget overflow triggers coarser reconstruction. Hide unneeded sources before the first preparation to reduce work. Retained display variants still count toward the same cache budget. These choices affect presentation only and do not change the solver state or VTU output.
+**Settings > Display Storage** limits particle-display buffers rather than the number of particles in the simulation. Display sampling affects presentation only; it does not change the solver state or VTU output. Hide unneeded Packings or lower the storage setting when inspecting large cases on a memory-constrained machine.
 
 ### 20.3 LSParticle display
 
@@ -682,7 +689,7 @@ Check, in order:
 The viewport displays only sphere-sphere Force Chains. Confirm:
 
 1. a sphere-sphere Contact exists;
-2. **Post-processing > Interactions > Visible** is enabled, or the top-menu quick toggle **Post-processing > Interactions > Show Force Chains** is checked;
+2. **Post-processing > Contacts > Visible** is enabled in the project tree;
 3. at least one endpoint Sphere Packing is selected;
 4. aggregated normal force is positive;
 5. the Clip Plane retains the representative Contact point.
@@ -693,8 +700,8 @@ Inspect sphere-LS and LS-LS Contacts through VTU.
 
 Confirm:
 
-1. **Post-processing > Packings > Bonds > Visible** is enabled, or the top-menu quick toggle **Post-processing > Packings > Show Bonds** is checked;
-2. the source Bond Packing is selected;
+1. the Bond Packing's Eye or **Visible** control is enabled under **Post-processing > Packings**;
+2. that Bond Packing's **Opacity** is greater than zero;
 3. the Bond point lies on the retained side of the Clip Plane;
 4. equivalent length is positive;
 5. normal is valid;

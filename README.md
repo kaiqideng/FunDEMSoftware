@@ -24,9 +24,9 @@ The macOS target requires an Apple Silicon Mac running macOS 14 or later. Simula
 
 1. Download and extract `FunDEM-Workbench-Windows-x64.zip`.
 2. Keep the extracted directory intact.
-3. Run `FunDEM.exe`.
-4. Read `docs/USER_MANUAL.md` in the extracted package, or download the matching manual above, for project setup, simulation, playback, export, and post-processing.
-5. Open a project from `examples` to explore its model and run a simulation.
+3. Open the extracted `Windows` folder and run `FunDEM.exe`.
+4. Read `Windows/docs/USER_MANUAL.md` in the extracted package, or download the matching manual above, for project setup, simulation, playback, export, and post-processing.
+5. Open a project from `Windows/examples` to explore its model and run a simulation.
 
 The six bundled examples cover Gomboc self-righting, a physically interlocked chain, bonded cloth falling onto a box, dam-break flow around a square column, Brazil-nut segregation, and superellipsoids in a rotating drum. These are demonstration projects; their presence is not a claim of experimental validation.
 
