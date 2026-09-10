@@ -2,7 +2,7 @@
 
 FunDEM Workbench is a desktop application for Windows and Apple Silicon macOS, for preparing, running, and reviewing particle-based simulations. It combines CPU-based DEM and SPH simulation with GPU-accelerated visualization. The package includes the FunDEMBeta computation core; users do not need to compile anything.
 
-This public repository distributes the packaged application and English documentation. The application and computation-core source code remain private and are not published here.
+This public repository distributes the packaged application and English documentation. The Workbench application source remains private. Its computation core is available separately in the [FunDEMBeta source repository](https://github.com/kaiqideng/FunDEMBeta); users of the application package do not need to download or compile it.
 
 ## Download
 

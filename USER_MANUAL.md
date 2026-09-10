@@ -276,6 +276,8 @@ Sphere Packing bounds use particle positions plus or minus physical radii. LSPar
 
 SPHDEM uses one global SPH property set, but the project may contain multiple Blocks or Jets.
 
+In a project exported from a recorded frame, the global SPH properties are read-only whenever the saved model contains an SPH Block or Jet, including a source scheduled for later activation. Particle spacing, smoothing length, reference density, dynamic viscosity, design velocity, and artificial sound speed remain fixed to the saved model. Newly appended sources use that same property set. Other solver/output settings remain editable; use a new initial project to change the fluid discretization or material properties. Older frame projects without a saved property baseline adopt their imported global values once; resaving records that baseline.
+
 ### 9.1 Block
 
 A Block creates a regular fluid volume from its minimum position, 3-D particle count, and global spacing. Activation step supports staged fluid insertion.
@@ -468,7 +470,9 @@ The application always writes fields required to reconstruct basic geometry and 
 - Contact: point and normal are mandatory; force, spring, and energy fields are optional.
 - Bond: point and normal are mandatory; stiffness, damage, endpoint, torque, and energy fields are optional.
 
-The render frame contains only data required for interactive display, but its paired restart checkpoint preserves every particle state plus retained Contacts and Bonds. Both stay in process memory until Reset or project replacement. For very large models, choose the Output interval from the available host memory as well as the desired animation smoothness; VTU or DAT remains the appropriate quantitative record.
+The render frame contains only data required for interactive display, while its paired restart checkpoint preserves every particle state plus retained Contacts and Bonds. Both are written to a private temporary disk history; only frame metadata and a bounded playback cache (32 MiB by default) remain resident. This cache is independent of **Settings > Display Storage**, which controls presentation sampling. One loaded frame and live solver data still require memory, and long recordings require sufficient free space on the system temporary drive. Frames larger than the cache budget are loaded on demand rather than permanently cached. Reset or project replacement releases the old history after active readers finish; normal shutdown also removes it. Export important frames or animations before resetting or closing. An abnormal termination can leave temporary files behind.
+
+SPH VTU, playback frames, and restart checkpoints are captured from one synchronized current-time observation, even when an output step falls between SPH acoustic updates. Merely viewing or exporting that state does not change the simulation's acoustic schedule. A disk-write failure is reported and does not publish a partially recorded frame.
 
 ### 14.3 `energy.dat`
 
