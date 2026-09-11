@@ -371,7 +371,7 @@ There is no View menu or View item in the project tree. Display controls are org
 - **Post-processing > Contacts** contains Force Chain visibility and Sphere Packing scope.
 - **Post-processing > Filters** contains the global coordinate axes and Clip Plane.
 - **Post-processing > Legends** contains the three shared scalar-range controls: **Velocity Magnitude**, **Force Chain Magnitude**, and **Bond Total Elastic Energy**. Packing-bounds controls belong to each Packing's display page, not to Legends.
-- The top **Settings** menu contains only **Display Storage** and **Workspace**. Use **Settings > Display Storage** for the presentation-memory budget and **Settings > Workspace** to show or hide workspace panels. Bond and Force Chain visibility controls remain in the Post-processing tree.
+- The top **Settings** menu contains only **Display Storage** and **Workspace**. **Settings > Display Storage** contains separate **Viewport** and **Playback Cache** budgets; **Settings > Workspace** shows or hides workspace panels. Bond and Force Chain visibility controls remain in the Post-processing tree.
 
 Camera controls do not appear in the Post-processing tree or Settings menu. The camera-icon button immediately after **Reset** on the Simulation toolbar is the only Camera menu.
 
@@ -431,7 +431,7 @@ After the solver starts, every control that changes mechanics, references, or so
 - Clip Plane settings and manipulation;
 - each Packing's bounding-box visibility and dimension annotations.
 
-These controls modify camera state or separate presentation descriptions and masks. They do not regenerate, reorder, or resize solver particle arrays, Contact/Bond arrays, or recorded playback-history arrays. Background preparation, project file operations, import, and export temporarily lock the workspace until they finish; the controls above become available again during normal calculation. Packing placement is a model change, not a display setting, so it remains locked. Playback navigation is available only when calculation and background work are idle. **Settings > Display Storage** changes only the number of particle instances sampled for presentation.
+These controls modify camera state or separate presentation descriptions and masks. They do not regenerate, reorder, or resize solver particle arrays, Contact/Bond arrays, or recorded playback-history arrays. Background preparation, project file operations, import, and export temporarily lock the workspace until they finish; the controls above become available again during normal calculation. Packing placement is a model change, not a display setting, so it remains locked. Playback navigation is available only when calculation and background work are idle. Under **Settings > Display Storage**, **Viewport** changes particle presentation sampling, while **Playback Cache** changes how much recorded-frame data is retained in memory for reuse. Both budgets can be changed during normal calculation.
 
 ## 13. Particle Force Modules
 
@@ -470,7 +470,9 @@ The application always writes fields required to reconstruct basic geometry and 
 - Contact: point and normal are mandatory; force, spring, and energy fields are optional.
 - Bond: point and normal are mandatory; stiffness, damage, endpoint, torque, and energy fields are optional.
 
-The render frame contains only data required for interactive display, while its paired restart checkpoint preserves every particle state plus retained Contacts and Bonds. Both are written to a private temporary disk history; only frame metadata and a bounded playback cache (32 MiB by default) remain resident. This cache is independent of **Settings > Display Storage**, which controls presentation sampling. One loaded frame and live solver data still require memory, and long recordings require sufficient free space on the system temporary drive. Frames larger than the cache budget are loaded on demand rather than permanently cached. Reset or project replacement releases the old history after active readers finish; normal shutdown also removes it. Export important frames or animations before resetting or closing. An abnormal termination can leave temporary files behind.
+The render frame contains only data required for interactive display, while its paired restart checkpoint preserves every particle state plus retained Contacts and Bonds. Both are written to a private temporary disk history. Frame metadata stays resident, and a configurable playback cache retains recently used render frames within a 256 MiB default budget. Shared immutable LS geometry is reused across retained frames and counted once. **Settings > Display Storage > Playback Cache** controls this cache independently of **Viewport** presentation sampling; see Section 20.1 for the memory tradeoffs. Frames larger than the budget are loaded on demand without cache retention, and scientific checkpoints are not cached. Eviction or turning the cache off does not remove recorded frames from disk or reduce their particle data.
+
+The budget does not cap total application RAM or GPU memory: live solver data, the current frame, active readers, and other application allocations still need memory. Long recordings require sufficient free space on the system temporary drive. Reset or project replacement releases the old history after active readers finish; normal shutdown also removes it. Export important frames or animations before resetting or closing. An abnormal termination can leave temporary files behind.
 
 SPH VTU, playback frames, and restart checkpoints are captured from one synchronized current-time observation, even when an output step falls between SPH acoustic updates. Merely viewing or exporting that state does not change the simulation's acoustic schedule. A disk-write failure is reported and does not publish a partially recorded frame.
 
@@ -643,13 +645,26 @@ Dragging a Packing creates one history operation when the drag ends. Camera moti
 
 ### 20.1 Display Storage
 
-Use **Settings > Display Storage** to select a 128 MiB to 4 GiB presentation budget. It limits display instances, not particles in the solver. When demand exceeds the budget, sampling is allocated fairly across all Packings, including hidden ones: each non-empty Packing receives representation when capacity permits, then remaining capacity is distributed in proportion to its remaining particle count. Hidden instances remain in the budgeted presentation cache, so reopening a Packing's Eye reveals its retained samples immediately without regenerating the Packing. Calculation, Contacts, Bonds, VTU output, and playback-history particle arrays still retain every particle.
+**Settings > Display Storage** contains two independent budgets:
+
+| Setting | Default | Purpose |
+| --- | --- | --- |
+| **Viewport** | 512 MiB | Controls the number of particle instances retained for presentation. |
+| **Playback Cache** | 256 MiB | Retains recently used complete render frames and their shared geometry for playback reuse. |
+
+**Viewport** offers 64 MiB to 4 GiB. When demand exceeds its budget, sampling is allocated fairly across all Packings, including hidden ones: each non-empty Packing receives representation when capacity permits, then remaining capacity is distributed in proportion to its remaining particle count. Hidden instances remain in the budgeted presentation cache, so reopening a Packing's Eye reveals its retained samples immediately without regenerating the Packing. Calculation, Contacts, Bonds, VTU output, and playback-history particle arrays still retain every particle.
+
+**Playback Cache** offers **Off**, 64, 128, 256, 512, 1024, 2048, and 4096 MiB. It uses least-recently-used eviction, retaining multiple frames when they fit. Shared immutable LS geometry is counted once across the retained frames. Lowering the budget immediately evicts cache entries as needed; **Off** clears retained entries and makes subsequent requests load from disk. A frame larger than the budget can still be viewed and exported without being retained. Neither eviction nor **Off** deletes the full disk history or changes scientific data.
+
+The 256 MiB default is an engineering starting point, not a measured optimum. A larger cache can avoid repeated disk reads when revisiting frames that fit, at the cost of more retained memory; a smaller cache leaves more memory available for the solver and other work. First visits, cache misses, oversized frames, frame copying, and rendering can still take time and may block playback. The cache does not preload the whole recording or guarantee a particular playback speed. Neither budget is a limit on total process RAM or GPU memory, and the two values do not add up to a complete memory estimate.
+
+Both choices are saved as application preferences. They apply to the current session and future sessions, survive Reset and New/Open project, and are independent of project files. Changing the playback budget leaves the temporary-history disk lifecycle unchanged.
 
 ### 20.2 Sphere and SPH display
 
 Sphere and SPH particles use depth-correct two-triangle GPU impostors during preview, calculation, recorded playback, and animation export. They do not construct a traditional sphere mesh per particle and are therefore suitable for high instance counts.
 
-**Settings > Display Storage** limits particle-display buffers rather than the number of particles in the simulation. Display sampling affects presentation only; it does not change the solver state or VTU output. Hide unneeded Packings or lower the storage setting when inspecting large cases on a memory-constrained machine.
+**Settings > Display Storage > Viewport** limits particle-display buffers rather than the number of particles in the simulation. Display sampling affects presentation only; it does not change the solver state or VTU output. Hide unneeded Packings or lower the Viewport setting when inspecting large cases on a memory-constrained machine.
 
 ### 20.3 LSParticle display
 

@@ -32,6 +32,8 @@ The six bundled examples cover Gomboc self-righting, a physically interlocked ch
 
 In the Windows x64 package, keep the runtime libraries, `platforms`, `force-modules`, example assets, documentation, and licenses with the executable. The package includes optional particle-force modules and supports recorded-frame playback, animation export, and VTU output for further analysis.
 
+**Settings > Display Storage** separates the **Viewport** presentation budget from the **Playback Cache** budget. Playback defaults to 256 MiB of recently used frames with shared LS geometry reuse; it can be adjusted or turned off without deleting the recorded disk history. These budgets do not limit total application memory. See the user manual for available settings and memory tradeoffs.
+
 ## Start on macOS
 
 1. Download either the DMG or ZIP above. For the DMG, open it and drag `FunDEM.app` into Applications, then eject the disk image. For the ZIP, extract it and move the complete `FunDEM.app` into Applications.
