@@ -39,7 +39,9 @@ Start the program in one of these ways:
 .\FunDEM.exe .\examples\gombocSelfRighting.fundem.json
 ```
 
-On Windows, relative result paths are resolved from the executable folder, not from the project-file folder. On macOS, relative result paths are placed under `Documents/FunDEM` rather than inside the signed `.app` bundle. Explicit absolute output paths are preserved on both platforms. Use a separate absolute result directory for every production simulation.
+In a portable Windows installation, relative result paths are resolved from the executable folder, not from the project-file folder. In a Microsoft Store/MSIX installation and on macOS, relative result paths are placed under `Documents/FunDEM` rather than inside the read-only installation or signed `.app` bundle. Explicit absolute output paths are preserved on all platforms. Use a separate absolute result directory for every production simulation.
+
+For a Microsoft Store release, install from the published Store listing and launch **FunDEM** from Start; do not move files out of its installation directory. Installed examples and bundled libraries are read-only. Saving an installed example opens **Save As** in a user-owned location, while bundled mesh/module references remain resolvable after an application update. Store publishing support does not mean a certified Store release is already available. An unsigned GitHub ZIP or unsigned submission MSIX is a separate distribution and may still trigger SmartScreen. Do not disable Windows protection to install it.
 
 ## 2. Main-window organization
 
@@ -51,6 +53,8 @@ The main window has four stable regions:
 - **Output**, at the bottom, contains the Console and live Monitor.
 
 The playback bar is below the viewport. It remains inactive until output frames exist. After calculation, it can select frames, step backward or forward, or play them according to simulation time.
+
+Within each **Simulation Model** category, objects with the same meaningful name prefix and a final numeric index are automatically collected into a collapsible group when at least two match. For example, `geometry0`, `geometry1`, and `geometry2` appear under `geometry`. This is a tree-display grouping only: object names, stable IDs, container order, solver indices, and references do not change. Expand the group to select or edit an individual object; Packing Eye and Move controls remain on the individual Packing rows. Renaming an object updates its grouping. Different model categories are never merged, and a group row is not a new material, particle, Packing, or solver container.
 
 Simulation statistics are consolidated in **Live Monitor**. The viewport does not overlay a **Displayed samples** counter, and the bottom-right status area does not duplicate Step, simulation time, or CPU usage. State labels and operation/loading notices remain in the status bar; scientific legends and explicitly enabled per-Packing bounds and dimensions remain available in the viewport.
 
@@ -138,7 +142,9 @@ Sphere Material is valid for Sphere Types. Its initial values are:
 
 ### 5.2 LS Material
 
-Every LSParticle Type must reference an LS Material. A Sphere Material cannot be assigned to an LSParticle Type. A sphere-LS contact takes its effective stiffness directly from the sphere material. LS Material retains the sliding, rolling, and torsional friction settings used by LS interactions.
+Every LSParticle Type must reference an LS Material. A Sphere Material cannot be assigned to an LSParticle Type. LS Material exposes stiffness per unit contact area, sliding friction, restitution, and density; it has no rolling/torsional friction controls. Sphere-LS contacts take all four stiffnesses and both rolling/torsional friction coefficients directly from the sphere material. Sliding friction and restitution still combine both materials using the harmonic mean. LS-LS contacts retain their surface-node force model without separate rolling/torsional resistance springs.
+
+Older project files may contain rolling/torsional friction values for LS Materials. The loader ignores these unused values, and saving the project omits those two LS-only legacy fields. Sphere Material values are preserved unchanged.
 
 Material parameters define mechanics, not viewport colors. Infinite-mass coloring belongs to the Particle Type and View policies.
 
@@ -183,9 +189,9 @@ For imported OBJ files, the application can only render triangles present in the
 
 Select an LS Geometry and open the SDF Viewer:
 
-1. Choose the X, Y, or Z slice axis.
-2. Select the slice index.
-3. Read the signed-distance magnitude and sign from the color bar.
+1. Choose X, Y, or Z in **Normal axis**.
+2. Enter a one-based **Layer** number. The suffix shows the maximum layer count for the selected axis. Both inputs use the same fixed-width template.
+3. Read the signed-distance magnitude and sign from the color bar. Its endpoints are the actual minimum and maximum finite distances on the displayed slice, not a forced symmetric range. Negative values are blue and positive values red; zero is white and appears at its true position if the slice spans zero. A constant-valued slice has a solid bar and one value.
 4. Inspect continuity around the zero level set.
 
 The viewer builds only the selected geometry grid when needed. It does not create particles or solver containers.
@@ -262,7 +268,7 @@ Displacement amplitude is measured in metres, frequency in hertz, and phase in r
 - **Opacity** uses a slider and remains editable during calculation.
 - **Coloring** selects **Particle type (default)**, **Packing color**, or **Velocity magnitude**. Choose Packing color to display the custom RGB picker; the other modes do not expose an inactive color control.
 - **Packing Bounds > Visible** shows this Packing's bounding box. **Bounding-box dimensions** adds its X/Y/Z lengths in metres only when both switches are on; its editor is disabled while Visible is off. Both switches are off by default and are saved independently for each Sphere, LSParticle, or SPH Packing.
-- **Move in View** is a preprocessing operation available only for an editable model. Select the Packing in the model tree and enable this action to show its bounding box and move handle, even when its Post-processing bounds switch is off. Drag the center handle to translate the group. Left-dragging elsewhere continues to orbit the camera.
+- **Move in View** is the four-arrow toggle at the right of each preprocessing Packing row, not an inspector button. It starts off and uses the same control for Sphere, LSParticle, Random particle, and SPH Packings. It is available only for an editable model. Enable it to show the active Packing's bounding box and center move handle, even when its Post-processing bounds switch is off. Drag the handle to translate the group; left-dragging elsewhere continues to orbit the camera. While Move is active, the **Placement** fields are temporarily locked against competing manual edits. Their position components show the current drag coordinates live; the stored project and its undo history change once on release, not on every mouse movement. Disable Move to restore normal Placement editing, subject to the normal model and imported-frame locks.
 
 Particle-type coloring gives every Packing referencing the same Sphere Type or LSParticle Type the same default color, independent of its position in the Packing list. All SPH Blocks and Jets share the default color of their single global SPH type. Choose Packing color to override one Packing without changing another; returning to Particle type restores automatic type coloring. Infinite-mass particles always use light gray.
 
@@ -271,6 +277,27 @@ Select Packings in the tree, not by clicking particles in the viewport. Tree sel
 Saved explicit Packing colors remain unchanged when old projects are opened. A legacy display with no color and no color mode adopts Particle type; a legacy explicit RGB with no mode remains Packing color. The selected coloring mode is saved with the project and survives frame export and restart.
 
 Sphere Packing bounds use particle positions plus or minus physical radii. LSParticle Packing bounds use the minimum and maximum of all surface-node positions after each particle's position and orientation are applied; neither the LS bounding sphere nor a display sample substitutes for these points. Box edges obey the same world-space depth test as other geometry and can be occluded by objects in front.
+
+### 8.6 Generate a random sample
+
+Use **Packings > Random particle packings > +** before running the model (or after Reset). Random particle packings have their own category alongside the ordinary Sphere Packings and LS Particle Packings. The dialog uses the same property rows, units, selectors, and buttons as other editors. Add a compatible material first. Sphere samples require a Sphere Material; superellipsoid and irregular samples require an LS Material. The SPH + LS solver permits the two LS options, not ordinary spheres.
+
+The default shape is **Sphere**. Switch to **Superellipsoid** or **Random shape** to expose the relevant size and surface parameters. Set the particle count, number of reusable particle types, random seed, cuboid origin and full X/Y/Z dimensions in metres. **One generation creates one Random particle packing**, regardless of its type count. Its particles refer internally to the generated types; use one type per particle if every particle needs a separately sampled shape. This costs substantially more geometry memory for LS particles.
+
+- **Sphere:** specify minimum and maximum radius in metres.
+- **Superellipsoid:** specify lower/upper semi-axis lengths and equatorial/polar exponent ranges.
+- **Random shape:** specify a base-radius range and minimum/maximum surface heights in metres. Heights are radial offsets from the base sphere, not world Z coordinates. The smallest base radius plus the minimum height must stay positive. Correlated smooth perturbations retain a closed, outward-oriented sphere topology; this mode does not create holes or radial overhangs.
+- **LS resolution:** surface subdivision controls triangle density, while grid spacing controls the SDF. These are independent settings. Very small spacing or high subdivision can require substantial memory and build time.
+
+The initial layout uses a shared spatial search and conservative enclosing-sphere separation, including the requested clearance. It keeps each generated particle inside the cuboid and prevents mutual overlaps, but can be loose for elongated or irregular shapes. This is not a dense-packing or equilibrium algorithm. An overfilled region stops after the configured placement attempts with an explanation; failed or canceled generation adds nothing to the project.
+
+On success, the software adds geometry/type/packing entries in one operation. The newly generated geometries and particle types are read-only: their names, shape parameters, discretization, material references, and mass settings cannot be modified. This restriction is retained when the project is saved and reopened, and Reset does not remove it. Geometry remains inspectable through the SDF Viewer. Existing materials and manually created geometries/types keep their normal editing rules.
+
+The complete sample appears as one entry under **Random particle packings**. It stores explicit positions relative to one editable origin, individual random orientations, and each particle's type reference. Moving it, changing its activation step, hiding it, or changing its Post-processing color and opacity applies to the entire sample, not one type subgroup. Its selection box encloses all included particle shapes. Lattice dimensions, spacing, and orientation regeneration controls are absent for this layout; velocity and angular velocity remain configurable under the usual pre-run/Reset and imported-frame rules. The resource lock does not lock packing placement or its Post-processing display controls. Saved projects preserve the actual generated mesh, placements, type references, and random-packing category. Changing the origin translates the whole packing without regenerating it. Undo removes the entire generation operation together; Redo restores its read-only resources and single packing.
+
+New project files use schema 8 for per-placement type references. Older projects still load with their original packing structure and order: a placement without its own type reference uses the packing's shared particle type. Existing multi-packing samples are not automatically merged, which preserves their bond references, schedules, and recorded particle numbering.
+
+Check existing boundary geometry against the requested sample box: walls and reversed-SDF containers are not treated as solid enclosing-sphere obstacles. Apply a subsequent settling/compaction calculation if a mechanically equilibrated specimen is required.
 
 ## 9. SPH Blocks and Jets
 
@@ -300,11 +327,12 @@ The editable project does not maintain a top-level collection of individual Bond
 
 ### 10.1 Distance rule
 
-A Bond is generated whenever the particle-center distance does not exceed **Maximum center distance**, even when the two bounding spheres do not physically touch.
+A candidate pair is selected whenever the particle-center distance does not exceed **Maximum center distance**. With **Custom** length, the pair can be bonded even without physical contact.
 
 - Bond point is the midpoint between the two facing bounding-sphere surface points.
-- Equivalent length may be custom or derived from particle-center distance.
-- Fracture area may be custom or derived as `pi * minimumBoundingRadius²`.
+- For sphere–sphere pairs, **Bond length** offers **Particle center distance** and **Custom**.
+- When either endpoint is an LS particle, **Bond length** offers **Overlap** and **Custom**. **Overlap** uses the same LS contact detector as the solver, not bounding-sphere overlap. For LS–LS pairs with several surface-node contacts, the largest positive detected depth is used. Pairs without positive overlap are skipped in this mode; choose **Custom** to connect separated particles.
+- **Bond area source** offers **Custom** or **Minimum bounding-sphere circle** (`pi * minimumBoundingRadius²`). With **Custom**, enter **Bond area (m²)**.
 
 ### 10.2 Contacts rule
 
@@ -312,21 +340,23 @@ This rule is valid for a project exported from a playback frame because a normal
 
 - Bond point uses the saved physical Contact point.
 - Normal uses the saved Contact normal.
-- Equivalent length may be custom or derived from the saved particle positions.
-- Fracture area may be custom or use the saved Contact area.
+- Sphere–sphere length may be custom or derived from the saved particle positions. If either endpoint is LS, choose **Overlap** to use the saved Contact's overlap or **Custom** to enter a length. Contacts with no positive overlap are skipped in **Overlap** mode.
+- **Bond area source** offers **Custom** or **Contact area**. The latter uses the saved Contact area.
+
+Changing either source Packing updates the automatic length option; an explicitly chosen **Custom** length is preserved. Legacy LS Bond Packings using center-distance length load as **Overlap**. Existing checkpoint Bonds retain their already-computed lengths.
 
 ### 10.3 Stiffness and BK damage
 
 A Bond Packing sets normal, shear, bending, and torsional stiffness, Mode-I and Mode-II critical energies, the mode-mixity exponent, and the damage-initiation ratio.
 
-A fracture area of zero disables fracture evaluation while allowing an elastic Bond response.
+A **Bond area** of zero disables fracture evaluation while allowing an elastic Bond response. In C++ and saved JSON this field is named `crossSectionArea`; older JSON documents containing `fractureArea` remain readable, including their Bond VTU field selections. New documents and VTU files use `crossSectionArea`.
 
 The viewport renders each Bond as a cylinder:
 
 - center: Bond point;
 - axis: Bond normal;
 - length: equivalent length;
-- effective area: `fractureArea * (1 - damageFactor)`;
+- effective area: `crossSectionArea * (1 - damageFactor)`;
 - physical radius: `sqrt(effectiveArea / pi)`.
 
 ### 10.4 Selecting Bond Packings for display
@@ -351,13 +381,17 @@ Bond Packing visibility, opacity, and uniform-color settings remain available. C
 
 The viewport displays only sphere-sphere Contacts, using one aggregated force chain for each sphere pair. Sphere-LSParticle and LSParticle-LSParticle Contacts remain active in the solver and may be written to VTU, but they do not generate viewport geometry.
 
-When a sphere pair has multiple low-level Contacts, the viewport sums their normal-force vectors and draws one center-to-center cylinder. Width uses square-root scaling:
+Select **Post-processing > Contacts > Force component** to display **Normal force** (the default), **Tangential force**, or **Resultant force**. These are magnitudes in newtons; they control both cylinder width and color, and the legend uses the selected quantity's name. The control remains available during calculation and playback and does not change contact mechanics.
+
+For a contact with unit normal `n` and evaluated force `F`, the tangential component is `F - dot(F, n) * n`. Resultant force is the magnitude of the full evaluated vector, not the sum of normal and tangential magnitudes. Rolling and torsional moments are not forces and are not included. When a sphere pair has multiple low-level Contacts, each selected component's vectors are summed before taking their magnitude. The pair is drawn as one center-to-center cylinder. Width uses square-root scaling, clamping the normalized magnitude to `[0, 1]`:
 
 \[
-r=r_{min}+(r_{max}-r_{min})\sqrt{\frac{F_n-F_{min}}{F_{max}-F_{min}}}
+r=r_{min}+(r_{max}-r_{min})\sqrt{\operatorname{clamp}\!\left(\frac{F-F_{min}}{F_{max}-F_{min}},0,1\right)}
 \]
 
-Color and width use the same normal-force magnitude. The color-bar maximum is the historical maximum observed for the currently selected Sphere Packing scope. Changing that selection uses the accumulated history of the newly selected Packings, rather than starting their history at the moment they are selected.
+Color and width use the same selected force magnitude. **Post-processing > Legends > Force Chain Magnitude** provides the existing historical or custom minimum/maximum range. Histories for normal, tangential, and resultant forces are independent, so switching components never reuses another component's maximum. Changing the Sphere Packing selection uses the accumulated history of the newly selected Packings. Custom bounds remain explicit user settings when switching components.
+
+New playback frames and exported frame projects retain all three force components. Older frame-project JSON files stored only normal-force magnitudes; they load with normal display selected unless explicitly configured otherwise, and their unavailable tangential component is treated as zero until the solver evaluates new contact forces.
 
 In the project tree, select **Post-processing > Contacts**, then use **Select Force-chain Packings...**. A chain is shown when either sphere endpoint belongs to a selected Sphere Packing. LSParticle Packings are intentionally absent from the dialog.
 
@@ -494,13 +528,16 @@ Even a nominally nondissipative model can show integration error from finite tim
 
 The first Run performs its expensive preparation in the background and reports each available stage in **Output > Console**:
 
-1. validates every stable ID and reference;
-2. expands Packings;
-3. creates material, geometry, particle, and interaction containers;
-4. generates Bond Packings;
-5. initializes the CPU solver;
-6. clears VTU and DAT files from the configured result directory;
-7. advances by Total steps.
+1. increases geometry padding when the project contains both sphere and LS particle types;
+2. validates every stable ID and reference;
+3. expands Packings;
+4. creates material, geometry, particle, and interaction containers;
+5. generates Bond Packings;
+6. initializes the CPU solver;
+7. clears VTU and DAT files from the configured result directory;
+8. advances by Total steps.
+
+For a mixed sphere/LS project, every geometry must satisfy `padding cells × grid spacing >= maximum sphere radius`. The maximum includes all sphere types, including infinite-mass types and types used by future-activation Packings. The software increases insufficient padding to the smallest suitable integer; it never decreases padding or changes grid spacing or the physical shape. This is a system preparation rule, including for read-only generated resources and imported-frame geometry. The corrected padding is used for both preview and solver geometry, then reflected in Properties and saved project data; the Console lists each change. A sphere-only or LS-only project is unchanged. Preparation stops with an explanation if satisfying the condition would exceed the supported padding limit; it does not run with silently truncated padding. This check runs when constructing the model, not on each DEM step.
 
 A later Run continues from the current state for another requested round. Time, global step, output numbering, and playback history remain continuous, and the output directory is not cleared again.
 
