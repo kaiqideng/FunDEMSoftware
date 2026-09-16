@@ -167,7 +167,9 @@ Creating a Geometry does not place it in the viewport. It becomes visible only w
 - **Grid spacing** is the LS grid interval in metres. Smaller spacing improves SDF query resolution but increases preprocessing and memory cost.
 - **Padding size** is the number of grid layers outside the geometry bounds.
 - **Reverse SDF** changes the signed-distance convention and any required source winding normalization. It does not change visibility, depth ordering, or transparency in the viewport.
-- **Fixed integral properties** allows a fixed boundary to skip volume, centroid-offset, and unit-density inertia integration.
+- **Fixed integral properties** is passed to `LSInfo::buildLSGrid` and defaults to enabled for all wall geometries. Fixed geometry keeps its input frame and skips volume, centroid-offset, and unit-density inertia integration; its bounding radius is still calculated.
+
+For movable LS geometry, grid construction automatically calculates the volume and centroid, shifts both the surface nodes and grid origin into the centroidal frame, and caches the unit-density inertia tensor and bounding radius. Preview, random-packing placement, SDF display, and solver input use these prepared coordinates. The solver copies this data and does not integrate or recenter the geometry again.
 
 ### 6.2 Solver surface and display surface
 
@@ -204,7 +206,7 @@ A Sphere Type references one Sphere Material and stores a physical radius. It do
 
 ### 7.2 LSParticle Type
 
-An LSParticle Type references one LS Material and one LS Geometry. Mass, centroid data, inertia, and bounding information are derived from geometry data and material density during model compilation.
+An LSParticle Type references one LS Material and one LS Geometry. LS grid construction prepares centroidal coordinates, volume, unit-density inertia, and bounding information. During model compilation the particle derives its mass and inertia from these cached geometry properties and material density.
 
 ### 7.3 Infinite mass
 
