@@ -20,6 +20,15 @@ These stable links follow the latest published release. See the [latest release 
 
 The macOS target requires an Apple Silicon Mac running macOS 14 or later. Simulation runs on the CPU; this package does not include CUDA or support CUDA solver execution. Visualization uses the Mac's graphics hardware. Intel Macs are not included in this distribution.
 
+## New in v0.3.30
+
+- Inspect geometry surface points and any combination of the X, Y, and Z center SDF planes in one interactive 3-D preview, with a shared color bar and optional coordinate axes.
+- Follow solid-particle kinetic, gravitational, Contact elastic, and Bond elastic energy in Live Monitor. Choose curves and linear or logarithmic axes; monitoring is independent of scientific `energy.dat` output.
+- Remove model collections and shared-name groups with reference checks and one-step Undo.
+- Read simulation statistics in a Live Monitor table with fitted quantity labels and a readable minimum value-column width.
+
+See the [user manual](USER_MANUAL.md), [seven-example guide](EXAMPLE_GUIDE.md), and [v0.3.30 release notes](https://github.com/kaiqideng/FunDEMSoftware/releases/tag/v0.3.30). Project-file links in the example guide refer to the installed examples directory.
+
 ## Start on Windows
 
 1. Download and extract `FunDEM-Workbench-Windows-x64.zip`.

@@ -58,13 +58,25 @@ Within each **Simulation Model** category, objects with the same meaningful name
 
 Simulation statistics are consolidated in **Live Monitor**. The viewport does not overlay a **Displayed samples** counter, and the bottom-right status area does not duplicate Step, simulation time, or CPU usage. State labels and operation/loading notices remain in the status bar; scientific legends and explicitly enabled per-Packing bounds and dimensions remain available in the viewport.
 
+The **Quantity** column has a fixed, content-measured width that fits the header and every quantity name. Resizing the panel changes the **Value** column, not the quantity labels. Value has a minimum width of 120 logical pixels, increased when the font needs more space for scientific notation. The statistics pane reserves both columns and scrollbar space, so dragging its divider cannot squeeze the values below that minimum. Font/style changes recalculate these widths.
+
+Live Monitor contains two side-by-side panes: the statistics table and **Solid particle energy plot**. Drag their divider to allocate more room to either pane. The plot records the entire solid system, independently of Packing visibility or viewport sampling. SPH-fluid energy is excluded.
+
+Use **Curves and axes...** to select any combination of kinetic, gravitational potential, Contact elastic and Bond elastic energies. Kinetic energy includes translation and rotation of finite-mass solids. Gravitational potential uses the solver's world-origin reference and can be negative. Contact elastic energy sums the normal, sliding, rolling and torsional springs; Bond elastic energy sums normal, shear, bending and torsional contributions. The Bond elastic curve defaults to off when the current system contains no Bonds. Curve choices remain user-controlled: playback across Bond activation does not overwrite an explicit selection.
+
+The horizontal axis is **Time (s)**. The energy axis defaults to **Logarithmic (base 10)**, with an automatic lower limit of `1e-12 J`; its automatic upper limit follows positive values on the selected curves within the time window. Non-positive values cannot appear on the logarithmic axis, but their original signed data are retained. Select **Energy axis > Linear** to inspect signed gravitational potential energy. Each axis supports automatic limits or custom minimum/maximum values; maximum must exceed minimum, and logarithmic energy limits must both be positive. Positive values below the current lower limit are clipped from the plot, not changed or deleted. A gray dashed line marks the displayed frame's time. Settings remain editable during calculation. These presentation settings do not modify the solver or scientific output and are not stored in project JSON.
+
+Energy sampling follows newly published solver states in the live View, not just VTU output frames. It includes the initialized state, intermediate live updates, output frames, and the final published state. Capturing the same step and simulation time again does not add a duplicate sample. A repaint, camera movement, or playback of an existing frame does not run another solver-energy scan. The curve between samples is a visualization interpolation, not a new simulation sample. Further calculation rounds append to the same history. Reset or loading a newly compiled project starts a new history; merely changing visibility or playing earlier frames does not delete past samples. Existing output files are not imported automatically as plot history.
+
+The optional project JSON field `solver.monitorSolidEnergy` defaults to `true`. Set it to `false` before calculation to disable the additional live-monitor energy collection. This does not disable or change `energy.dat`; scientific energy output still follows its normal output schedule. Each collected monitor sample scans the solid particles, Contacts, and Bonds, with cost `O(particles + contacts + bonds)`. Its actual runtime overhead has not been benchmarked, so do not assume that frequent monitoring is free for large models.
+
 The **Live Monitor > FunDEM CPU (%)** row measures the current FunDEM process, including its solver, rendering, and background threads. It is not the computer's total CPU load. Usage is averaged over approximately 0.75 seconds and normalized to all online logical processors: one fully busy core on a 16-logical-processor machine is about 6.25%, and all 16 fully busy cores are 100%. The first valid sample appears after a short sampling window; an unavailable sample is shown as a dash. Sampling uses its own non-blocking UI timer, so it continues before compilation, while paused, during playback and animation export. If the UI event loop is busy, the next sample covers the longer elapsed interval rather than blocking the application. Reset clears simulation quantities without clearing this live process indicator.
 
 The **Bonds** row immediately follows **Contacts** and reports the stored bond count in the current frame. Hiding Bond Packings does not change this count.
 
 ### 2.1 Background operations and progress
 
-All operations report progress in **Output > Console** without opening a progress window. This includes parameter changes that rebuild the preview, creating/opening/saving a project, importing a force module, exporting a playback-frame project, building an SDF, and preparing or controlling the solver with Run/Pause/Single Step/Reset. Animation export also reports its frame progress in the Console. The current scene remains visible while work proceeds, and the normal file chooser, animation settings, unsaved-change confirmation, error messages, and completed SDF viewer still appear when needed.
+All operations report progress in **Output > Console** without opening a progress window. This includes parameter changes that rebuild the preview, creating/opening/saving a project, importing a force module, exporting a playback-frame project, building an SDF, and preparing or controlling the solver with Run/Pause/Single Step/Reset. Animation export also reports its frame progress in the Console. The current scene remains visible while work proceeds, and the normal file chooser, animation settings, unsaved-change confirmation, error messages, and completed geometry preview still appear when needed.
 
 The Console reports descriptive operation stages, such as **Preparing geometries** and **Scene preview completed**, followed by completion, cancellation, or failure with elapsed time. Background operations do not append generic item counters to these messages. Animation export retains completed/total frame progress.
 
@@ -93,6 +105,8 @@ Solver
 Materials, geometries, and particle types are reusable definitions. They do not place particles in the scene. Positions are created only by a Particle Packing, SPH Block, or SPH Jet. A `1 x 1 x 1` Particle Packing is the standard way to place one rigid particle.
 
 A referenced definition cannot be deleted directly. For example, reassign or remove every dependent Particle Type before removing its Material. Removing a Particle Packing also removes Bond Packings that reference it. Saved Post-processing selections are cleaned through the same model transaction.
+
+To delete a whole collection or a shared-name group, select its expandable row in **Simulation Model**, then use **Delete Group Objects...** from the context/Edit menu or press **Delete**. Collapsed children are included. The confirmation reports the selected objects and any additional dependent Bond Packings. A batch is all-or-nothing: a read-only object or a reference from an object outside the batch blocks the entire deletion. One **Undo** restores the complete batch, its dependent Bonds, and display selections. Post-processing rows are display controls, not deletion targets; physical deletion remains unavailable after running until **Reset**.
 
 ## 4. Solver selection
 
@@ -187,16 +201,22 @@ The viewport uses a separate display surface:
 
 For imported OBJ files, the application can only render triangles present in the file. Improve a visibly polygonal silhouette in the mesh authoring tool instead of increasing the LS display subdivision.
 
-### 6.3 SDF Viewer
+### 6.3 Combined geometry preview
 
-Select an LS Geometry and open the SDF Viewer:
+Select any LS Geometry and click **Preview Geometry...**. This opens one independent, non-modal 3-D window for both actual surface points and signed-distance slices, using the same viewport and camera controls as the main View:
 
-1. Choose X, Y, or Z in **Normal axis**.
-2. Enter a one-based **Layer** number. The suffix shows the maximum layer count for the selected axis. Both inputs use the same fixed-width template.
-3. Read the signed-distance magnitude and sign from the color bar. Its endpoints are the actual minimum and maximum finite distances on the displayed slice, not a forced symmetric range. Negative values are blue and positive values red; zero is white and appears at its true position if the slice spans zero. A constant-valued slice has a solid bar and one value.
-4. Inspect continuity around the zero level set.
+- drag with the left mouse button to rotate;
+- scroll the mouse wheel to zoom;
+- drag with the right or middle mouse button to pan;
+- use **Fit scene** in the top controls to frame the complete geometry again.
 
-The viewer builds only the selected geometry grid when needed. It does not create particles or solver containers.
+The four independent switches are **Surface points**, **X center SDF plane**, **Y center SDF plane**, and **Z center SDF plane**. Any combination can be visible at once; points and the Z plane are initially enabled. The top **Coordinate axes** switch is optional and initially off. X/Y/Z specify the plane normal, so the X slice is parallel to YZ, for example. Toggling layers or axes preserves the camera; **Fit scene** reframes the active geometry.
+
+Each slice is fixed at the exact middle of its grid extent. For an odd node count, the middle layer is used directly. For an even node count, the two middle layers are interpolated with equal weights and displayed halfway between them. These are geometry-local grid centers, not necessarily global coordinate zero or the particle centroid. All visible slices use one **SDF (m)** color bar in the upper-right corner of the 3-D viewport: negative is blue, positive is red, and zero is white. The endpoints cover the actual minimum and maximum across all enabled slices. The bar remains anchored when the window is resized and does not intercept camera mouse input. With no SDF planes enabled, the bar is hidden. Planes and point glyphs share true 3-D projection and depth ordering; the SDF colors are unlit and do not change with camera orientation.
+
+The point layer uses actual configured surface nodes in prepared geometry-local coordinates, including centroid correction for movable geometry. It does not use the independently smoothed display mesh. The point count is shown in the window. Glyph sizes only aid inspection and do not change contact-node positions or physical particle radii.
+
+The selected geometry is built once in the background for both layers, with progress reported in Console. All geometry families, imported meshes, generated read-only geometry and saved-frame geometry share this preview. No solver particles are added, and the main View camera is unchanged. Each window is a snapshot of the geometry at opening time; reopen it after editing. If the complete points or center planes exceed the configured display-memory budget, the operation reports an error instead of silently removing samples.
 
 ## 7. Particle Types
 
@@ -293,7 +313,7 @@ The default shape is **Sphere**. Switch to **Superellipsoid** or **Random shape*
 
 The initial layout uses a shared spatial search and conservative enclosing-sphere separation, including the requested clearance. It keeps each generated particle inside the cuboid and prevents mutual overlaps, but can be loose for elongated or irregular shapes. This is not a dense-packing or equilibrium algorithm. An overfilled region stops after the configured placement attempts with an explanation; failed or canceled generation adds nothing to the project.
 
-On success, the software adds geometry/type/packing entries in one operation. The newly generated geometries and particle types are read-only: their names, shape parameters, discretization, material references, and mass settings cannot be modified. This restriction is retained when the project is saved and reopened, and Reset does not remove it. Geometry remains inspectable through the SDF Viewer. Existing materials and manually created geometries/types keep their normal editing rules.
+On success, the software adds geometry/type/packing entries in one operation. The newly generated geometries and particle types are read-only: their names, shape parameters, discretization, material references, and mass settings cannot be modified. This restriction is retained when the project is saved and reopened, and Reset does not remove it. Geometry remains inspectable through **Preview Geometry...**. Existing materials and manually created geometries/types keep their normal editing rules.
 
 The complete sample appears as one entry under **Random particle packings**. It stores explicit positions relative to one editable origin, individual random orientations, and each particle's type reference. Moving it, changing its activation step, hiding it, or changing its Post-processing color and opacity applies to the entire sample, not one type subgroup. Its selection box encloses all included particle shapes. Lattice dimensions, spacing, and orientation regeneration controls are absent for this layout; velocity and angular velocity remain configurable under the usual pre-run/Reset and imported-frame rules. The resource lock does not lock packing placement or its Post-processing display controls. Saved projects preserve the actual generated mesh, placements, type references, and random-packing category. Changing the origin translates the whole packing without regenerating it. Undo removes the entire generation operation together; Redo restores its read-only resources and single packing.
 
@@ -332,8 +352,8 @@ The editable project does not maintain a top-level collection of individual Bond
 A candidate pair is selected whenever the particle-center distance does not exceed **Maximum center distance**. With **Custom** length, the pair can be bonded even without physical contact.
 
 - Bond point is the midpoint between the two facing bounding-sphere surface points.
-- For sphere–sphere pairs, **Bond length** offers **Particle center distance** and **Custom**.
-- When either endpoint is an LS particle, **Bond length** offers **Overlap** and **Custom**. **Overlap** uses the same LS contact detector as the solver, not bounding-sphere overlap. For LS–LS pairs with several surface-node contacts, the largest positive detected depth is used. Pairs without positive overlap are skipped in this mode; choose **Custom** to connect separated particles.
+- For sphere–sphere pairs, **Bond length source** offers **Particle center distance** and **Custom**.
+- When either endpoint is an LS particle, **Bond length source** offers **Overlap** and **Custom**. **Overlap** uses the same LS contact detector as the solver, not bounding-sphere overlap. For LS–LS pairs with several surface-node contacts, the largest positive detected depth is used. Pairs without positive overlap are skipped in this mode; choose **Custom** to connect separated particles.
 - **Bond area source** offers **Custom** or **Minimum bounding-sphere circle** (`pi * minimumBoundingRadius²`). With **Custom**, enter **Bond area (m²)**.
 
 ### 10.2 Contacts rule
