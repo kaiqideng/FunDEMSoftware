@@ -28,7 +28,7 @@ The macOS target requires an Apple Silicon Mac running macOS 14 or later. Simula
 4. Read `Windows/docs/USER_MANUAL.md` in the extracted package, or download the matching manual above, for project setup, simulation, playback, export, and post-processing.
 5. Open a project from `Windows/examples` to explore its model and run a simulation.
 
-The six bundled examples cover Gomboc self-righting, a physically interlocked chain, bonded cloth falling onto a box, dam-break flow around a square column, Brazil-nut segregation, and superellipsoids in a rotating drum. These are demonstration projects; their presence is not a claim of experimental validation.
+The seven bundled examples cover Gomboc self-righting, a physically interlocked chain, bonded cloth falling onto a box, dam-break flow around a square column, Brazil-nut segregation, superellipsoids in a rotating drum, and irregular particles in a cylindrical mold. These are demonstration projects; their presence is not a claim of experimental validation.
 
 In the Windows x64 package, keep the runtime libraries, `platforms`, `force-modules`, example assets, documentation, and licenses with the executable. The package includes optional particle-force modules and supports recorded-frame playback, animation export, and VTU output for further analysis.
 
@@ -38,7 +38,7 @@ In the Windows x64 package, keep the runtime libraries, `platforms`, `force-modu
 
 1. Download either the DMG or ZIP above. For the DMG, open it and drag `FunDEM.app` into Applications, then eject the disk image. For the ZIP, extract it and move the complete `FunDEM.app` into Applications.
 2. Open `FunDEM.app`. Keep its contents intact; users do not need to compile the application or install CUDA.
-3. Read the [macOS guide](https://github.com/kaiqideng/FunDEMSoftware/releases/latest/download/MACOS_GUIDE.md). The application bundle also contains `Contents/Resources/docs/USER_MANUAL.md` and the six projects in `Contents/Resources/examples`; Finder's **Show Package Contents** reveals these folders.
+3. Read the [macOS guide](https://github.com/kaiqideng/FunDEMSoftware/releases/latest/download/MACOS_GUIDE.md). The application bundle also contains `Contents/Resources/docs/USER_MANUAL.md` and the seven projects in `Contents/Resources/examples`; Finder's **Show Package Contents** reveals these folders.
 4. Check the Output directory before running a project. Relative output names resolve under `Documents/FunDEM` on macOS; an explicit absolute output path remains unchanged, so projects transferred from another computer may need a different output directory.
 
 The macOS package uses an **ad-hoc signature**. It is **not signed with an Apple Developer ID and has not been notarized by Apple**. If Gatekeeper blocks the first launch, proceed only if you trust the download and have verified its source: first try opening the app, then follow Apple's application-specific **System Settings → Privacy & Security → Open Anyway** procedure. See [Apple's official instructions](https://support.apple.com/en-us/102445). Do not globally disable Gatekeeper or other macOS security protections. If macOS reports malware or a damaged application, stop and obtain a verified package instead of bypassing the warning.
