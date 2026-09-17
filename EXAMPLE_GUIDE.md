@@ -1,6 +1,6 @@
 # Example projects
 
-The seven projects below are complete FunDEMSoftware models. Open one with **File > Open Project** to inspect its initial model, then choose **Run** to simulate. Each file contains its materials, geometries, particle types, Packings, solver settings, and output selection. Generated random-sample geometries and particle types are read-only; their packing placement and display settings remain editable before calculation. Referenced OBJ meshes are included in `assets`; keep that directory with the project files. The cloth example also uses the bundled Particle Damping library in `force-modules`. The level-5 irregular-particle column starts with global coordinate axes visible; the other projects start with them hidden. Change this setting under **Post-processing > Filters** if needed. The Brazil-nut project also starts with Clip Plane filtering and its plane display disabled.
+The seven projects below are complete FunDEMSoftware models. Open one with **File > Open Project** to inspect its initial model, then choose **Run** to simulate. Each file contains its materials, geometries, particle types, Packings, solver settings, and output selection. Generated random-sample geometries and particle types are read-only; their packing placement and display settings remain editable before calculation. Referenced OBJ meshes are included in `assets`; keep that directory with the project files. The cloth example also uses the bundled Particle Damping library in `force-modules`. The `randomShapeColumn` example starts with global coordinate axes visible; the other projects start with them hidden. Change this setting under **Post-processing > Filters** if needed. The Brazil-nut project also starts with Clip Plane filtering and its plane display disabled.
 
 | Project | File | Calculation time | Output interval |
 | --- | --- | --- | --- |
@@ -10,7 +10,7 @@ The seven projects below are complete FunDEMSoftware models. Open one with **Fil
 | Dam break around a square column | [`damBreakSquareColumn.fundem.json`](damBreakSquareColumn.fundem.json) | 3 s | 0.05 s |
 | Brazil nut segregation | [`brazilNut.fundem.json`](brazilNut.fundem.json) | 8 s | 0.05 s |
 | Layered superellipsoids in a rotating drum | [`superellipsoidDrum.fundem.json`](superellipsoidDrum.fundem.json) | 8 s | 0.05 s |
-| Level-5 irregular particles in a cylindrical mold | [`randomShapeColumnLevel5.fundem.json`](randomShapeColumnLevel5.fundem.json) | 2 s per Run | 0.05 s |
+| Irregular particles in a cylindrical mold | [`randomShapeColumn.fundem.json`](randomShapeColumn.fundem.json) | 2 s per Run | 0.05 s |
 
 Calculation times are physical simulation times, not estimates of wall-clock execution time. Output directories are created beside the executable. Existing results are not part of the bundled example projects. See the [user manual](../docs/USER_MANUAL.md) for execution, playback, restart export, and energy output.
 
@@ -112,14 +112,14 @@ The CPU solver uses a `2e-5 s` step for 400,000 steps (8 s total) and records ev
 FunDEM.exe examples\superellipsoidDrum.fundem.json
 ```
 
-## Level-5 irregular particles in a cylindrical mold
+## Irregular particles in a cylindrical mold
 
-`randomShapeColumnLevel5.fundem.json` contains 240 finite-mass irregular LS particles in one Random particle packing. Twelve generated shapes are reused 20 times each, with random orientations. Before volume-preserving reshaping into elongated, flat, and blocky families, base radii span `8–12 mm` and radial surface offsets are bounded by `−4 to +4 mm`. These initial bounds are not the final reshaped particle extents. Each shape has an actual level-5 surface mesh: 10,242 vertices and 20,480 triangles. A second packing contains the infinite-mass, closed cylindrical mold, with a `0.075 m` radius, `0.9 m` height, reversed SDF, and opacity `0.10`.
+`randomShapeColumn.fundem.json` contains 240 finite-mass irregular LS particles in one Random particle packing. Twelve generated shapes are reused 20 times each, with random orientations. Before volume-preserving reshaping into elongated, flat, and blocky families, base radii span `8–12 mm` and radial surface offsets are bounded by `−4 to +4 mm`. These initial bounds are not the final reshaped particle extents. Each shape has an actual level-5 surface mesh: 10,242 vertices and 20,480 triangles. A second packing contains the infinite-mass, closed cylindrical mold, with a `0.075 m` radius, `0.9 m` height, reversed SDF, and opacity `0.10`.
 
 The starting arrangement is a conservative enclosing-sphere deposition, not a settled DEM state. Gravity, friction, and restitution subsequently allow the irregular surfaces to find their contacts. The prepared project has been checked for solver-corrected surface containment and save/reload consistency, but no settling simulation was run when authoring it. The configured `2 s` is an initial calculation round, not a verified convergence time. Monitor kinetic energy and particle velocities, and continue with another Run if needed. There are no bonds, and the mold remains present; this is not a self-supporting column demonstration.
 
-The CPU SphereDEM solver uses `1e-5 s` for 200,000 steps and writes every 5,000 steps (`0.05 s`) to `randomShapeColumnLevel5_files`. Although it uses the SphereDEM formulation, every solid in this project is an LS particle; no ordinary sphere particles are present. High-resolution surface output can be large with 41 scheduled frames including the initial frame. See the [dedicated example guide](randomShapeColumnLevel5.md) for geometry, material values, initialization, execution, and result interpretation.
+The CPU SphereDEM solver uses `1e-5 s` for 200,000 steps and writes every 5,000 steps (`0.05 s`) to `randomShapeColumn_files`. Although it uses the SphereDEM formulation, every solid in this project is an LS particle; no ordinary sphere particles are present. High-resolution surface output can be large with 41 scheduled frames including the initial frame. See the [dedicated example guide](randomShapeColumn.md) for geometry, material values, initialization, execution, and result interpretation.
 
 ```powershell
-FunDEM.exe examples\randomShapeColumnLevel5.fundem.json
+FunDEM.exe examples\randomShapeColumn.fundem.json
 ```

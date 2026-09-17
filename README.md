@@ -20,14 +20,16 @@ These stable links follow the latest published release. See the [latest release 
 
 The macOS target requires an Apple Silicon Mac running macOS 14 or later. Simulation runs on the CPU; this package does not include CUDA or support CUDA solver execution. Visualization uses the Mac's graphics hardware. Intel Macs are not included in this distribution.
 
-## New in v0.3.30
+## New in v0.3.31
 
-- Inspect geometry surface points and any combination of the X, Y, and Z center SDF planes in one interactive 3-D preview, with a shared color bar and optional coordinate axes.
-- Follow solid-particle kinetic, gravitational, Contact elastic, and Bond elastic energy in Live Monitor. Choose curves and linear or logarithmic axes; monitoring is independent of scientific `energy.dat` output.
+- Inspect geometry surface points and any combination of the X, Y, and Z center SDF planes in one interactive 3-D preview, with optional coordinate axes. The shared SDF color bar has a transparent background and four-significant-digit labels; Fit scene is in the control row.
+- Live solid-energy monitoring now defaults to off for new projects and older project files that omit the setting; explicitly saved enabled settings are preserved. When off, it skips extra energy scans and plot-history collection without changing scientific `energy.dat` output. Enable it to follow kinetic, gravitational, Contact elastic, and Bond elastic energy with selectable curves and axes.
+- Energy plots always label the vertical axis `Energy (J)`. Logarithmic ticks use `1e` followed by an integer exponent; linear ticks use integers or concise scientific notation.
+- Try the seven included examples, including the renamed `randomShapeColumn.fundem.json` random-shape column example.
 - Remove model collections and shared-name groups with reference checks and one-step Undo.
 - Read simulation statistics in a Live Monitor table with fitted quantity labels and a readable minimum value-column width.
 
-See the [user manual](USER_MANUAL.md), [seven-example guide](EXAMPLE_GUIDE.md), and [v0.3.30 release notes](https://github.com/kaiqideng/FunDEMSoftware/releases/tag/v0.3.30). Project-file links in the example guide refer to the installed examples directory.
+See the [user manual](USER_MANUAL.md), [seven-example guide](EXAMPLE_GUIDE.md), and [v0.3.31 release notes](https://github.com/kaiqideng/FunDEMSoftware/releases/tag/v0.3.31). Project-file links in the example guide refer to the installed examples directory.
 
 ## Start on Windows
 
