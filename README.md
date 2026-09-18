@@ -20,16 +20,15 @@ These stable links follow the latest published release. See the [latest release 
 
 The macOS target requires an Apple Silicon Mac running macOS 14 or later. Simulation runs on the CPU; this package does not include CUDA or support CUDA solver execution. Visualization uses the Mac's graphics hardware. Intel Macs are not included in this distribution.
 
-## New in v0.3.31
+## New in v0.3.32
 
-- Inspect geometry surface points and any combination of the X, Y, and Z center SDF planes in one interactive 3-D preview, with optional coordinate axes. The shared SDF color bar has a transparent background and four-significant-digit labels; Fit scene is in the control row.
-- Live solid-energy monitoring now defaults to off for new projects and older project files that omit the setting; explicitly saved enabled settings are preserved. When off, it skips extra energy scans and plot-history collection without changing scientific `energy.dat` output. Enable it to follow kinetic, gravitational, Contact elastic, and Bond elastic energy with selectable curves and axes.
-- Energy plots always label the vertical axis `Energy (J)`. Logarithmic ticks use `1e` followed by an integer exponent; linear ticks use integers or concise scientific notation.
-- Try the seven included examples, including the renamed `randomShapeColumn.fundem.json` random-shape column example.
-- Remove model collections and shared-name groups with reference checks and one-step Undo.
-- Read simulation statistics in a Live Monitor table with fitted quantity labels and a readable minimum value-column width.
+- Create named sphere-type batches directly, with arithmetic or random radius distributions; generate irregular LS geometries from one fixed superellipsoid base and surface-height fluctuations.
+- Select geometries and particle types through the same expandable name-prefix groups, with group and individual checkboxes. Generated definitions remain normally editable and removable, subject to references and saved-frame protections.
+- Choose single-type lattice or multi-type random packing under Sphere Packings or LS Particle Packings. Random packing reuses existing types and supports conservative non-overlap or nominal-porosity placement with overlap allowed.
+- Keep narrow Output panels inside their own boundaries with internal Live Monitor scrolling; statistics and plots retain readable widths. Geometry preview controls also reuse the shared compact templates.
+- Use the updated FunDEMBeta core with simplified SPH step state, separate jet lifecycle and shared CPU/CUDA interaction/statistics types.
 
-See the [user manual](USER_MANUAL.md), [seven-example guide](EXAMPLE_GUIDE.md), and [v0.3.31 release notes](https://github.com/kaiqideng/FunDEMSoftware/releases/tag/v0.3.31). Project-file links in the example guide refer to the installed examples directory.
+See the [user manual](USER_MANUAL.md), [seven-example guide](EXAMPLE_GUIDE.md), and [v0.3.32 release notes](https://github.com/kaiqideng/FunDEMSoftware/releases/tag/v0.3.32). Project-file links in the example guide refer to the installed examples directory.
 
 ## Start on Windows
 
