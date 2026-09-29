@@ -19,15 +19,14 @@ These stable links follow the latest published release. See the [latest release 
 
 The macOS target requires an Apple Silicon Mac running macOS 14 or later. Simulation runs on the CPU; this package does not include CUDA or support CUDA solver execution. Visualization uses the Mac's graphics hardware. Intel Macs are not included in this distribution.
 
-## New in v0.3.32
+## New in v0.3.36
 
-- Create named sphere-type batches directly, with arithmetic or random radius distributions; generate irregular LS geometries from one fixed superellipsoid base and surface-height fluctuations.
-- Select geometries and particle types through the same expandable name-prefix groups, with group and individual checkboxes. Generated definitions remain normally editable and removable, subject to references and saved-frame protections.
-- Choose single-type lattice or multi-type random packing under Sphere Packings or LS Particle Packings. Random packing reuses existing types and supports conservative non-overlap or nominal-porosity placement with overlap allowed.
-- Keep narrow Output panels inside their own boundaries with internal Live Monitor scrolling; statistics and plots retain readable widths. Geometry preview controls also reuse the shared compact templates.
-- Use the updated FunDEMBeta core with simplified SPH step state, separate jet lifecycle and shared CPU/CUDA interaction/statistics types.
+- The default workspace places **Properties** below **Project**.
+- **Configure Bond Packing** lists **Name**, **Particle Packing 1**, **Particle Packing 2**, and **Rule**, followed by the setting for the selected rule. Edit **Bond length** in **Properties** after creating the Packing.
+- New sphere-only Bond Packings derive Bond length from particle-center distance; Packings with an LS particle endpoint use actual contact overlap. A positive custom Bond length can connect separated pairs.
+- Windows x64 and Apple Silicon macOS 14+ packages use portable ZIP archives. Extract the complete package before launching; the macOS app is ad-hoc signed and not notarized.
 
-See the [user manual](USER_MANUAL.md), [seven-example guide](EXAMPLE_GUIDE.md), and [v0.3.32 release notes](https://github.com/kaiqideng/FunDEMSoftware/releases/tag/v0.3.32). Project-file links in the example guide refer to the installed examples directory.
+See the [user manual](USER_MANUAL.md) and [seven-example guide](EXAMPLE_GUIDE.md). Project-file links in the example guide refer to the installed examples directory.
 
 ## Start on Windows
 
