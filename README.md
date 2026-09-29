@@ -15,7 +15,6 @@ These stable links follow the latest published release. See the [latest release 
 ### macOS Apple Silicon
 
 - [macOS Apple Silicon ZIP](https://github.com/kaiqideng/FunDEMSoftware/releases/latest/download/FunDEM-Workbench-macOS-arm64.zip)
-- [macOS Apple Silicon DMG](https://github.com/kaiqideng/FunDEMSoftware/releases/latest/download/FunDEM-Workbench-macOS-arm64.dmg)
 - [English macOS guide](https://github.com/kaiqideng/FunDEMSoftware/releases/latest/download/MACOS_GUIDE.md)
 
 The macOS target requires an Apple Silicon Mac running macOS 14 or later. Simulation runs on the CPU; this package does not include CUDA or support CUDA solver execution. Visualization uses the Mac's graphics hardware. Intel Macs are not included in this distribution.
@@ -46,7 +45,7 @@ In the Windows x64 package, keep the runtime libraries, `platforms`, `force-modu
 
 ## Start on macOS
 
-1. Download either the DMG or ZIP above. For the DMG, open it and drag `FunDEM.app` into Applications, then eject the disk image. For the ZIP, extract it and move the complete `FunDEM.app` into Applications.
+1. Download the macOS ZIP above, extract it, and move the complete `FunDEM.app` into Applications.
 2. Open `FunDEM.app`. Keep its contents intact; users do not need to compile the application or install CUDA.
 3. Read the [macOS guide](https://github.com/kaiqideng/FunDEMSoftware/releases/latest/download/MACOS_GUIDE.md). The application bundle also contains `Contents/Resources/docs/USER_MANUAL.md` and the seven projects in `Contents/Resources/examples`; Finder's **Show Package Contents** reveals these folders.
 4. Check the Output directory before running a project. Relative output names resolve under `Documents/FunDEM` on macOS; an explicit absolute output path remains unchanged, so projects transferred from another computer may need a different output directory.

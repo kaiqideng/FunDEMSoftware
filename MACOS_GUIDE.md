@@ -4,7 +4,7 @@
 
 The macOS package targets Apple Silicon (M-series) Macs running macOS 14 or later. It contains a native ARM64 application, the CPU FunDEMBeta core, Qt frameworks, the OpenMP runtime, and the bundled particle-force modules. CUDA is not used. Intel Macs are not included in this package.
 
-Download the Mac ZIP or DMG from the [official release page](https://github.com/kaiqideng/FunDEMSoftware/releases/latest). Open the DMG or extract the ZIP, then copy the complete `FunDEM.app` to Applications or another writable folder. Do not copy only the executable from inside the application bundle. No compiler, Qt installation, or Homebrew installation is required to run the package.
+Download the Mac ZIP from the [official release page](https://github.com/kaiqideng/FunDEMSoftware/releases/latest). Extract it, then copy the complete `FunDEM.app` to Applications or another writable folder. Do not copy only the executable from inside the application bundle. No compiler, Qt installation, or Homebrew installation is required to run the package.
 
 ## First launch and signing
 
@@ -18,7 +18,7 @@ The application keeps its examples and English documentation in `FunDEM.app/Cont
 
 The interface and project format are shared with Windows. The platform's matching `.dylib` files are used for the bundled force modules; a Windows `.dll` itself cannot run on macOS. Third-party modules require a native ARM64 macOS build from their author.
 
-On macOS, relative result paths are placed under your **Documents/FunDEM** directory. Explicit absolute result paths are kept as configured. The actual output path is shown in the project settings; it must be writable. When moving a saved project between computers, review its output directory because a saved absolute path can refer to the previous computer's user account. Results are never meant to be written into `FunDEM.app` or the mounted DMG.
+On macOS, relative result paths are placed under your **Documents/FunDEM** directory. Explicit absolute result paths are kept as configured. The actual output path is shown in the project settings; it must be writable. When moving a saved project between computers, review its output directory because a saved absolute path can refer to the previous computer's user account. Results are never meant to be written into `FunDEM.app` or its installation folder.
 
 The main [User Manual](USER_MANUAL.md) describes the model editor, CPU solvers, playback, VTU output, and post-processing. Windows installation instructions and `.dll` examples in that manual should be read together with this macOS-specific guide.
 
@@ -35,4 +35,4 @@ bash FunDEMSoftware/scripts/build-macos.sh \
   --deployment-target 14.0
 ```
 
-The packaging script builds and checks the program, deploys dependencies into the bundle, applies ad-hoc signatures, and prepares ZIP/DMG files. The private GitHub Actions workflow runs this same entry point and checks the deployed application. Public distribution is a separate, deliberate upload of the binary package and documentation, never a copy of the private source tree.
+The packaging script builds and checks the program, deploys dependencies into the bundle, applies ad-hoc signatures, and prepares a ZIP file. The private GitHub Actions workflow runs this same entry point and checks the deployed application. Public distribution is a separate, deliberate upload of the binary package and documentation, never a copy of the private source tree.
