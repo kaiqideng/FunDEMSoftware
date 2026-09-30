@@ -19,12 +19,12 @@ These stable links follow the latest published release. See the [latest release 
 
 The macOS target requires an Apple Silicon Mac running macOS 14 or later. Simulation runs on the CPU; this package does not include CUDA or support CUDA solver execution. Visualization uses the Mac's graphics hardware. Intel Macs are not included in this distribution.
 
-## New in v0.3.36
+## New in v0.3.37
 
-- The default workspace places **Properties** below **Project**.
-- **Configure Bond Packing** lists **Name**, **Particle Packing 1**, **Particle Packing 2**, and **Rule**, followed by the setting for the selected rule. Edit **Bond length** in **Properties** after creating the Packing.
-- New sphere-only Bond Packings derive Bond length from particle-center distance; Packings with an LS particle endpoint use actual contact overlap. A positive custom Bond length can connect separated pairs.
-- Windows x64 and Apple Silicon macOS 14+ packages use portable ZIP archives. Extract the complete package before launching; the macOS app is ad-hoc signed and not notarized.
+- The Project tree and Properties panel use more consistent controls, spacing, and labels. Materials are organized into separate **Sphere Materials** and **Level-Set Materials** groups; new objects receive numbered default names.
+- Every new rigid-particle Packing opens a Configure window. Sphere radius and material, or LS geometry and material, are chosen as part of the Packing workflow; a separate Particle Types category is no longer shown. Existing Packings can be reconfigured from Properties. Geometry creation likewise confirms its configuration before generation and supports later reconfiguration.
+- SPH Blocks and Jets are grouped under **SPH Packings**. Choose Block or Jet from the add menu; Properties shows the shared Particle Packing settings with Activation step in its own section.
+- Run, Pause, Single Step, and Reset now use simulation-control symbols distinct from the playback controls. This changes their appearance, not their simulation behavior or physics.
 
 See the [user manual](USER_MANUAL.md) and [seven-example guide](EXAMPLE_GUIDE.md). Project-file links in the example guide refer to the installed examples directory.
 
