@@ -12,6 +12,8 @@ This public repository distributes the packaged application and English document
 
 These stable links follow the latest published release. See the [latest release page](https://github.com/kaiqideng/FunDEMSoftware/releases/latest) for the current version and available downloads.
 
+This documentation describes v0.3.38. Use the matching verified platform package from its release page; the latest links change only after the release assets are published. An older package may not include the new menus, archives, queries, or CLI described here.
+
 ### macOS Apple Silicon
 
 - [macOS Apple Silicon ZIP](https://github.com/kaiqideng/FunDEMSoftware/releases/latest/download/FunDEM-Workbench-macOS-arm64.zip)
@@ -19,14 +21,18 @@ These stable links follow the latest published release. See the [latest release 
 
 The macOS target requires an Apple Silicon Mac running macOS 14 or later. Simulation runs on the CPU; this package does not include CUDA or support CUDA solver execution. Visualization uses the Mac's graphics hardware. Intel Macs are not included in this distribution.
 
-## New in v0.3.37
+## New in v0.3.38
 
-- The Project tree and Properties panel use more consistent controls, spacing, and labels. Materials are organized into separate **Sphere Materials** and **Level-Set Materials** groups; new objects receive numbered default names.
-- Every new rigid-particle Packing opens a Configure window. Sphere radius and material, or LS geometry and material, are chosen as part of the Packing workflow; a separate Particle Types category is no longer shown. Existing Packings can be reconfigured from Properties. Geometry creation likewise confirms its configuration before generation and supports later reconfiguration.
-- SPH Blocks and Jets are grouped under **SPH Packings**. Choose Block or Jet from the add menu; Properties shows the shared Particle Packing settings with Activation step in its own section.
-- Run, Pause, Single Step, and Reset now use simulation-control symbols distinct from the playback controls. This changes their appearance, not their simulation behavior or physics.
+- **File > Examples** opens any of the seven packaged projects without starting calculation. Use **Save As** for edits in a writable user-owned folder. The examples use the current project schema and retain their physical parameters and stable references.
+- **Simulation > Check Model...** reports model/resource issues, estimated output and geometry costs, material pairs, and activation/motion schedules before preparation. Source-backed geometry is frozen for a prepared run; display-only changes do not repeatedly rebuild or recheck the model.
+- Each fresh calculation reserves a unique child run directory. Complete frame bundles keep playback, full-precision checkpoints, scientific VTU/DAT output, and timestamped PVD collections aligned without clearing earlier runs.
+- **File > Save Run...** saves the committed results to a new archive; **Open Results...** reopens it read-only for playback, display, queries, and frame export. Cancelable loading preserves the previous project on failure or cancellation.
+- **Results > Result Query...** exports full-state particle/time-series CSV independently of viewport sampling, visibility, or clipping. **Export Solid Energy...** exports the collected monitored solid-energy series.
+- The packaged `FunDEM-cli` checks or runs a project without a window, using the same serializer, preflight, CPU session, and archive writer.
 
-See the [user manual](USER_MANUAL.md) and [seven-example guide](EXAMPLE_GUIDE.md). Project-file links in the example guide refer to the installed examples directory.
+These changes are in the Workbench workflow; they do not change the FunDEMBeta contact laws or integration algorithms. Model estimates are not physical validation or convergence proofs. Open Results currently accepts saved run archives, not arbitrary raw run directories; archive checksums detect accidental corruption and are not cryptographic authentication. Query charts, cross-run energy comparison, and a parameter-scan GUI remain planned.
+
+See the [user manual](USER_MANUAL.md), [seven-example guide](EXAMPLE_GUIDE.md), and [workflow guide](WORKFLOW_IMPROVEMENTS.md) for operation and current limits. Project filenames refer to the examples shipped inside the runtime, not private application source.
 
 ## Start on Windows
 
@@ -34,11 +40,21 @@ See the [user manual](USER_MANUAL.md) and [seven-example guide](EXAMPLE_GUIDE.md
 2. Keep the extracted directory intact.
 3. Open the extracted `Windows` folder and run `FunDEM.exe`.
 4. Read `Windows/docs/USER_MANUAL.md` in the extracted package, or download the matching manual above, for project setup, simulation, playback, export, and post-processing.
-5. Open a project from `Windows/examples` to explore its model and run a simulation.
+5. Choose **File > Examples** to inspect a bundled model. This only opens it; press **Run** explicitly when ready. Save edits with **File > Save As...** in a writable user-owned folder.
 
 The seven bundled examples cover Gomboc self-righting, a physically interlocked chain, bonded cloth falling onto a box, dam-break flow around a square column, Brazil-nut segregation, superellipsoids in a rotating drum, and irregular particles in a cylindrical mold. These are demonstration projects; their presence is not a claim of experimental validation.
 
-In the Windows x64 package, keep the runtime libraries, `platforms`, `force-modules`, example assets, documentation, and licenses with the executable. The package includes optional particle-force modules and supports recorded-frame playback, animation export, and VTU output for further analysis.
+In the Windows x64 package, keep `FunDEM.exe`, `FunDEM-cli.exe`, the runtime libraries, `platforms`, `force-modules`, example assets, documentation, and licenses together. The package includes the required meshes and compiled particle-force modules; no compiler, SDK, or separate Qt installation is needed. A missing installed example warns without replacing the current project.
+
+For a Microsoft Store installation, launch FunDEM from Start and use the same **File > Examples** menu. Installed resources are read-only. Relative result roots resolve under `Documents/FunDEM`; portable Windows roots resolve beside the executable. Each fresh calculation creates its own child directory, and explicit absolute output paths remain unchanged.
+
+From the extracted `Windows` folder, the headless check is:
+
+```powershell
+.\FunDEM-cli.exe --check .\examples\gombocSelfRighting.fundem.json
+```
+
+Use `--run project.fundem.json [--steps N --output root --archive newdir]` for an explicit calculation. The archive destination must be new. See the [workflow guide](WORKFLOW_IMPROVEMENTS.md#headless-checks-and-runs) for exit codes, interruption behavior, and argument limits.
 
 **Settings > Display Storage** separates the **Viewport** presentation budget from the **Playback Cache** budget. Playback defaults to 256 MiB of recently used frames with shared LS geometry reuse; it can be adjusted or turned off without deleting the recorded disk history. These budgets do not limit total application memory. See the user manual for available settings and memory tradeoffs.
 
@@ -46,8 +62,9 @@ In the Windows x64 package, keep the runtime libraries, `platforms`, `force-modu
 
 1. Download the macOS ZIP above, extract it, and move the complete `FunDEM.app` into Applications.
 2. Open `FunDEM.app`. Keep its contents intact; users do not need to compile the application or install CUDA.
-3. Read the [macOS guide](https://github.com/kaiqideng/FunDEMSoftware/releases/latest/download/MACOS_GUIDE.md). The application bundle also contains `Contents/Resources/docs/USER_MANUAL.md` and the seven projects in `Contents/Resources/examples`; Finder's **Show Package Contents** reveals these folders.
-4. Check the Output directory before running a project. Relative output names resolve under `Documents/FunDEM` on macOS; an explicit absolute output path remains unchanged, so projects transferred from another computer may need a different output directory.
+3. In the matching v0.3.38 app, use **File > Examples** to open a bundled project without starting calculation. Save edits with **File > Save As...** outside the application bundle.
+4. Read the [macOS guide](MACOS_GUIDE.md). The application bundle also contains `Contents/Resources/docs/USER_MANUAL.md`, the workflow guide, and the seven projects in `Contents/Resources/examples`; Finder's **Show Package Contents** reveals these folders.
+5. Check the Output directory before running a project. Relative output names resolve under `Documents/FunDEM` on macOS; an explicit absolute output path remains unchanged, so projects transferred from another computer may need a different output directory.
 
 The macOS package uses an **ad-hoc signature**. It is **not signed with an Apple Developer ID and has not been notarized by Apple**. If Gatekeeper blocks the first launch, proceed only if you trust the download and have verified its source: first try opening the app, then follow Apple's application-specific **System Settings → Privacy & Security → Open Anyway** procedure. See [Apple's official instructions](https://support.apple.com/en-us/102445). Do not globally disable Gatekeeper or other macOS security protections. If macOS reports malware or a damaged application, stop and obtain a verified package instead of bypassing the warning.
 

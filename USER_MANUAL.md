@@ -1,6 +1,8 @@
 # FunDEM Workbench User Manual
 
-This manual describes the shared FunDEM Workbench interface and simulation workflow. The application is a native Qt desktop program that calls the FunDEMBeta C++ core in-process. The project document owns the editable model. FunDEM containers are created transactionally only when **Run** or **Single Step** is requested, so adding, removing, or renaming editable objects cannot directly corrupt solver indices. Windows startup is described below; Apple Silicon Mac users should also read the [macOS guide](MACOS_GUIDE.md) for installation and platform-specific paths.
+This manual describes the shared FunDEM Workbench interface and simulation workflow. The application is a native Qt desktop program that calls the FunDEMBeta C++ core in-process. The project document owns the editable model. FunDEM containers are created transactionally only when **Run** or **Step** is requested, so adding, removing, or renaming editable objects cannot directly corrupt solver indices. Windows startup is described below; Apple Silicon Mac users should also read the [macOS guide](MACOS_GUIDE.md) for installation and platform-specific paths.
+
+For model checks, protected run directories, Save Run/Open Results, quantitative CSV exports, and the headless command, see [Workflow improvements](WORKFLOW_IMPROVEMENTS.md). That guide distinguishes completed features from the remaining roadmap.
 
 ## 1. Release folder and startup
 
@@ -9,12 +11,14 @@ A public Windows x64 ZIP contains a `Windows/` runtime folder with:
 ```text
 Windows/
   FunDEM.exe
+  FunDEM-cli.exe
   Qt6Core.dll, Qt6Gui.dll, Qt6Widgets.dll, Qt6OpenGL.dll, Qt6OpenGLWidgets.dll
   compiler and graphics runtime DLLs
   platforms/qwindows.dll
   imageformats/qjpeg.dll
   styles/qmodernwindowsstyle.dll    (when supplied by the selected Qt kit)
   docs/USER_MANUAL.md
+  docs/WORKFLOW_IMPROVEMENTS.md
   examples/                       (seven projects, their guide, and required meshes)
   force-modules/
     README.md
@@ -43,6 +47,12 @@ Start the program in one of these ways:
 In a portable Windows installation, relative result paths are resolved from the executable folder, not from the project-file folder. In a Microsoft Store/MSIX installation and on macOS, relative result paths are placed under `Documents/FunDEM` rather than inside the read-only installation or signed `.app` bundle. Explicit absolute output paths are preserved on all platforms. Use a separate absolute result directory for every production simulation.
 
 For a Microsoft Store release, install from the published Store listing and launch **FunDEM** from Start; do not move files out of its installation directory. Installed examples and bundled libraries are read-only. Saving an installed example opens **Save As** in a user-owned location, while bundled mesh/module references remain resolvable after an application update. Store publishing support does not mean a certified Store release is already available. An unsigned GitHub ZIP or unsigned submission MSIX is a separate distribution and may still trigger SmartScreen. Do not disable Windows protection to install it.
+
+### 1.1 Open a bundled example
+
+Choose **File > Examples** and select one of the seven installed projects. This opens its initial model without starting a calculation; inspect it first, then use **Run** or **Step** explicitly. The menu finds the examples shipped with the application, including in a Microsoft Store installation or macOS app bundle.
+
+Use **File > Save As...** to save edits in a writable, user-owned folder, such as Documents. Do not overwrite installed resources. Keep the bundled meshes and force-module libraries available; missing resources are reported when the project is opened or checked. If the selected example file itself is missing, **Example Not Available** warns you and leaves the current project unchanged.
 
 ## 2. Main-window organization
 
@@ -79,7 +89,7 @@ The **Bonds** row immediately follows **Contacts** and reports the stored bond c
 
 ### 2.1 Background operations and progress
 
-All operations report progress in **Output > Console** without opening a progress window. This includes parameter changes that rebuild the preview, creating/opening/saving a project, importing a force module, exporting a playback-frame project, building an SDF, and preparing or controlling the solver with Run/Pause/Single Step/Reset. Animation export also reports its frame progress in the Console. The current scene remains visible while work proceeds, and the normal file chooser, animation settings, unsaved-change confirmation, error messages, and completed geometry preview still appear when needed.
+All operations report progress in **Output > Console** without opening a progress window. This includes parameter changes that rebuild the preview, creating/opening/saving a project, importing a force module, exporting a playback-frame project, building an SDF, and preparing or controlling the solver with Run/Pause/Step/Reset. Animation export also reports its frame progress in the Console. The current scene remains visible while work proceeds, and the normal file chooser, animation settings, unsaved-change confirmation, error messages, and completed geometry preview still appear when needed.
 
 The Console reports descriptive operation stages, such as **Preparing geometries** and **Scene preview completed**, followed by completion, cancellation, or failure with elapsed time. Background operations do not append generic item counters to these messages. Animation export retains completed/total frame progress.
 
@@ -134,7 +144,7 @@ Use this formulation for SPH fluid and LS solids or boundaries. It intentionally
 ### 4.3 Common solver values
 
 - **Time step** is the base DEM step in seconds.
-- **Total steps** is the number of additional steps performed by the next Run; it is not an absolute stop index.
+- **Steps this run** is the additional step count for a new calculation round; a paused unfinished round resumes its existing target. It is not an absolute stop index.
 - **Gravity Z** is the global gravitational acceleration along Z in m/s².
 - **Output interval** is the number of DEM steps between output events.
 
@@ -181,11 +191,11 @@ Supported geometry families are:
 - Cone Wall;
 - OBJ Triangle Mesh.
 
-The **LS Geometries > +** menu offers **Superellipsoids and variants** (Superellipsoid and Irregular superellipsoid), a direct **Triangle mesh (OBJ)...** action, and **Built-in walls** (Plane, Box, Cylinder, Cone). Choosing a shape or clicking **Triangle mesh (OBJ)...** opens Configure directly; there is no Import OBJ submenu. Configure displays the chosen **Geometry type** as read-only text instead of a Primitive dropdown. Existing Sphere geometries can still be loaded and reconfigured, but this menu does not create new ones.
+The **LS Geometries > +** menu offers **Superellipsoids and variants** (**Superellipsoid...** and **Random geometry...**), a direct **Triangle mesh (OBJ)...** action, and **Built-in walls** (Plane, Box, Cylinder, Cone). Choosing a shape or clicking **Triangle mesh (OBJ)...** opens Configure directly; there is no Import OBJ submenu. Configure displays the chosen **Geometry type** as read-only text instead of a Primitive dropdown. Existing Sphere geometries can still be loaded and reconfigured, but this menu does not create new ones.
 
 Enter the source-shape and level-set parameters, then confirm. Configure validates the draft but does not build a surface or calculate volume/inertia before confirmation. Preparation starts after confirmation and reports real progress in the Console; a canceled or failed operation leaves the previous project unchanged. Properties then shows the cached results of the prepared geometry: surface-node and triangle counts, bounding radius, volume (m^3), and the full 3-by-3 centroidal unit-density inertia tensor (m^5). While preparation is pending, calculated values say so; fixed geometry shows **Not applicable (fixed geometry)** for volume and inertia. Values with magnitude below the default numerical tolerance are displayed as `0` without changing the calculated data. Select an existing geometry and use **Reconfigure Geometry...** to edit its structural settings; the confirmed rebuild keeps its stable ID and Packing references. Creating a Geometry does not place it in the viewport. It becomes visible only when an LSParticle Packing uses it.
 
-**Irregular superellipsoid...** creates one geometry per confirmation. Its configuration sets one superellipsoid base, minimum/maximum signed surface offsets, random seed, surface subdivision, grid spacing, padding, and base name. The generated embedded mesh is the saved physical source. New geometries also retain optional procedural-source settings so **Reconfigure Geometry...** can regenerate that mesh from edited parameters without treating it as an OBJ file. Older embedded meshes with no procedural source remain ordinary triangle meshes; opening them does not invent the original random settings.
+**Random geometry...** opens **Configure Random Geometry** and creates one irregular superellipsoid per **Create Geometry** confirmation. Its configuration sets one superellipsoid base, minimum/maximum signed surface offsets, random seed, surface subdivision, grid spacing, padding, and base name. The generated embedded mesh is the saved physical source. New geometries also retain optional procedural-source settings so **Reconfigure Geometry...** can regenerate that mesh from edited parameters without treating it as an OBJ file. Older embedded meshes with no procedural source remain ordinary triangle meshes; opening them does not invent the original random settings.
 
 Enabling **Skip mass integration** forces LS particle types using that geometry to **Infinite mass**. Disabling it later does not automatically clear an already saved Infinite mass setting.
 
@@ -221,15 +231,15 @@ Select any LS Geometry and click **Preview Geometry...**. This opens one indepen
 - drag with the left mouse button to rotate;
 - scroll the mouse wheel to zoom;
 - drag with the right or middle mouse button to pan;
-- use **Fit scene** in the controls below the viewport to frame the complete geometry again.
+- use **Fit Scene** in the upper-right camera menu to frame the complete geometry again.
 
-The compact toolbar below the viewport groups **Surface points** and **Axes** under **Display**, followed by the **XY**, **XZ**, and **YZ** buttons under **SDF planes**, and **Fit scene**. Each option is independently selectable: a pale-blue button means enabled, and all three planes may be displayed together. Surface points and XY are initially enabled; axes are initially off. Plane names describe the plane's span (XY has its normal along Z); hover over a button for the full explanation. Use Tab to focus an option and Space to toggle it. Narrow windows wrap whole groups without splitting their buttons or clipping labels. Toggling layers or axes preserves the camera; **Fit scene** reframes the active geometry.
+The compact top toolbar contains **Surface points** and the independent **XY**, **XZ**, and **YZ** buttons under **SDF planes**. A pale-blue button means enabled, and all three planes may be displayed together. Surface points and XY are initially enabled. Plane names describe the plane's span (XY has its normal along Z); hover over a button for the full explanation. Use Tab to focus an option and Space to toggle it. Narrow windows wrap whole groups without splitting their buttons or clipping labels. A separate camera-icon button at the upper right contains **Fit Scene**, seven standard views (Isometric, Front, Back, Left, Right, Top, Bottom), and optional **Coordinate axes**, initially off. Toggling layers or axes preserves the camera; only an explicit camera command changes its framing or orientation. The compact bottom row shows the surface-point count and **Close**.
 
 Each slice is fixed at the exact middle of its grid extent. For an odd node count, the middle layer is used directly. For an even node count, the two middle layers are interpolated with equal weights and displayed halfway between them. These are geometry-local grid centers, not necessarily global coordinate zero or the particle centroid. All visible slices use one **SDF (m)** color bar in the upper-right corner of the 3-D viewport: negative is blue, positive is red, and zero is white. The endpoints cover the actual minimum and maximum across all enabled slices. Numeric labels use scientific notation with four significant digits, such as `1.234e-03`, with zero shown as `0.000e+00`. The bar overlays the scene without a white background panel, remains anchored when the window is resized, and does not intercept camera mouse input. With no SDF planes enabled, the bar is hidden. Planes and point glyphs share true 3-D projection and depth ordering; the SDF colors are unlit and do not change with camera orientation.
 
 The point layer uses actual configured surface nodes in prepared geometry-local coordinates, including centroid correction for movable geometry. It does not use the independently smoothed display mesh. The point count is shown in the window. Glyph sizes only aid inspection and do not change contact-node positions or physical particle radii.
 
-The selected geometry is built once in the background for both layers, with progress reported in Console. All geometry families, imported meshes, batch-created geometry and saved-frame geometry share this preview. No solver particles are added, and the main View camera is unchanged. Each window is a snapshot of the geometry at opening time; reopen it after editing. If the complete points or center planes exceed the configured display-memory budget, the operation reports an error instead of silently removing samples.
+The selected geometry is built once in the background for both layers, with progress reported in Console. All geometry families, imported meshes, batch-created geometry and saved-frame geometry share this preview. SDF-plane switches update only the scalar planes and their legend; they do not resend the point snapshot or regenerate the geometry. No solver particles are added, and the main View camera is unchanged. Each window is a snapshot of the geometry at opening time; reopen it after editing. If the complete points or center planes exceed the configured display-memory budget, the operation reports an error instead of silently removing samples.
 
 ## 7. Particle definitions inside Packings
 
@@ -319,7 +329,7 @@ Sphere Packing bounds use particle positions plus or minus physical radii. LSPar
 
 Geometry preparation and particle placement remain separate operations. Sphere radius/material and LS geometry/material are configured inside the Packing workflow; the serialized particle types remain internal definitions. All generation dialogs reuse the standard property rows, units, selectors, validation and action buttons. Work before Run or after Reset.
 
-1. **LS Geometries > + > Superellipsoids and variants > Irregular superellipsoid...** uses one superellipsoid base: three semi-axes and two exponents, plus signed radial surface-height bounds. Set a base name (default **Level-Set Geometry**), seed, subdivision, grid spacing, and padding. One confirmation generates one geometry with the first available numbered name, not a batch. Heights are offsets from the base surface, not world Z values or absolute distances from the final centroid. Smooth bounded perturbations preserve the radial topology; they do not model holes or overhangs. After confirmation, the geometry goes through `LSInfo::buildLSGrid()` for volume, inertia, and centroid correction, the same path used by Preview and the solver. This step needs no material and creates no particle types.
+1. **LS Geometries > + > Superellipsoids and variants > Random geometry...** uses one superellipsoid base: three semi-axes and two exponents, plus signed radial surface-height bounds. Set a base name (default **Level-Set Geometry**), seed, subdivision, grid spacing, and padding. One confirmation generates one geometry with the first available numbered name, not a batch. Heights are offsets from the base surface, not world Z values or absolute distances from the final centroid. Smooth bounded perturbations preserve the radial topology; they do not model holes or overhangs. After confirmation, the geometry goes through `LSInfo::buildLSGrid()` for volume, inertia, and centroid correction, the same path used by Preview and the solver. This step needs no material and creates no particle types.
 2. **Sphere Packings > +** and **LS Particle Packings > +** each offer **Lattice packing...** and **Random packing...**. Lattice creation opens the common Packing configuration with the relevant particle values and SC/BCC/FCC/HCP controls. Choose material and radius for spheres; choose material and existing geometry for LS particles. The dialog must be confirmed before the Packing or its definition is added.
 3. **Random packing...** also opens a configuration window before generation. For spheres, set **Radius variant count**, **Minimum radius**, **Maximum radius**, and **Radius method** directly in **Sphere Radii and Material**. **Arithmetic sequence** spaces the variants evenly across both bounds when there is more than one; one variant uses the minimum. **Random** draws uniform radii from the range and exposes **Radius random seed** so the same settings reproduce the variants. Then use **Choose sphere material...** for one shared Sphere Material. For LS particles, use **LS Geometries and Material > Select LS geometries...** to select multiple existing bounded LS geometries in the searchable, name-prefix-grouped picker, then **Choose LS material...** to assign one LS Material shared by them. Walls and reversed-SDF container geometries are excluded. Geometry generation still happens separately under **LS Geometries**. One random generation creates one Packing, not one Packing per radius or geometry variant.
 4. Set the separate placement **Random seed**, cuboid minimum/size, and placement mode in the same window. Set **Activation step** afterward in Packing Properties. Existing random Packings reopen Configure through **Reconfigure** in Properties. A legacy Sphere Packing without a saved radius recipe starts with **Keep saved radii**; selecting Arithmetic sequence or Random explicitly replaces those variants. Sphere radii or LS geometries are sorted by descending enclosing radius and assigned cyclically, largest first. If fewer particles are generated than candidates, only the largest candidates are used; otherwise every candidate appears in each full cycle. The placement seed controls positions and LS orientations, not this radius/geometry order. Regeneration preserves the Packing's stable ID. Canceling or failing generation leaves the prior project intact.
@@ -531,7 +541,7 @@ Output interval is expressed in DEM steps. One output event:
 3. stores one compact View playback frame;
 4. stores one full restart checkpoint used by frame export.
 
-All three products use the same frame number, solver step, and simulation time.
+These products use the same frame number, solver step, and simulation time. Complete bundles, the committed run manifest, and timestamped PVD collections are described in [Run directories and complete frames](WORKFLOW_IMPROVEMENTS.md#run-directories-and-complete-frames).
 
 ### 14.2 Mandatory and optional fields
 
@@ -545,7 +555,7 @@ The application always writes fields required to reconstruct basic geometry and 
 
 The render frame contains only data required for interactive display, while its paired restart checkpoint preserves every particle state plus retained Contacts and Bonds. Both are written to a private temporary disk history. Frame metadata stays resident, and a configurable playback cache retains recently used render frames within a 256 MiB default budget. Shared immutable LS geometry is reused across retained frames and counted once. **Settings > Display Storage > Playback Cache** controls this cache independently of **Viewport** presentation sampling; see Section 20.1 for the memory tradeoffs. Frames larger than the budget are loaded on demand without cache retention, and scientific checkpoints are not cached. Eviction or turning the cache off does not remove recorded frames from disk or reduce their particle data.
 
-The budget does not cap total application RAM or GPU memory: live solver data, the current frame, active readers, and other application allocations still need memory. Long recordings require sufficient free space on the system temporary drive. Reset or project replacement releases the old history after active readers finish; normal shutdown also removes it. Export important frames or animations before resetting or closing. An abnormal termination can leave temporary files behind.
+The budget does not cap total application RAM or GPU memory: live solver data, the current frame, active readers, and other application allocations still need memory. Long recordings require sufficient free space on the system temporary drive. Reset or project replacement releases the old temporary history after active readers finish; normal shutdown also removes it. Use **File > Save Run...** to retain complete reopenable results before resetting or closing. An abnormal termination can leave temporary files behind. Opened saved archives remain on disk; see [Save a run and reopen it](WORKFLOW_IMPROVEMENTS.md#save-a-run-and-reopen-it).
 
 SPH VTU, playback frames, and restart checkpoints are captured from one synchronized current-time observation, even when an output step falls between SPH acoustic updates. Merely viewing or exporting that state does not change the simulation's acoustic schedule. A disk-write failure is reported and does not publish a partially recorded frame.
 
@@ -561,7 +571,9 @@ SPH VTU, playback frames, and restart checkpoints are captured from one synchron
 
 Even a nominally nondissipative model can show integration error from finite time steps, stiff contacts, or initial overlap. Reduce the time step and inspect initial geometry before changing display settings.
 
-## 15. Run, Pause, Single Step, and Reset
+## 15. Run, Pause, Step, and Reset
+
+The Simulation toolbar uses neutral icon-and-text buttons: a lightning symbol for **Run**, two vertical bars for **Pause**, an arrow ending at a bar for **Step**, and a return arrow for **Reset**. The shared command template is 32 logical pixels high with 18-pixel icons. A divider separates Reset from the first three commands; the main camera menu remains separate. These commands perform calculation, unlike the icon-only playback controls below the viewport. During calculation, only Pause is enabled among these four commands; preparation prevents repeat commands until its safe completion.
 
 ### 15.1 First Run
 
@@ -573,28 +585,32 @@ The first Run performs its expensive preparation in the background and reports e
 4. creates material, geometry, particle, and interaction containers;
 5. generates Bond Packings;
 6. initializes the CPU solver;
-7. clears VTU and DAT files from the configured result directory;
-8. advances by Total steps.
+7. reserves a unique calculation child under the configured result root, with private core staging;
+8. advances by **Steps this run**.
 
 For a mixed sphere/LS project, every geometry must satisfy `padding cells × grid spacing >= maximum sphere radius`. The maximum includes all sphere types, including infinite-mass types and types used by future-activation Packings. The software increases insufficient padding to the smallest suitable integer; it never decreases padding or changes grid spacing or the physical shape. This is a system preparation rule, including for generated resources and read-only imported-frame geometry. The corrected padding is used for both preview and solver geometry, then reflected in Properties and saved project data; the Console lists each change. A sphere-only or LS-only project is unchanged. Preparation stops with an explanation if satisfying the condition would exceed the supported padding limit; it does not run with silently truncated padding. This check runs when constructing the model, not on each DEM step.
 
-A later Run continues from the current state for another requested round. Time, global step, output numbering, and playback history remain continuous, and the output directory is not cleared again.
+A paused Run is labeled **Resume** and resumes its existing target. A Run after completion requests another round from the current state. Time, global step, output numbering, playback history, and the calculation's child directory remain continuous; previous run directories are retained.
 
 The window does not wait through a nested UI event loop while geometry, containers, initial Contacts, or the first output frame are being prepared. A preparation failure is reported without starting the requested continuous calculation.
 
 ### 15.2 Pause
 
-Pause stops the worker at a safe step boundary. It does not unlock the physical model. Continue with Run or Single Step.
+Pause stops the worker at a safe step boundary. It does not unlock the physical model. Continue with Resume or Step.
 
 Live monitoring targets a 500 ms refresh interval to reduce snapshot-copy and rendering overhead. Every configured output boundary still publishes its frame and requests a display update, so throttling never delays data publication beyond the next output interval. Pausing, single stepping, and completion also publish the current state. This wall-clock target does not change the solver time step or the output-step interval; a busy interface can still present fewer frames than are recorded.
 
-### 15.3 Single Step
+### 15.3 Step
 
-The first Single Step performs the same project compilation and then advances one DEM step. Use it to inspect initial Contacts, Force Chains, and Bonds.
+The first Step performs the same project compilation and then advances one DEM step. Use it to inspect initial Contacts, Force Chains, and Bonds.
 
 ### 15.4 Reset
 
-Once the solver has started, physical parameters remain locked even after the current Run has finished. Select Reset to return to editable state. Reset removes the current runtime state and playback history but does not delete project definitions.
+Once the solver has started, physical parameters remain locked even after the current Run has finished. Select Reset to return to editable state. When runtime state or playback history exists, Reset asks for confirmation before discarding that session. It does not delete project definitions or saved output files.
+
+### 15.5 Checks, archives, and quantitative results
+
+**Simulation > Check Model...** checks references, resources, estimates, material rules, and activation/motion schedules before preparation. **File > Save Run...** preserves the committed run in a new archive directory; **Open Results...** reopens it read-only. **Results > Result Query...** and **Export Solid Energy...** provide full-state tabular/CSV data. Reset returns an opened archive to its saved initial project; use **Export Playback Frame as Project...** to restart from a selected recorded state. See [Workflow improvements](WORKFLOW_IMPROVEMENTS.md) for the exact behavior, CLI commands, and current limitations.
 
 ## 16. Playback
 
@@ -679,7 +695,7 @@ To make videos for six of the seven bundled examples, invoke the reusable script
 
 The destination must not exist. The script archives exact project files and their assets under `projects`, records executable/project hashes in `run-manifest.json`, and saves per-case logs. It defaults to two concurrent runs with eight OpenMP threads each; use `-ConcurrentRuns 1 -ThreadsPerRun 4` to reduce resource usage. SPH projects use the same particle-rendering export path.
 
-Scientific output still follows the project's configured directory, normally beside the executable—not inside the video destination. Normal first-run VTU/DAT cleanup still applies; preserve previous scientific results and do not run competing jobs against the same output directory. Physical simulation duration is not wall-clock execution time: calculation and video encoding can take substantially longer.
+Scientific output uses a new unique calculation child under the project's configured result root, normally beside the executable—not inside the video destination. Core cleanup is confined to that child's staging directory, and previous runs are retained. Physical simulation duration is not wall-clock execution time: calculation and video encoding can take substantially longer.
 
 ## 18. Exporting a frame and continuing calculation
 
@@ -808,22 +824,22 @@ As damage reaches one, effective area approaches zero and the displayed cylinder
 
 Run the `FunDEM.exe` distributed with this manual. Closed transparent boundaries use far/near surface layers and real surface-depth sorting. Reverse SDF does not participate in main-View transparency sorting.
 
-### 21.7 Result directory was cleared
+### 21.7 Locating a new result directory
 
-The configured result directory is cleared only at the first Solve of one project session. Continuing with Run does not clear it again. Use a dedicated folder and back up important results.
+Each new calculation creates a unique `run-*` child under the configured result root. Check **Run Statistics...**, the Console, or CLI stderr for its actual path. Continuing with Run uses that same child; prior runs are retained. Use **Save Run...** to create an archive that **Open Results...** can reopen. Raw interrupted-run recovery is not an automatic Open Results operation.
 
 ## 22. First guided run: Gomboc self-righting
 
-1. Open [the Gomboc self-righting project](../examples/gombocSelfRighting.fundem.json). Keep its bundled `examples/assets/Gomboc.obj` mesh available.
+1. Choose **File > Examples > Gomboc self-righting**. See [the example guide](EXAMPLE_GUIDE.md#gomboc-self-righting) and keep its bundled `examples/assets/Gomboc.obj` mesh available.
 2. Inspect **Analysis > Formulation**, **Analysis > Loop Parameters**, Materials, LS Geometries, and the Gomboc and fixed-floor Packings. Each Packing shows its particle definition; there is no separate Particles tree branch. The project already defines the starting position and orientation; no placement edits are needed.
 3. Check the supplied settings: time step `1.0e-4 s`, new-round length `1200000` steps, and output interval `500` steps. One fresh Run covers `120 s`, with recorded frames spaced by `0.05 s`.
-4. Optionally use **Single Step** to inspect the initial View and result path. Use **Reset** before the full run if you want that run to start again from the initial state.
+4. Optionally use **Step** to inspect the initial View and result path. Use **Reset** before the full run if you want that run to start again from the initial state.
 5. Click **Run**, wait for the completion message, and inspect rocking and self-righting in playback. Running the same round again continues the existing state; it does not restart the drop.
 6. Plot the energy columns in `gombocSelfRighting_files/energy.dat`, resolved from the executable directory. Restitution is `0.4` and sliding friction is `0.1`, so this is a dissipative case: total mechanical energy should decay overall as motion settles, not remain constant. Numerical traces need not decrease at every individual output sample.
 7. Open the VTU files in ParaView to inspect positions, shapes, and velocity. Optional scientific fields can be selected in **Analysis > Output** before starting a fresh calculation.
 8. Export one playback frame as a project, reload it, and Run to inspect restart behavior. Use a distinct output directory when retaining both runs.
 
-The other packaged projects are [the interlocked chain](../examples/interlockedChain.fundem.json), [the bonded cloth falling onto a box](../examples/clothBoxDrop.fundem.json), [the dam break around a square column](../examples/damBreakSquareColumn.fundem.json), [Brazil-nut segregation](../examples/brazilNut.fundem.json), [the superellipsoid drum](../examples/superellipsoidDrum.fundem.json), and [irregular particles in a cylindrical mold](../examples/randomShapeColumn.fundem.json). The chain uses physical interlocking rather than Bonds; the cloth uses triangular unbreakable Bonds and the packaged Particle Damping module; the dam break demonstrates SPH/LS interaction; Brazil-nut segregation and the drum demonstrate staged activation followed by prescribed boundary motion. The cylindrical-mold project uses irregular LS particles generated from superellipsoids. See [the example guide](../examples/README.md) for the complete project settings and required assets.
+The other packaged projects are the interlocked chain, the bonded cloth falling onto a box, the dam break around a square column, Brazil-nut segregation, the superellipsoid drum, and irregular particles in a cylindrical mold. Open them from **File > Examples**. The chain uses physical interlocking rather than Bonds; the cloth uses triangular unbreakable Bonds and the packaged Particle Damping module; the dam break demonstrates SPH/LS interaction; Brazil-nut segregation and the drum demonstrate staged activation followed by prescribed boundary motion. The cylindrical-mold project uses irregular LS particles generated from superellipsoids. See [the example guide](EXAMPLE_GUIDE.md) for the complete project settings and required assets.
 
 ## 23. Diagnostic commands
 
@@ -860,6 +876,7 @@ The public Windows ZIP includes these runtime documents:
 
 - `README.md`: installation and quick start.
 - `docs/USER_MANUAL.md`: this manual.
+- `docs/WORKFLOW_IMPROVEMENTS.md`: model checks, complete run directories, saved archives, quantitative CSV exports, and the headless CLI.
 - `force-modules/README.md`, `SphereHydrodynamics.md`, and `ParticleDamping.md`: module loading and physical-model guides, all under `force-modules/`.
 - `examples/README.md` and `examples/randomShapeColumn.md`: bundled project descriptions and the irregular-particle guide.
 - `THIRD_PARTY-NOTICES.md`, `FUNDEM_BETA_CORE.txt`, and `licenses/`: notices and license texts.

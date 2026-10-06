@@ -14,25 +14,12 @@ Only if you have verified that the download is from the official release page an
 
 ## Projects, examples, and results
 
-The application keeps its examples and English documentation in `FunDEM.app/Contents/Resources`. In Finder, **Show Package Contents** exposes that directory. Copy an example to your own working folder before editing it, or use **Save As** in the application. Do not edit files inside the signed application bundle.
+Choose **File > Examples** to open one of the seven bundled projects without starting a calculation, then use **Run** explicitly when ready. The menu reads the installed examples in `FunDEM.app/Contents/Resources/examples`; it does not depend on the current working directory. The application keeps its English documentation in the same Resources directory. In Finder, **Show Package Contents** exposes these folders. Use **File > Save As...** to save edits in a writable, user-owned working folder. Keep the bundled meshes and force modules available, and do not edit files inside the signed application bundle. A missing installed example produces an **Example Not Available** warning without replacing the current project.
 
 The interface and project format are shared with Windows. The platform's matching `.dylib` files are used for the bundled force modules; a Windows `.dll` itself cannot run on macOS. Third-party modules require a native ARM64 macOS build from their author.
 
-On macOS, relative result paths are placed under your **Documents/FunDEM** directory. Explicit absolute result paths are kept as configured. The actual output path is shown in the project settings; it must be writable. When moving a saved project between computers, review its output directory because a saved absolute path can refer to the previous computer's user account. Results are never meant to be written into `FunDEM.app`.
+On macOS, relative result paths are placed under your **Documents/FunDEM** directory; each fresh calculation creates its own child run directory. Explicit absolute result paths are kept as configured. The actual output path is shown in the project settings; it must be writable. When moving a saved project between computers, review its output directory because a saved absolute path can refer to the previous computer's user account. Results are never meant to be written into `FunDEM.app`.
 
 The main [User Manual](USER_MANUAL.md) describes the model editor, CPU solvers, playback, VTU output, and post-processing. Windows installation instructions and `.dll` examples in that manual should be read together with this macOS-specific guide.
 
-## Build from a private source checkout
-
-Application and solver source code are not published in the public download repository. For an authorized source checkout, install CMake, Ninja, a compatible Qt 6.8+ macOS SDK, and the OpenMP runtime. On a Mac, the shared packaging entry point is:
-
-```bash
-bash FunDEMSoftware/scripts/build-macos.sh \
-  --qt-root /absolute/path/to/Qt/6.8.3/macos \
-  --build-dir /absolute/path/to/build-macos \
-  --package-dir /absolute/path/to/package-macos \
-  --architecture arm64 \
-  --deployment-target 14.0
-```
-
-The packaging script builds and checks the program, deploys dependencies into the bundle, applies ad-hoc signatures, and prepares a ZIP package. The private GitHub Actions workflow runs this same entry point and checks the deployed application; its build artifact contains only the ZIP. Public distribution is a separate, deliberate upload of the binary package and documentation, never a copy of the private source tree.
+The [workflow guide](WORKFLOW_IMPROVEMENTS.md) covers model checks, saved-run archives, quantitative CSV exports, and the bundled headless command. These instructions require the matching v0.3.38 package; an older Mac download may not include those features. The public runtime contains no application source, module SDK, or development build templates.
