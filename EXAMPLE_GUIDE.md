@@ -23,7 +23,7 @@ Calculation times are physical simulation times, not estimates of wall-clock exe
 The CPU SphereDEM solver advances 1,200,000 steps at `1e-4 s` and records one frame every 500 steps. Results are written to `gombocSelfRighting_files`. This is a dissipative self-righting example: restitution and friction allow mechanical energy to decrease as the particle comes to rest, so it is not an energy-conservation test.
 
 ```powershell
-FunDEM.exe examples\gombocSelfRighting.fundem.json
+.\FunDEM.exe examples\gombocSelfRighting.fundem.json
 ```
 
 ## Physically interlocked anchor chain
@@ -35,7 +35,7 @@ Three Packings reproduce this arrangement. The shared `assets/anchorChainLink.ob
 The CPU solver advances 150,000 steps at `2e-5 s`, for a total of 3 s, and records one frame every 2,500 steps (`0.05 s`). Results are written to `interlockedChain_files`.
 
 ```powershell
-FunDEM.exe examples\interlockedChain.fundem.json
+.\FunDEM.exe examples\interlockedChain.fundem.json
 ```
 
 ## Damped fine-grain cloth on a box
@@ -60,7 +60,7 @@ Contact restitution is reduced to `0.05` and sliding friction increased to `0.6`
 The CPU solver runs 300,000 steps at `1e-5 s`, for exactly 3 s, with output every 5,000 steps (`0.05 s`) to `clothBoxDrop_files`. The tutorial's single-bond time-step estimate at this diameter is approximately `1.275e-5 s`; the selected smaller step also divides the requested duration and output interval exactly. This estimate is not a proof of nonlinear stability for every configuration. Results and DEM energy histories use the ordinary software output path.
 
 ```powershell
-FunDEM.exe examples\clothBoxDrop.fundem.json
+.\FunDEM.exe examples\clothBoxDrop.fundem.json
 ```
 
 Keep `force-modules/fundemParticleDamping.dll` with the executable. The case intentionally fails to compile its solver if that enabled module is missing, rather than silently omitting the requested damping. On a non-Windows source build, replace the module filename with the corresponding built `.so` or `.dylib` library before loading the project.
@@ -74,7 +74,7 @@ The CPU SPHDEM solver uses `0.01 m` spacing, `0.013 m` smoothing length, `1,000 
 The fluid is displayed as SPH particles during calculation, recorded playback, and animation export. After pausing or finishing, inspect any recorded frame or press **Play** directly; no liquid-surface preparation is required. Packing visibility, opacity, color, velocity-magnitude coloring, and Clip Plane settings remain available in Post-processing. See [Playback](USER_MANUAL.md#16-playback).
 
 ```powershell
-FunDEM.exe examples\damBreakSquareColumn.fundem.json
+.\FunDEM.exe examples\damBreakSquareColumn.fundem.json
 ```
 
 ## Brazil nut segregation
@@ -95,7 +95,7 @@ The small ellipsoid retains subdivision level 3 (642 surface nodes), and the lar
 After the filling schedule, the box begins 20 Hz harmonic Z translation with 4 mm amplitude. The dimensionless peak acceleration is `Gamma = A (2 pi f)^2 / g = 6.44`. The calculation uses 800,000 steps at `1e-5 s` (8 s), with output every 5,000 steps to `brazilNut_files`. Activation and vibration use fixed times, not a measured settling criterion. This is a qualitative segregation example; the schedule alone does not guarantee a particular rise time or complete rest before vibration.
 
 ```powershell
-FunDEM.exe examples\brazilNut.fundem.json
+.\FunDEM.exe examples\brazilNut.fundem.json
 ```
 
 ## Layered superellipsoids in a rotating drum
@@ -111,7 +111,7 @@ The first species is active at 0 s, the second at 1 s, and the third at 2 s. The
 The CPU solver uses a `2e-5 s` step for 400,000 steps (8 s total) and records every 2,500 steps (0.05 s) to `superellipsoidDrum_files`. Material properties, grain shapes, surface resolutions, and deterministic random orientations retain their existing settings. The translucent drum permits inspection of the loading and mixing process.
 
 ```powershell
-FunDEM.exe examples\superellipsoidDrum.fundem.json
+.\FunDEM.exe examples\superellipsoidDrum.fundem.json
 ```
 
 ## Irregular particles in a cylindrical mold
@@ -123,5 +123,5 @@ The starting arrangement is a conservative enclosing-sphere deposition, not a se
 The CPU SphereDEM solver uses `1e-5 s` for 200,000 steps and writes every 5,000 steps (`0.05 s`) under `randomShapeColumn_files`. Although it uses the SphereDEM formulation, every solid in this project is an LS particle; no ordinary sphere particles are present. High-resolution surface output can be large with 41 scheduled frames including the initial frame. The installed package includes `examples/randomShapeColumn.md` for geometry, material values, initialization, execution, and result interpretation.
 
 ```powershell
-FunDEM.exe examples\randomShapeColumn.fundem.json
+.\FunDEM.exe examples\randomShapeColumn.fundem.json
 ```

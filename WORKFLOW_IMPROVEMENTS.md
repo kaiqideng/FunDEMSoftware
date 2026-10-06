@@ -14,7 +14,7 @@ Choose **Simulation > Check Model...** (`Ctrl+F5`). The report uses the shared r
 
 **Export Report...** saves the report as text. The check reads project definitions and available source data without constructing the solver or generating an SDF. It checks references, checkpoint consistency, enabled force-library paths, counts, schedules, and numeric inputs. Basic source geometry diagnostics do not constitute a complete mesh-quality assessment.
 
-Run and Single Step invoke this check before preparation. Errors prevent preparation; warnings are reported. The desktop caches the report for the current project and run context. Model changes invalidate it; a changed current step/time, target, or next output boundary requires a new report. Display-only changes do not require a new model check. This is a preparation check, not a repeated scan in every solver step.
+Run and Step invoke this check before preparation. Errors prevent preparation; warnings are reported. The desktop caches the report for the current project and run context. Model changes invalidate it; a changed current step/time, target, or next output boundary requires a new report. Display-only changes do not require a new model check. This is a preparation check, not a repeated scan in every solver step.
 
 Storage numbers are estimates for particle VTU output, not a promise of total disk use. Contacts, Bonds, checkpoints, geometry resources, temporary playback storage, and archive copies add costs. The Sphere time-step heuristic and configured-state SPH limits are guidance, not convergence tests or guaranteed LS/Bond stability limits.
 
@@ -77,7 +77,7 @@ The current archive manifest version is 1 and its binary history record version 
 
 Archive copying, checksums, project reads, and history decoding check cancellation between chunks. Declared manifest text/count lengths are checked against their limits and remaining encoded bytes before allocation. The latest frame is prepared on the loading worker, so installation does not reread a large archive record on the desktop thread. A canceled open keeps the previous document and scene; a canceled save leaves the destination absent. Geometry generation may still need to finish its current underlying construction stage before cancellation is acknowledged.
 
-Choose **File > Open Results...** and select the archive directory. Validation and cancelable scene preparation complete before replacing the current document. The reopened session is results-only: playback, display settings, quantitative queries, frame export, and saving another archive are available; Run and Single Step are disabled. Playback uses the same bounded cache as live recordings. Closing or replacing this session does not delete the archive files.
+Choose **File > Open Results...** and select the archive directory. Validation and cancelable scene preparation complete before replacing the current document. The reopened session is results-only: playback, display settings, quantitative queries, frame export, and saving another archive are available; Run and Step are disabled. Playback uses the same bounded cache as live recordings. Closing or replacing this session does not delete the archive files.
 
 Two actions have different meanings:
 
