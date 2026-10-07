@@ -22,4 +22,4 @@ On macOS, relative result paths are placed under your **Documents/FunDEM** direc
 
 The main [User Manual](USER_MANUAL.md) describes the model editor, CPU solvers, playback, VTU output, and post-processing. Windows installation instructions and `.dll` examples in that manual should be read together with this macOS-specific guide.
 
-The [workflow guide](WORKFLOW_IMPROVEMENTS.md) covers model checks, saved-run archives, quantitative CSV exports, and the bundled headless command. These instructions require the matching v0.3.39 package; an older Mac download may not include those features. The public runtime contains no application source, module SDK, or development build templates.
+The [workflow guide](WORKFLOW_IMPROVEMENTS.md) covers model checks, saved-run archives, quantitative CSV exports, and the bundled headless command. These instructions require the matching v0.3.40 package; an older Mac download may not include those features. The public runtime contains no application source, module SDK, or development build templates.

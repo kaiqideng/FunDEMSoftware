@@ -420,7 +420,7 @@ Select a Bond Packing under **Post-processing > Packings** and set **Coloring** 
 
 This is the total for one Bond, not the sum over its Packing. Normal, shear, bending, and torsional choices show the corresponding term alone. The values follow the solver's energy calculation; the display does not multiply them by `1 - damageFactor` again. The cylinder's effective area still follows the damage-based rule in Section 10.3, independently of its color.
 
-Under **Post-processing > Legends > Bond Elastic Energy**, choose **Range > Historical maximum** or **Custom**. Historical maximum uses one common scale for the selected energy components of visible Bond Packings. Changing the visible Packing scope or its component choice uses the relevant maxima already accumulated during the current session, including state captured before energy coloring was enabled. The legend title is generic because visible Packings may use different components. Custom exposes **Minimum (J)** and **Maximum (J)** and overrides the automatic range.
+Under **Post-processing > Legends > Bond Elastic Energy**, choose **Range > Historical maximum**, **Current frame min/max**, or **Custom**. Historical maximum uses one common scale for the selected energy components of visible Bond Packings. Changing the visible Packing scope or its component choice uses the relevant maxima already accumulated during the current session, including state captured before energy coloring was enabled. Current frame min/max follows the current values for those Packings and components, including when stepping backward through playback. The legend title is generic because visible Packings may use different components. Custom exposes **Minimum (J)** and **Maximum (J)** and overrides the automatic range.
 
 An older or imported playback frame may contain total Bond energy but lack the four component values. If the selected component is unavailable, its Bond is drawn with its uniform Packing color instead of showing a fabricated zero-energy value. Newly calculated frames contain the component values.
 
@@ -438,7 +438,7 @@ For a contact with unit normal `n` and evaluated force `F`, the tangential compo
 r=r_{min}+(r_{max}-r_{min})\sqrt{\operatorname{clamp}\!\left(\frac{F-F_{min}}{F_{max}-F_{min}},0,1\right)}
 \]
 
-Color and width use the same selected force magnitude. **Post-processing > Legends > Force Chain Magnitude** provides the existing historical or custom minimum/maximum range. Histories for normal, tangential, and resultant forces are independent, so switching components never reuses another component's maximum. Changing the rigid-particle Packing selection uses the accumulated history of the newly selected Packings. Custom bounds remain explicit user settings when switching components.
+Color and width use the same selected force magnitude. **Post-processing > Legends > Force Chain Magnitude** provides historical, current-frame, and custom minimum/maximum ranges. Current frame min/max uses the selected force component and selected rigid-particle Packings without historical maxima. Histories for normal, tangential, and resultant forces are independent, so switching components never reuses another component's maximum. Changing the rigid-particle Packing selection uses the accumulated history of the newly selected Packings in historical mode. Custom bounds remain explicit user settings when switching components.
 
 New playback frames and exported frame projects retain all three force components. Older frame-project JSON files stored only normal-force magnitudes; they load with normal display selected unless explicitly configured otherwise, and their unavailable tangential component is treated as zero until the solver evaluates new contact forces.
 
@@ -451,7 +451,7 @@ In the project tree, select **Post-processing > Contacts**, then use **Select Fo
 There is no View menu or View item in the project tree. Display controls are organized as follows:
 
 - **Post-processing > Packings** in the project tree contains every rigid-particle Packing, SPH Block/Jet, and Bond Packing display page, with an Eye button for each Packing.
-- **Post-processing > Contacts** contains Force Chain visibility and rigid-particle Packing scope.
+- **Post-processing > Contacts** has the same Eye button as Packing rows. Its Properties contains the force component and rigid-particle Packing scope, not a duplicate Visible checkbox.
 - **Post-processing > Filters** contains the global coordinate axes and Clip Plane.
 - **Post-processing > Legends** contains the three shared scalar-range controls: **Velocity Magnitude**, **Force Chain Magnitude**, and **Bond Elastic Energy**. Packing-bounds controls belong to each Packing's display page, not to Legends.
 - The top **Settings** menu contains only **Display Storage** and **Workspace**. **Settings > Display Storage** contains separate **Viewport** and **Playback Cache** budgets; **Settings > Workspace** shows or hides workspace panels. Bond and Force Chain visibility controls remain in the Post-processing tree.
@@ -515,6 +515,16 @@ After the solver starts, every control that changes mechanics, references, or so
 - each Packing's bounding-box visibility and dimension annotations.
 
 These controls modify camera state or separate presentation descriptions and masks. They do not regenerate, reorder, or resize solver particle arrays, Contact/Bond arrays, or recorded playback-history arrays. Background preparation, project file operations, import, and export temporarily lock the workspace until they finish; the controls above become available again during normal calculation. Packing placement is a model change, not a display setting, so it remains locked. Playback navigation is available only when calculation and background work are idle. Under **Settings > Display Storage**, **Viewport** changes particle presentation sampling, while **Playback Cache** changes how much recorded-frame data is retained in memory for reuse. Both budgets can be changed during normal calculation.
+
+### 12.8 Legend range modes
+
+The three Legend pages use one shared **Range** control:
+
+- **Historical maximum** retains the relevant Packing/component maxima during the session.
+- **Current frame min/max** automatically uses both extrema of the current frame. Velocity uses visible, velocity-colored Packings; force chains use the selected rigid Packings and force component; Bond energy uses the component chosen for each visible, energy-colored Bond Packing. The range is recomputed as calculation or playback advances and does not retain a previous frame's maximum.
+- **Custom** keeps the manually entered minimum and maximum.
+
+Current-frame ranges are calculated from the full available frame before viewport presentation sampling. The Clip Plane remains a display filter and does not redefine the selected Packing data range. Empty or constant-valued scopes use a safe display fallback rather than divide by zero or present non-finite bounds. Changing range modes does not change physical values, scientific output, or saved custom bounds. These controls remain available during calculation.
 
 ## 13. Particle Force Modules
 
@@ -800,7 +810,7 @@ Check, in order:
 The viewport displays rigid-particle Contact branches. Confirm:
 
 1. a sphere-sphere, sphere-LSParticle, or LSParticle-LSParticle Contact exists;
-2. **Post-processing > Contacts > Visible** is enabled in the project tree;
+2. the Eye on **Post-processing > Contacts** is enabled;
 3. at least one owner Packing is selected;
 4. the selected force component has positive magnitude;
 5. at least one owner has finite mass and a nonzero-length branch;

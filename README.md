@@ -12,7 +12,7 @@ This public repository distributes the packaged application and English document
 
 These stable links follow the latest published release. See the [latest release page](https://github.com/kaiqideng/FunDEMSoftware/releases/latest) for the current version and available downloads.
 
-This documentation describes v0.3.39. Use the matching verified platform package from its release page; the latest links change only after the release assets are published. An older package may not include the force-chain display or workflow features described here.
+This documentation describes v0.3.40. Use the matching verified platform package from its release page; the latest links change only after the release assets are published. An older package may not include the Contacts eye control, legend range modes, or workflow features described here.
 
 ### macOS Apple Silicon
 
@@ -21,11 +21,10 @@ This documentation describes v0.3.39. Use the matching verified platform package
 
 The macOS target requires an Apple Silicon Mac running macOS 14 or later. Simulation runs on the CPU; this package does not include CUDA or support CUDA solver execution. Visualization uses the Mac's graphics hardware. Intel Macs are not included in this distribution.
 
-## New in v0.3.39
+## New in v0.3.40
 
-- Force Chains now display **Sphere-Sphere**, **Sphere-LSParticle**, and **LSParticle-LSParticle** Contacts. Each actual Contact is drawn from its contact point to each finite-mass owner's center of mass, preserving separate surface Contacts instead of merging them into a center-to-center chain.
-- An infinite-mass side is omitted. A finite particle contacting a fixed wall has one branch; two infinite-mass owners produce no visible branch.
-- **Normal force**, **Tangential force**, and **Resultant force** remain available. Both branches of a Contact use that Contact's selected magnitude for width and color. Existing Packing selection and Clip Plane controls still filter the displayed Contacts; SPH-fluid Contacts do not generate Force Chains.
+- **Post-processing > Contacts** now uses the same Eye control as Packing rows to show or hide Force Chains. Its saved visibility still starts off in a new project, and the display control remains available during calculation and playback.
+- All three legend pages—**Velocity Magnitude**, **Force Chain Magnitude**, and **Bond Elastic Energy**—share **Range > Current frame min/max**. It automatically recalculates both extrema from the full available current frame before viewport sampling, using each quantity's Packing scope and selected component. **Historical maximum** and **Custom** remain available; saved custom bounds are retained. Empty or constant-valued scopes use a safe display fallback.
 
 The packaged examples, model checks, protected run directories, saved-run archives, quantitative CSV exports, and `FunDEM-cli` workflow remain available. This is a Workbench visualization update; it does not change the FunDEMBeta contact laws or integration algorithms. Model estimates are not physical validation or convergence proofs. Open Results currently accepts saved run archives, not arbitrary raw run directories; archive checksums detect accidental corruption and are not cryptographic authentication. Query charts, cross-run energy comparison, and a parameter-scan GUI remain planned.
 
@@ -59,7 +58,7 @@ Use `--run project.fundem.json [--steps N --output root --archive newdir]` for a
 
 1. Download the macOS ZIP above, extract it, and move the complete `FunDEM.app` into Applications.
 2. Open `FunDEM.app`. Keep its contents intact; users do not need to compile the application or install CUDA.
-3. In the matching v0.3.39 app, use **File > Examples** to open a bundled project without starting calculation. Save edits with **File > Save As...** outside the application bundle.
+3. In the matching v0.3.40 app, use **File > Examples** to open a bundled project without starting calculation. Save edits with **File > Save As...** outside the application bundle.
 4. Read the [macOS guide](MACOS_GUIDE.md). The application bundle also contains `Contents/Resources/docs/USER_MANUAL.md`, the workflow guide, and the seven projects in `Contents/Resources/examples`; Finder's **Show Package Contents** reveals these folders.
 5. Check the Output directory before running a project. Relative output names resolve under `Documents/FunDEM` on macOS; an explicit absolute output path remains unchanged, so projects transferred from another computer may need a different output directory.
 
