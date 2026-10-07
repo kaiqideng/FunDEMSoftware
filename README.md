@@ -12,7 +12,7 @@ This public repository distributes the packaged application and English document
 
 These stable links follow the latest published release. See the [latest release page](https://github.com/kaiqideng/FunDEMSoftware/releases/latest) for the current version and available downloads.
 
-This documentation describes v0.3.38. Use the matching verified platform package from its release page; the latest links change only after the release assets are published. An older package may not include the new menus, archives, queries, or CLI described here.
+This documentation describes v0.3.39. Use the matching verified platform package from its release page; the latest links change only after the release assets are published. An older package may not include the force-chain display or workflow features described here.
 
 ### macOS Apple Silicon
 
@@ -21,16 +21,13 @@ This documentation describes v0.3.38. Use the matching verified platform package
 
 The macOS target requires an Apple Silicon Mac running macOS 14 or later. Simulation runs on the CPU; this package does not include CUDA or support CUDA solver execution. Visualization uses the Mac's graphics hardware. Intel Macs are not included in this distribution.
 
-## New in v0.3.38
+## New in v0.3.39
 
-- **File > Examples** opens any of the seven packaged projects without starting calculation. Use **Save As** for edits in a writable user-owned folder. The examples use the current project schema and retain their physical parameters and stable references.
-- **Simulation > Check Model...** reports model/resource issues, estimated output and geometry costs, material pairs, and activation/motion schedules before preparation. Source-backed geometry is frozen for a prepared run; display-only changes do not repeatedly rebuild or recheck the model.
-- Each fresh calculation reserves a unique child run directory. Complete frame bundles keep playback, full-precision checkpoints, scientific VTU/DAT output, and timestamped PVD collections aligned without clearing earlier runs.
-- **File > Save Run...** saves the committed results to a new archive; **Open Results...** reopens it read-only for playback, display, queries, and frame export. Cancelable loading preserves the previous project on failure or cancellation.
-- **Results > Result Query...** exports full-state particle/time-series CSV independently of viewport sampling, visibility, or clipping. **Export Solid Energy...** exports the collected monitored solid-energy series.
-- The packaged `FunDEM-cli` checks or runs a project without a window, using the same serializer, preflight, CPU session, and archive writer.
+- Force Chains now display **Sphere-Sphere**, **Sphere-LSParticle**, and **LSParticle-LSParticle** Contacts. Each actual Contact is drawn from its contact point to each finite-mass owner's center of mass, preserving separate surface Contacts instead of merging them into a center-to-center chain.
+- An infinite-mass side is omitted. A finite particle contacting a fixed wall has one branch; two infinite-mass owners produce no visible branch.
+- **Normal force**, **Tangential force**, and **Resultant force** remain available. Both branches of a Contact use that Contact's selected magnitude for width and color. Existing Packing selection and Clip Plane controls still filter the displayed Contacts; SPH-fluid Contacts do not generate Force Chains.
 
-These changes are in the Workbench workflow; they do not change the FunDEMBeta contact laws or integration algorithms. Model estimates are not physical validation or convergence proofs. Open Results currently accepts saved run archives, not arbitrary raw run directories; archive checksums detect accidental corruption and are not cryptographic authentication. Query charts, cross-run energy comparison, and a parameter-scan GUI remain planned.
+The packaged examples, model checks, protected run directories, saved-run archives, quantitative CSV exports, and `FunDEM-cli` workflow remain available. This is a Workbench visualization update; it does not change the FunDEMBeta contact laws or integration algorithms. Model estimates are not physical validation or convergence proofs. Open Results currently accepts saved run archives, not arbitrary raw run directories; archive checksums detect accidental corruption and are not cryptographic authentication. Query charts, cross-run energy comparison, and a parameter-scan GUI remain planned.
 
 See the [user manual](USER_MANUAL.md), [seven-example guide](EXAMPLE_GUIDE.md), and [workflow guide](WORKFLOW_IMPROVEMENTS.md) for operation and current limits. Project filenames refer to the examples shipped inside the runtime, not private application source.
 
@@ -62,7 +59,7 @@ Use `--run project.fundem.json [--steps N --output root --archive newdir]` for a
 
 1. Download the macOS ZIP above, extract it, and move the complete `FunDEM.app` into Applications.
 2. Open `FunDEM.app`. Keep its contents intact; users do not need to compile the application or install CUDA.
-3. In the matching v0.3.38 app, use **File > Examples** to open a bundled project without starting calculation. Save edits with **File > Save As...** outside the application bundle.
+3. In the matching v0.3.39 app, use **File > Examples** to open a bundled project without starting calculation. Save edits with **File > Save As...** outside the application bundle.
 4. Read the [macOS guide](MACOS_GUIDE.md). The application bundle also contains `Contents/Resources/docs/USER_MANUAL.md`, the workflow guide, and the seven projects in `Contents/Resources/examples`; Finder's **Show Package Contents** reveals these folders.
 5. Check the Output directory before running a project. Relative output names resolve under `Documents/FunDEM` on macOS; an explicit absolute output path remains unchanged, so projects transferred from another computer may need a different output directory.
 

@@ -1,6 +1,6 @@
 # Model checks, complete runs, and quantitative results
 
-This guide describes the v0.3.38 Workbench workflow. It extends the existing Project, Properties, View, and Output layout with model reports, protected run directories, saved-run playback, quantitative CSV exports, and a headless command. Use the matching verified platform package; an older published runtime may lack these features. These changes are in the Workbench application; the FunDEMBeta contact laws, solvers, and integration algorithms have not been changed.
+This guide describes the v0.3.39 Workbench workflow. It extends the existing Project, Properties, View, and Output layout with model reports, protected run directories, saved-run playback, quantitative CSV exports, and a headless command. Use the matching verified platform package; an older published runtime may lack these features. These changes are in the Workbench application; the FunDEMBeta contact laws, solvers, and integration algorithms have not been changed.
 
 ## Check a project before calculation
 
@@ -102,7 +102,7 @@ The query dialog edits a temporary selection: Cancel leaves the caller's selecti
 
 ## Headless checks and runs
 
-The Qt Core-only `FunDEM-cli` executable uses the same serializer, preflight, CPU session, protected output, and archive writer without a window or OpenGL context. Use the executable supplied with the matching v0.3.38 platform package; this guide does not assert that an older published runtime already contains it.
+The Qt Core-only `FunDEM-cli` executable uses the same serializer, preflight, CPU session, protected output, and archive writer without a window or OpenGL context. Use the executable supplied with the matching v0.3.39 platform package; this guide does not assert that an older published runtime already contains it.
 
 ```text
 FunDEM-cli --check project.fundem.json

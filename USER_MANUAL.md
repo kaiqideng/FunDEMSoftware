@@ -60,7 +60,7 @@ The main window has four stable regions:
 
 - **Project**, on the left, has a five-icon category rail and one model tree with collection add actions. The icons select **Analysis**, **Materials**, **LS Geometry**, **Packings**, or **Post-processing**; only the selected category's children appear. Analysis contains separate **Formulation**, **Loop Parameters**, and **Output** entries. There is no separate **Particles** category, **Simulation Model** header, or visible project-name root row. The project name remains part of the saved document.
 - **Properties**, below Project in the default left column, edits the selected object. Rows, editors, choices, check boxes, and action buttons are produced by reusable UI templates. The mouse wheel scrolls the panel but does not change numeric inputs or closed drop-down selections; click or type to edit them.
-- The **viewport**, to the right of the Project and Properties column, displays particles, LS surfaces, sphere-sphere force chains, Bond cylinders, Packing bounds, and the optional Clip Plane.
+- The **viewport**, to the right of the Project and Properties column, displays particles, LS surfaces, rigid-particle force chains, Bond cylinders, Packing bounds, and the optional Clip Plane.
 - **Output**, at the bottom, contains the Console and live Monitor.
 
 The playback bar is below the viewport. It remains inactive until output frames exist. After calculation, it can select frames, step backward or forward, or play them according to simulation time.
@@ -428,21 +428,21 @@ Bond Packing visibility, opacity, and uniform-color settings remain available. C
 
 ## 11. Force Chain display
 
-The viewport displays only sphere-sphere Contacts, using one aggregated force chain for each sphere pair. Sphere-LSParticle and LSParticle-LSParticle Contacts remain active in the solver and may be written to VTU, but they do not generate viewport geometry.
+The viewport displays sphere-sphere, sphere-LSParticle, and LSParticle-LSParticle Contacts. Each actual Contact produces a branch from its contact point to each finite-mass owner's center of mass. An infinite-mass side is never drawn: a particle contacting a fixed wall therefore has only the finite particle's branch. A Contact between two infinite-mass owners has no visible branch. Contacts are not merged into a center-to-center pair chain; distinct surface Contacts retain their actual locations.
 
 Select **Post-processing > Contacts > Force component** to display **Normal force** (the default), **Tangential force**, or **Resultant force**. These are magnitudes in newtons; they control both cylinder width and color, and the legend uses the selected quantity's name. The control remains available during calculation and playback and does not change contact mechanics.
 
-For a contact with unit normal `n` and evaluated force `F`, the tangential component is `F - dot(F, n) * n`. Resultant force is the magnitude of the full evaluated vector, not the sum of normal and tangential magnitudes. Rolling and torsional moments are not forces and are not included. When a sphere pair has multiple low-level Contacts, each selected component's vectors are summed before taking their magnitude. The pair is drawn as one center-to-center cylinder. Width uses square-root scaling, clamping the normalized magnitude to `[0, 1]`:
+For a contact with unit normal `n` and evaluated force `F`, the tangential component is `F - dot(F, n) * n`. Resultant force is the magnitude of the full evaluated vector, not the sum of normal and tangential magnitudes. Rolling and torsional moments are not forces and are not included. Both branches of the same Contact use that Contact's selected force magnitude; multiple Contacts between the same owners are displayed independently. Width uses square-root scaling, clamping the normalized magnitude to `[0, 1]`:
 
 \[
 r=r_{min}+(r_{max}-r_{min})\sqrt{\operatorname{clamp}\!\left(\frac{F-F_{min}}{F_{max}-F_{min}},0,1\right)}
 \]
 
-Color and width use the same selected force magnitude. **Post-processing > Legends > Force Chain Magnitude** provides the existing historical or custom minimum/maximum range. Histories for normal, tangential, and resultant forces are independent, so switching components never reuses another component's maximum. Changing the Sphere Packing selection uses the accumulated history of the newly selected Packings. Custom bounds remain explicit user settings when switching components.
+Color and width use the same selected force magnitude. **Post-processing > Legends > Force Chain Magnitude** provides the existing historical or custom minimum/maximum range. Histories for normal, tangential, and resultant forces are independent, so switching components never reuses another component's maximum. Changing the rigid-particle Packing selection uses the accumulated history of the newly selected Packings. Custom bounds remain explicit user settings when switching components.
 
 New playback frames and exported frame projects retain all three force components. Older frame-project JSON files stored only normal-force magnitudes; they load with normal display selected unless explicitly configured otherwise, and their unavailable tangential component is treated as zero until the solver evaluates new contact forces.
 
-In the project tree, select **Post-processing > Contacts**, then use **Select Force-chain Packings...**. A chain is shown when either sphere endpoint belongs to a selected Sphere Packing. LSParticle Packings are intentionally absent from the dialog.
+In the project tree, select **Post-processing > Contacts**, then use **Select Force-chain Packings...**. The shared selector groups Sphere Packings and LS Particle Packings; SPH fluid Packings are not included. A Contact is included when either owner belongs to a selected Packing, and all its finite-mass branches are shown. Selecting a fixed wall's Packing can therefore show the finite particles' wall-contact branches without drawing a branch to the wall center. Selecting all rigid Packings also includes future rigid Packings; an explicit empty selection shows no force chains.
 
 ## 12. Post-processing and camera controls
 
@@ -451,7 +451,7 @@ In the project tree, select **Post-processing > Contacts**, then use **Select Fo
 There is no View menu or View item in the project tree. Display controls are organized as follows:
 
 - **Post-processing > Packings** in the project tree contains every rigid-particle Packing, SPH Block/Jet, and Bond Packing display page, with an Eye button for each Packing.
-- **Post-processing > Contacts** contains Force Chain visibility and Sphere Packing scope.
+- **Post-processing > Contacts** contains Force Chain visibility and rigid-particle Packing scope.
 - **Post-processing > Filters** contains the global coordinate axes and Clip Plane.
 - **Post-processing > Legends** contains the three shared scalar-range controls: **Velocity Magnitude**, **Force Chain Magnitude**, and **Bond Elastic Energy**. Packing-bounds controls belong to each Packing's display page, not to Legends.
 - The top **Settings** menu contains only **Display Storage** and **Workspace**. **Settings > Display Storage** contains separate **Viewport** and **Playback Cache** budgets; **Settings > Workspace** shows or hides workspace panels. Bond and Force Chain visibility controls remain in the Post-processing tree.
@@ -500,7 +500,7 @@ This policy prevents a boundary edge from appearing permanently in front of part
 - **Retained side** chooses coordinates less than/equal to or greater than/equal to the position.
 - **Section position** is measured in metres.
 
-Particles are retained or hidden as complete objects according to their center positions; triangles are not physically cut. A Force Chain is classified using its force-weighted representative Contact point. A Bond is classified using its Bond point. Drag the orange center handle to move the plane along its normal.
+Particles are retained or hidden as complete objects according to their center positions; triangles are not physically cut. Both branches of a Force Chain are classified using their actual Contact point. A Bond is classified using its Bond point. Drag the orange center handle to move the plane along its normal.
 
 ### 12.7 Controls available during calculation and background work
 
@@ -509,7 +509,7 @@ After the solver starts, every control that changes mechanics, references, or so
 - camera orbit, pan, zoom, Fit Scene, and standard views;
 - Packing Eye, opacity, and color mode;
 - axes, Force Chains, and Bonds visibility;
-- Sphere Packing scope for Force Chains;
+- Sphere and LS Packing scope for Force Chains;
 - each Bond Packing's Eye, visibility, opacity, and coloring;
 - Clip Plane settings and manipulation;
 - each Packing's bounding-box visibility and dimension annotations.
@@ -797,15 +797,14 @@ Check, in order:
 
 ### 21.4 Force Chains are not visible
 
-The viewport displays only sphere-sphere Force Chains. Confirm:
+The viewport displays rigid-particle Contact branches. Confirm:
 
-1. a sphere-sphere Contact exists;
+1. a sphere-sphere, sphere-LSParticle, or LSParticle-LSParticle Contact exists;
 2. **Post-processing > Contacts > Visible** is enabled in the project tree;
-3. at least one endpoint Sphere Packing is selected;
-4. aggregated normal force is positive;
-5. the Clip Plane retains the representative Contact point.
-
-Inspect sphere-LS and LS-LS Contacts through VTU.
+3. at least one owner Packing is selected;
+4. the selected force component has positive magnitude;
+5. at least one owner has finite mass and a nonzero-length branch;
+6. the Clip Plane retains the actual Contact point.
 
 ### 21.5 Bonds are not visible
 
