@@ -22,4 +22,17 @@ On macOS, relative result paths are placed under your **Documents/FunDEM** direc
 
 The main [User Manual](USER_MANUAL.md) describes the model editor, CPU solvers, playback, VTU output, and post-processing. Windows installation instructions and `.dll` examples in that manual should be read together with this macOS-specific guide.
 
-The [workflow guide](WORKFLOW_IMPROVEMENTS.md) covers model checks, saved-run archives, quantitative CSV exports, and the bundled headless command. These instructions require the matching v0.3.40 package; an older Mac download may not include those features. The public runtime contains no application source, module SDK, or development build templates.
+## Build from a private source checkout
+
+Application and solver source code are not published in the public download repository. For an authorized source checkout, install CMake, Ninja, a compatible Qt 6.8+ macOS SDK, and the OpenMP runtime. On a Mac, the shared packaging entry point is:
+
+```bash
+bash FunDEMSoftware/scripts/build-macos.sh \
+  --qt-root /absolute/path/to/Qt/6.8.3/macos \
+  --build-dir /absolute/path/to/build-macos \
+  --package-dir /absolute/path/to/package-macos \
+  --architecture arm64 \
+  --deployment-target 14.0
+```
+
+The packaging script builds and checks the program, deploys dependencies into the bundle, applies ad-hoc signatures, and prepares a ZIP package. The private GitHub Actions workflow runs this same entry point and checks the deployed application; its build artifact contains only the ZIP. Public distribution is a separate, deliberate upload of the binary package and documentation, never a copy of the private source tree.

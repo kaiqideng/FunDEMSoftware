@@ -4,17 +4,17 @@ The seven projects below are complete FunDEMSoftware models. Choose one from **F
 
 | Project | File | Calculation time | Output interval |
 | --- | --- | --- | --- |
-| Gomboc self-righting | `gombocSelfRighting.fundem.json` | 120 s | 0.05 s |
-| Physically interlocked anchor chain | `interlockedChain.fundem.json` | 3 s | 0.05 s |
-| Damped fine-grain cloth on a box | `clothBoxDrop.fundem.json` | 3 s | 0.05 s |
-| Dam break around a square column | `damBreakSquareColumn.fundem.json` | 3 s | 0.05 s |
-| Brazil nut segregation | `brazilNut.fundem.json` | 8 s | 0.05 s |
-| Layered superellipsoids in a rotating drum | `superellipsoidDrum.fundem.json` | 8 s | 0.05 s |
-| Irregular particles in a cylindrical mold | `randomShapeColumn.fundem.json` | 2 s per Run | 0.05 s |
+| Gomboc self-righting | [`gombocSelfRighting.fundem.json`](gombocSelfRighting.fundem.json) | 120 s | 0.05 s |
+| Physically interlocked anchor chain | [`interlockedChain.fundem.json`](interlockedChain.fundem.json) | 3 s | 0.05 s |
+| Damped fine-grain cloth on a box | [`clothBoxDrop.fundem.json`](clothBoxDrop.fundem.json) | 3 s | 0.05 s |
+| Dam break around a square column | [`damBreakSquareColumn.fundem.json`](damBreakSquareColumn.fundem.json) | 3 s | 0.05 s |
+| Brazil nut segregation | [`brazilNut.fundem.json`](brazilNut.fundem.json) | 8 s | 0.05 s |
+| Layered superellipsoids in a rotating drum | [`superellipsoidDrum.fundem.json`](superellipsoidDrum.fundem.json) | 8 s | 0.05 s |
+| Irregular particles in a cylindrical mold | [`randomShapeColumn.fundem.json`](randomShapeColumn.fundem.json) | 2 s per Run | 0.05 s |
 
-The files use the current project schema (version 8). The application still loads supported older schemas; the examples no longer depend on migration during normal use. Their physical parameters, stable IDs, object order, and references are retained. The filenames above refer to the installed runtime's `examples` directory; use **File > Examples** to open them.
+The files use the current project schema (version 8). The application still loads supported older schemas; the examples no longer depend on migration during normal use. Their physical parameters, stable IDs, object order, and references are retained. The `fundem_software_example_documents_check` development check loads and round-trips all seven files through the production serializer without running a simulation. Its optional `--normalize` argument writes only these seven files through the same atomic save operation.
 
-Calculation times are physical simulation times, not estimates of wall-clock execution time. Relative result roots are resolved beside the executable in the portable Windows package, and under `Documents/FunDEM` in Microsoft Store and macOS installations. Each fresh calculation creates a unique child run directory without clearing existing results. Existing results are not part of the bundled example projects. See the [user manual](USER_MANUAL.md) and [workflow guide](WORKFLOW_IMPROVEMENTS.md) for execution, playback, restart export, and energy output.
+Calculation times are physical simulation times, not estimates of wall-clock execution time. Relative result roots are resolved beside the executable in the portable Windows package, and under `Documents/FunDEM` in Microsoft Store and macOS installations. Each fresh calculation creates a unique child run directory without clearing existing results. Existing results are not part of the bundled example projects. See the [user manual](../docs/USER_MANUAL.md) for execution, playback, restart export, and energy output.
 
 ## Gomboc self-righting
 
@@ -71,7 +71,7 @@ Keep `force-modules/fundemParticleDamping.dll` with the executable. The case int
 
 The CPU SPHDEM solver uses `0.01 m` spacing, `0.013 m` smoothing length, `1,000 kg/m3` reference density, and `0.001 Pa s` dynamic viscosity. It advances 150,000 base steps at `2e-5 s` and records one frame every 2,500 steps. Results are written to `damBreakSquareColumn_files`. No column-force recording hook is installed, so there is no separate `columnForce.dat` or filtered column-load history.
 
-The fluid is displayed as SPH particles during calculation, recorded playback, and animation export. After pausing or finishing, inspect any recorded frame or press **Play** directly; no liquid-surface preparation is required. Packing visibility, opacity, color, velocity-magnitude coloring, and Clip Plane settings remain available in Post-processing. See [Playback](USER_MANUAL.md#16-playback).
+The fluid is displayed as SPH particles during calculation, recorded playback, and animation export. After pausing or finishing, inspect any recorded frame or press **Play** directly; no liquid-surface preparation is required. Packing visibility, opacity, color, velocity-magnitude coloring, and Clip Plane settings remain available in Post-processing. See [Playback](../docs/USER_MANUAL.md#16-playback).
 
 ```powershell
 .\FunDEM.exe examples\damBreakSquareColumn.fundem.json
@@ -120,7 +120,7 @@ The CPU solver uses a `2e-5 s` step for 400,000 steps (8 s total) and records ev
 
 The starting arrangement is a conservative enclosing-sphere deposition, not a settled DEM state. Gravity, friction, and restitution subsequently allow the irregular surfaces to find their contacts. The prepared project has been checked for solver-corrected surface containment and save/reload consistency, but no settling simulation was run when authoring it. The configured `2 s` is an initial calculation round, not a verified convergence time. Monitor kinetic energy and particle velocities, and continue with another Run if needed. There are no bonds, and the mold remains present; this is not a self-supporting column demonstration.
 
-The CPU SphereDEM solver uses `1e-5 s` for 200,000 steps and writes every 5,000 steps (`0.05 s`) under `randomShapeColumn_files`. Although it uses the SphereDEM formulation, every solid in this project is an LS particle; no ordinary sphere particles are present. High-resolution surface output can be large with 41 scheduled frames including the initial frame. The installed package includes `examples/randomShapeColumn.md` for geometry, material values, initialization, execution, and result interpretation.
+The CPU SphereDEM solver uses `1e-5 s` for 200,000 steps and writes every 5,000 steps (`0.05 s`) to `randomShapeColumn_files`. Although it uses the SphereDEM formulation, every solid in this project is an LS particle; no ordinary sphere particles are present. High-resolution surface output can be large with 41 scheduled frames including the initial frame. See the [dedicated example guide](randomShapeColumn.md) for geometry, material values, initialization, execution, and result interpretation.
 
 ```powershell
 .\FunDEM.exe examples\randomShapeColumn.fundem.json

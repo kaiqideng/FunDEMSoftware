@@ -12,7 +12,7 @@ This public repository distributes the packaged application and English document
 
 These stable links follow the latest published release. See the [latest release page](https://github.com/kaiqideng/FunDEMSoftware/releases/latest) for the current version and available downloads.
 
-This documentation describes v0.3.40. Use the matching verified platform package from its release page; the latest links change only after the release assets are published. An older package may not include the Contacts eye control, legend range modes, or workflow features described here.
+This documentation describes v0.3.41. Use the matching verified platform package from its release page; the latest links change only after the release assets are published. An older package may not include the Contacts eye control, legend range modes, or workflow features described here.
 
 ### macOS Apple Silicon
 
@@ -21,14 +21,19 @@ This documentation describes v0.3.40. Use the matching verified platform package
 
 The macOS target requires an Apple Silicon Mac running macOS 14 or later. Simulation runs on the CPU; this package does not include CUDA or support CUDA solver execution. Visualization uses the Mac's graphics hardware. Intel Macs are not included in this distribution.
 
-## New in v0.3.40
+## New in v0.3.41
 
-- **Post-processing > Contacts** now uses the same Eye control as Packing rows to show or hide Force Chains. Its saved visibility still starts off in a new project, and the display control remains available during calculation and playback.
-- All three legend pages—**Velocity Magnitude**, **Force Chain Magnitude**, and **Bond Elastic Energy**—share **Range > Current frame min/max**. It automatically recalculates both extrema from the full available current frame before viewport sampling, using each quantity's Packing scope and selected component. **Historical maximum** and **Custom** remain available; saved custom bounds are retained. Empty or constant-valued scopes use a safe display fallback.
+- **Check Model** tables now wrap headings and information automatically. **Material Pairs** displays **Normal stiffness parameter** and **Sliding stiffness parameter**, with explicit **N/m** or **N/m³** units to distinguish direct stiffness from stiffness per unit area.
+- The dedicated **Results analysis** and **Run Statistics** tools have been removed, including their unused query and timing backend. Saved-run playback, frame export, VTU/DAT output, live monitoring and solid-energy export remain available.
+- **Camera > Coordinate axes** now owns the coordinate-axis switch. It remains usable during calculation and follows saved display settings and Undo/Redo. Shared button templates keep navigation, add, visibility, move and playback icons centered.
+- Calculation preparation has clearer stage and cancellation behavior. Temporary preparation can be canceled safely; atomic installation and initialization finish without forced interruption. A failure after installation retains the session lock until Reset.
+- **Run**, **Resume** and **Continue** identify the calculation action. Monitor distinguishes cumulative steps from the round target and live values from recorded-frame values. Display-only Undo/Redo stays available without stopping playback.
+- New model warnings require explicit review before calculation. Save Project, Save Run, Export Frame as Project and Save Animation have clearer scopes; replacing or closing a session protects unarchived recorded frames.
+- **SPH Parameters** is separate from Loop Parameters, and the bottom **Console & Monitor** is distinct from file-output settings.
 
-The packaged examples, model checks, protected run directories, saved-run archives, quantitative CSV exports, and `FunDEM-cli` workflow remain available. This is a Workbench visualization update; it does not change the FunDEMBeta contact laws or integration algorithms. Model estimates are not physical validation or convergence proofs. Open Results currently accepts saved run archives, not arbitrary raw run directories; archive checksums detect accidental corruption and are not cryptographic authentication. Query charts, cross-run energy comparison, and a parameter-scan GUI remain planned.
+The seven packaged examples, legend range modes, Contacts Eye control, protected run directories, saved-run archives, monitored solid-energy export and `FunDEM-cli` workflow remain available. This is a Workbench interface and workflow update; it does not change the FunDEMBeta contact laws or integration algorithms. Project schema 8 and stable object references are preserved. Model estimates are not physical validation or convergence proofs. Open Results accepts saved run archives for playback, not arbitrary raw run directories; archive checksums detect accidental corruption and are not cryptographic authentication.
 
-See the [user manual](USER_MANUAL.md), [seven-example guide](EXAMPLE_GUIDE.md), and [workflow guide](WORKFLOW_IMPROVEMENTS.md) for operation and current limits. Project filenames refer to the examples shipped inside the runtime, not private application source.
+See the [user manual](USER_MANUAL.md), [seven-example guide](EXAMPLE_GUIDE.md), and [workflow guide](WORKFLOW_IMPROVEMENTS.md) for operation and current limits. Project filenames and asset links in the example guide refer to the examples shipped inside the runtime, not private application source. Read the bundled guide in its installed examples folder to follow those relative links.
 
 ## Start on Windows
 
@@ -58,7 +63,7 @@ Use `--run project.fundem.json [--steps N --output root --archive newdir]` for a
 
 1. Download the macOS ZIP above, extract it, and move the complete `FunDEM.app` into Applications.
 2. Open `FunDEM.app`. Keep its contents intact; users do not need to compile the application or install CUDA.
-3. In the matching v0.3.40 app, use **File > Examples** to open a bundled project without starting calculation. Save edits with **File > Save As...** outside the application bundle.
+3. In the matching v0.3.41 app, use **File > Examples** to open a bundled project without starting calculation. Save edits with **File > Save As...** outside the application bundle.
 4. Read the [macOS guide](MACOS_GUIDE.md). The application bundle also contains `Contents/Resources/docs/USER_MANUAL.md`, the workflow guide, and the seven projects in `Contents/Resources/examples`; Finder's **Show Package Contents** reveals these folders.
 5. Check the Output directory before running a project. Relative output names resolve under `Documents/FunDEM` on macOS; an explicit absolute output path remains unchanged, so projects transferred from another computer may need a different output directory.
 
