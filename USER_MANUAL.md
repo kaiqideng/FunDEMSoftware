@@ -6,6 +6,19 @@ For model checks, protected run directories, Save Run/Open Results, monitored so
 
 ## 1. Release folder and startup
 
+The v0.3.42 Windows downloads provide a default CPU-only ZIP and a separate
+MSVC/CUDA ZIP with CPU, GPU and Hybrid modes. The latter includes the CUDA 13.2
+runtime: no CUDA toolkit installation is needed to run it, but a supported NVIDIA
+GPU and an NVIDIA driver compatible with that runtime are required. Keep the
+matching DLLs from the selected ZIP together; do not combine the two compiler
+profiles. Apple Silicon packages remain CPU-only. CPU is the initial compute
+mode in every profile, and an unavailable GPU/Hybrid mode never silently falls
+back to CPU.
+
+The CUDA release profile targets native architectures `75`, `80`, `86`, `89`,
+`90`, `100`, and `120`. Execution checks currently cover an RTX 5060 (`sm_120`),
+not every GPU represented by the compiled targets.
+
 A public Windows x64 ZIP contains a `Windows/` runtime folder with:
 
 ```text
@@ -54,6 +67,92 @@ Choose **File > Examples** and select one of the seven installed projects. This 
 
 Use **File > Save As...** to save edits in a writable, user-owned folder, such as Documents. Do not overwrite installed resources. Keep the bundled meshes and force-module libraries available; missing resources are reported when the project is opened or checked. If the selected example file itself is missing, **Example Not Available** warns you and leaves the current project unchanged.
 
+### 1.2 Open the native ON-DEM benchmark
+
+Choose **File > Benchmarks > ON-DEM bumpy-wall shear flow...**. Select the
+author's original `GranularShearFlow.data`; the window verifies its SHA-256
+before creating the project. **Download Original Data...** opens the pinned
+author URL in a browser. Save the file, then use **Browse...** to select it.
+A previously downloaded input in a local development installation may be found
+automatically. The author dataset does not state a license and is not included
+in public application packages. Canceling or failing import leaves the current
+project unchanged. Import never starts a calculation.
+
+The model has 3000 mobile spheres and two 240-sphere infinite-mass rough walls.
+Every sphere has radius `0.5` and density `1` in the benchmark's normalized
+units. The domain is `[0,20] x [0,10.3923048454133] x [0,22]`, periodic in X/Y
+only. The lower/upper walls move at `-1`/`+1` along X, and gravity is zero.
+CPU is the default. In a CUDA-enabled application, Loop Parameters also offers
+GPU and Hybrid for the benchmark; both execute its sphere contacts on CUDA.
+The imported
+project contains two entries under **Analysis > Particle Force Modules**:
+**ON-DEM Sphere Contacts**, with five contact coefficients, and **Periodic
+Boundary**, with minimum/maximum domain corners and three direction check boxes. Select either entry
+to inspect or edit its parameters in the normal Properties panel before Run or
+after Reset. Both are built
+into the application: no force-module DLL needs to be selected or distributed.
+Wall velocities remain in the lower/upper Packing prescribed-motion settings;
+there are no duplicated wall-velocity fields or normal/history policy flags.
+**Periodic X**, **Periodic Y**, and **Periodic Z** choose which directions wrap.
+Any nonempty combination is allowed; the default is X/Y enabled and Z disabled.
+Inactive coordinates are unchanged by wrapping. Direction choices affect
+contact search, minimum-image contact geometry and force-chain display, not just
+the picture. Disabling all three directions is rejected.
+
+The imported contact-law defaults are `kn=200000`, `kt=400000/7`, `cn=15`,
+`ct=30/7`, `mu=0.3`, and time step `7.192545032e-5`. It retains signed normal
+force until separation, projects the tangential spring history, and limits the
+complete tangential force to `mu * abs(Fn)`. The material supplies mass and
+inertia only. The core detects ordinary sphere contacts, and the boundary
+module wraps selected coordinates and adds only the missing periodic seam
+contacts. The contact module evaluates its force law over the combined contact
+set and owns tangential history and elastic energy. The default core contact
+force is not evaluated in addition. Existing Packing
+prescribed motion controls the rough walls through the ordinary
+SphereDEM software adapter. It is not a new solver option. Existing external
+force-module DLLs continue to use the unchanged version-1 interface.
+The separate standalone validation runner keeps its existing default clamped
+normal-release behavior. See [the benchmark guide](../benchmarks/README.md) for
+data provenance and the distinction between website and snapshot-derived values.
+
+The default is **100000 steps**, with output every **1000 steps**, not the full
+200-million-step reference calculation. Use the normal **Run**, **Pause**,
+**Step**, **Continue**, and **Reset** commands explicitly. Scientific VTU and
+energy output, Live View, playback, and **Save Run / Open Results** remain
+available. Compute-mode, step-count, output and display controls use their normal lifecycle
+rules. Materials, sphere definitions, Packing placement and motion, gravity,
+time step, contact coefficients, domain corners and periodic-direction choices
+may be edited before Run or after Reset. The imported values are defaults, not
+permanent read-only settings. Changing a physical default creates a user variant,
+not a verified original reference calculation. Check Model warns about changed
+periodic directions; it does not certify the other parameters or the results.
+The model remains sphere-only. Once calculation starts, normal model/solver
+locks remain in force until Reset, including after calculation finishes.
+Check Model reports the current settings before solving. This parameter editing
+does not enable adding LS particles, SPH sources or Bond collections through
+the specialized benchmark UI.
+Post-processing stays available during a run.
+
+Saving the initial project embeds all coordinates, so reopening it does not
+need the author's input file again. These projects require schema 9 and an
+explicit benchmark marker; ordinary projects remain schema 8. Older software
+rejects the newer schema instead of silently using another contact model.
+Older schema-9 benchmark projects without module entries, or with the validated
+former combined module, are upgraded on load to the two modules while preserving
+the saved placements and stable IDs. Changed legacy flags or wall velocities
+are not silently discarded. Older two-corner **XY Periodic Boundary** entries
+gain default X/Y-on, Z-off choices; new selected directions are retained.
+The internal URI still contains `xyPeriodicBoundary` for compatibility.
+Neither module can be removed, duplicated or disabled to obtain
+ordinary contact behavior within this specialized benchmark.
+**Export Playback Frame as Project** and restart from a benchmark frame are
+not supported because complete external tangential history is not serialized.
+A saved result archive supports viewing, not an exact mid-run restart.
+
+The early comparison results are diagnostic only: particle trajectories and
+instantaneous contact pairs do not match exactly, and full steady-state
+benchmark validation has not been completed.
+
 ## 2. Main-window organization
 
 The main window has four stable regions:
@@ -83,9 +182,38 @@ When live energy monitoring is enabled, sampling follows newly published solver 
 
 The optional project JSON field `solver.monitorSolidEnergy` defaults to `false` for new projects and older project files that omit the field. An explicitly saved `true` value remains enabled; set it to `true` before calculation to collect live energy samples. While it is `false`, the additional live-monitor energy scans and plot history collection are skipped. This does not disable or change `energy.dat`; scientific energy output still follows its normal output schedule. Each collected monitor sample scans the solid particles, Contacts, and Bonds, with cost `O(particles + contacts + bonds)`. Its actual runtime overhead has not been benchmarked, so do not assume that frequent monitoring is free for large models.
 
-The **Monitor > FunDEM CPU (%)** row measures the current FunDEM process, including its solver, rendering, and background threads. It is not the computer's total CPU load. Usage is averaged over approximately 0.75 seconds and normalized to all online logical processors: one fully busy core on a 16-logical-processor machine is about 6.25%, and all 16 fully busy cores are 100%. The first valid sample appears after a short sampling window; an unavailable sample is shown as a dash. Sampling uses its own non-blocking UI timer, so it continues before compilation, while paused, during playback and animation export. If the UI event loop is busy, the next sample covers the longer elapsed interval rather than blocking the application. Reset clears simulation quantities without clearing this live process indicator.
+The **Monitor > CPU utilization (%)** row measures the current FunDEM process, including its solver, rendering, and background threads. It is not the computer's total CPU load. Usage is averaged over approximately 0.75 seconds and normalized to all online logical processors: one fully busy core on a 16-logical-processor machine is about 6.25%, and all 16 fully busy cores are 100%. The first valid sample appears after a short sampling window; an unavailable sample is shown as a dash. Sampling uses its own non-blocking UI timer, so it continues before compilation, while paused, during playback and animation export. If the UI event loop is busy, the next sample covers the longer elapsed interval rather than blocking the application. Reset clears simulation quantities without clearing this live process indicator.
 
 The **Bonds** row immediately follows **Contacts** and reports the stored bond count in the current frame. Hiding Bond Packings does not change this count.
+
+GPU and Hybrid default to **Loop Parameters > Live updates follow output**.
+Each scheduled output snapshot also updates Live; no extra solver observation
+is requested between output steps. An output interval of 0.2 simulated seconds
+therefore gives the same viewport update interval, not a wall-clock frame rate.
+In Live mode, **Simulation time (s)** and **Cumulative step** independently follow
+completed solver progress without capturing particle data or synchronizing the
+GPU. The viewport and other simulation statistics retain the latest available
+snapshot, so sparse output can leave them unchanged while these two counters
+advance. Recorded playback always shows the selected frame's time and step.
+Disable the option to restore independent Live updates: their minimum delay is
+500 ms and their
+measured capture cost sets an approximately 5% scheduling-budget target, not
+a benchmarked overhead guarantee. CPU Live behavior is unchanged. Initial
+state, Pause, Single Step and completion always publish the current state.
+An already captured identical step/time is reused. Appearance/visibility and
+camera edits remain responsive without observing the solver. Observations
+still synchronize/copy device data; output alignment is not zero-copy rendering
+and does not change integration, SPH timing, or scientific output intervals.
+
+In GPU/Hybrid mode the same Monitor table shows **GPU device** and **GPU utilization
+(%)**. These are current whole-device readings, including other applications,
+not FunDEM-only or recorded-frame statistics.
+A separate approximately one-second worker queries the NVIDIA driver by the
+selected CUDA device's PCI identity. It does not read solver containers or
+synchronize CUDA streams. The GUI only copies its latest small observation;
+sampling continues even with sparse output or paused playback. Unavailable
+metrics are explicitly labeled rather than reported as zero. CPU-only builds
+remain supported; unsupported driver metrics carry an explanatory tooltip.
 
 ### 2.1 Background operations and progress
 
@@ -135,7 +263,7 @@ Use this formulation for spheres, LS particles, and their interactions. It suppo
 - Sphere Packing and LSParticle Packing;
 - sphere-sphere, sphere-LSParticle, and LSParticle-LSParticle Bonds;
 - optional Particle Force Modules;
-- the CPU solver path exposed by the workbench.
+- CPU solving, or GPU/Hybrid solving in a CUDA-enabled application.
 
 ### 4.2 SPH + level-set DEM
 
@@ -143,6 +271,10 @@ Use this formulation for SPH fluid and LS solids or boundaries. It intentionally
 
 ### 4.3 Common solver values
 
+- **CPU** is the default solve option for both formulations and does not require a CUDA device.
+- **Hybrid (GPU + CPU)** advances spheres on CUDA in SphereDEM, or SPH on CUDA in SPHDEM, while LS particles stay on CPU.
+- **GPU** advances both participating particle families on CUDA: spheres and LS in SphereDEM, or SPH and LS in SPHDEM. Host preparation and scientific output still use the CPU; compatible particle-force modules use their native CUDA callbacks.
+- GPU and Hybrid require an application built with CUDA and a usable CUDA device; an unavailable backend is reported rather than silently replaced with CPU. **GPU device index** selects a zero-based device. The v0.3.42 default LLVM-MinGW Windows and Apple Silicon profiles remain CPU-only; choose the separate MSVC/CUDA Windows ZIP for device solving. Its bundled CUDA 13.2 runtime requires a compatible installed NVIDIA driver, not the CUDA development toolkit. GPU-accelerated visualization alone does not provide CUDA solving.
 - **Time step** is the base DEM step in seconds.
 - **Steps this run** is the additional step count for a new calculation round; a paused unfinished round resumes its existing target. It is not an absolute stop index.
 - **Gravity Z** is the global gravitational acceleration along Z in m/s².
@@ -410,6 +542,10 @@ The viewport renders each Bond as a cylinder:
 
 Each Bond Packing appears by name directly under **Post-processing > Packings**. Use its Eye button or select that Packing and change **Visible** and **Opacity**. The live frame, preview, and playback frames use those same per-Packing settings.
 
+Changing stiffness or BK damage coefficients no longer repeats the edit-time pair search when endpoint geometry and generation settings are unchanged. Changing source Packings, placements, shapes, the distance rule, Bond length/area, or relevant saved-frame geometry rebuilds the preview. The cache still checks its input data, and refreshing a visible preview still copies display arrays, so large projects can require preparation time even on a cache hit. Actual improvement depends on the project; no fixed generation time is guaranteed.
+
+Camera-only redraws reuse Bond display instances already uploaded to the graphics device. Changes to clipping, visibility, opacity, coloring, or the minimum display radius refresh those instances. Hiding all grouped Bond Packings avoids per-Bond rendering preparation. These are presentation optimizations only: sampled or limited previews do not remove physical Bonds from the simulation or scientific output, and choosing CUDA solving does not move the CPU preprocessing search to CUDA.
+
 Bond Packing visibility is independent of the Force Chain selection. It affects only the viewport and never deletes Bonds, changes mechanics, or changes VTU output.
 
 ### 10.5 Bond elastic-energy coloring
@@ -538,7 +674,12 @@ The reference hydrodynamics module declares:
 - Free-surface height;
 - Drag coefficient.
 
-The bundled hydrodynamics module supports spheres only, so it belongs in SphereDEM projects. The bundled Particle Damping module supports finite-mass spheres and LS particles. Modules run after Contact, Bond, and other internal forces have been assembled. The CPU host packs one state array, invokes each compatible module, validates the accumulated result, and adds it to particles. The reference hydrodynamics callback itself applies its formula in parallel. Load only trusted native libraries built for the host operating system, architecture, and ABI. In the public portable release, read `force-modules/README.md`, `force-modules/SphereHydrodynamics.md`, and `force-modules/ParticleDamping.md` for loading and physical-model details. Source-build instructions in the model guides require a separate development checkout.
+The bundled hydrodynamics module supports spheres only, so it belongs in SphereDEM projects. The bundled Particle Damping module supports finite-mass spheres and LS particles. Modules run after Contact, Bond, and other internal forces have been assembled. CPU evaluates each compatible callback on the host. GPU uses native CUDA callbacks; Hybrid evaluates spheres on CUDA and LS particles on the CPU. Both bundled modules share each physical formula between their CPU and GPU implementations. CUDA callbacks add loads to device buffers on the solver stream without downloading particles. A CPU-only external library is rejected when its supported family runs on CUDA. The existing CPU ABI v1 is unchanged; CUDA support uses a separate optional entry point.
+
+Load only trusted native libraries built for the host operating system, architecture, and ABI. In the public portable release, read `force-modules/README.md`, `force-modules/SphereHydrodynamics.md`, and `force-modules/ParticleDamping.md` for loading and physical-model details. Source-build instructions in the model guides require a separate development checkout.
+
+CUDA-enabled module libraries remain loaded until FunDEM exits, including after
+import or Reset. Close the application before replacing or rebuilding one.
 
 ## 14. Output
 
@@ -594,7 +735,7 @@ The first Run performs its expensive preparation in the background and reports e
 3. expands Packings;
 4. creates material, geometry, particle, and interaction containers;
 5. generates Bond Packings;
-6. initializes the CPU solver;
+6. initializes the selected CPU, GPU, or Hybrid solver;
 7. reserves a unique calculation child under the configured result root, with private core staging;
 8. advances by **Steps this run**.
 

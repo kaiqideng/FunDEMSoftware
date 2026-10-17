@@ -2,6 +2,25 @@
 
 This guide describes the workflow implemented in the current source tree. It extends the existing Project, Properties, View, and Console & Monitor layout with model reports, protected run directories, saved-run playback, monitored solid-energy export, and a headless command. These changes are in the Workbench application; the FunDEMBeta contact laws, solvers, and integration algorithms have not been changed.
 
+## v0.3.42 maintenance and distribution profiles
+
+- Disabled check boxes retain a clearly visible dark-gray check mark when a
+  calculation locks model editing. Checked values and lifecycle locks are
+  unchanged; the shared control template fixes contrast rather than changing data.
+- Periodic-boundary regression coverage compares core-plus-seam contacts against
+  an independent all-pairs/all-images oracle for all seven nonempty axis masks,
+  shifted domains, unequal radii, face/edge/corner seams, repeated wrapping,
+  fixed-particle ordering and changing particle counts. Additional lifecycle
+  checks cover moving infinite-mass walls and persistent contact history across
+  interior/seam transitions. This is focused implementation checking, not a
+  completed physical validation of the full ON-DEM reference benchmark.
+- The default LLVM-MinGW Windows ZIP and Apple Silicon package remain CPU-only.
+  A separate MSVC/CUDA Windows ZIP provides CPU, GPU and Hybrid with the CUDA
+  13.2 runtime bundled. Running it requires a supported NVIDIA GPU and a driver
+  compatible with that runtime, not a CUDA toolkit installation. The profiles
+  are separate runtime sets and must not be mixed. Packaging and source updates
+  do not imply Microsoft Store approval.
+
 ## Check a project before calculation
 
 Choose **Simulation > Check Model...** (`Ctrl+F5`). The report uses the shared report dialog and contains:
@@ -109,7 +128,7 @@ Display-only edits and their Undo/Redo remain available after calculation starts
 
 ## Headless checks and runs
 
-The Qt Core-only `FunDEM-cli` target uses the same serializer, preflight, CPU session, protected output, and archive writer without a window or OpenGL context. Use the executable built or installed with this source version; this guide does not assert that an older published runtime already contains it.
+The Qt Core-only `FunDEM-cli` target uses the same serializer, preflight, selected CPU/GPU/Hybrid session, protected output, and archive writer without a window or OpenGL context. CPU is the default. GPU and Hybrid require a CUDA-enabled build and an available NVIDIA device, just as in the desktop application; neither silently falls back to CPU. GPU advances both participating particle families on CUDA, while Hybrid keeps LS on CPU and uses CUDA for spheres or SPH. Use the executable built or installed with this source version. In v0.3.42, the separate MSVC/CUDA Windows profile supplies these device modes; the default LLVM-MinGW Windows and Apple Silicon profiles remain CPU-only. The CUDA runtime is bundled in the CUDA ZIP, while a compatible NVIDIA driver remains a user-system prerequisite.
 
 ```text
 FunDEM-cli --check project.fundem.json

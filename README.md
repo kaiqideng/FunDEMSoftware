@@ -1,18 +1,33 @@
 # FunDEM Software
 
-FunDEM Workbench is a desktop application for Windows and Apple Silicon macOS, for preparing, running, and reviewing particle-based simulations. It combines CPU-based DEM and SPH simulation with GPU-accelerated visualization. The package includes the FunDEMBeta computation core; users do not need to compile anything.
+FunDEM Workbench is a desktop application for Windows and Apple Silicon macOS, for preparing, running, and reviewing particle-based simulations. DEM and SPH solving default to CPU, with GPU-accelerated visualization. A separate Windows CUDA package also supports GPU and Hybrid solving on compatible NVIDIA hardware. The packages include the FunDEMBeta computation core; users do not need to compile anything.
 
 This public repository distributes the packaged application and English documentation. The Workbench application source remains private. Its computation core is available separately in the [FunDEMBeta source repository](https://github.com/kaiqideng/FunDEMBeta); users of the application package do not need to download or compile it.
 
 ## Download
 
-[Download the latest Windows x64 package](https://github.com/kaiqideng/FunDEMSoftware/releases/latest/download/FunDEM-Workbench-Windows-x64.zip)
+[Download the latest Windows x64 CPU package](https://github.com/kaiqideng/FunDEMSoftware/releases/latest/download/FunDEM-Workbench-Windows-x64.zip)
+
+[Download the latest Windows x64 CUDA package](https://github.com/kaiqideng/FunDEMSoftware/releases/latest/download/FunDEM-Workbench-Windows-CUDA-x64.zip)
 
 [Download the matching English user manual](https://github.com/kaiqideng/FunDEMSoftware/releases/latest/download/USER_MANUAL.md)
 
 These stable links follow the latest published release. See the [latest release page](https://github.com/kaiqideng/FunDEMSoftware/releases/latest) for the current version and available downloads.
 
-This documentation describes v0.3.41. Use the matching verified platform package from its release page; the latest links change only after the release assets are published. An older package may not include the Contacts eye control, legend range modes, or workflow features described here.
+This documentation describes v0.3.42. Use the matching verified platform package from its release page; the latest links change only after the release assets are published. Older packages may not include the CUDA backend, native ON-DEM benchmark, or control-display fixes described here.
+
+The default Windows ZIP is CPU-only. The separate MSVC/CUDA ZIP provides CPU,
+GPU and Hybrid modes and includes its CUDA 13.2 runtime; running it requires a
+supported NVIDIA GPU and an NVIDIA driver compatible with that runtime, not a
+CUDA toolkit installation. Hybrid keeps LS particles on CPU and advances spheres
+or SPH on CUDA; GPU advances both participating particle families on CUDA.
+Neither mode silently falls back to CPU. Keep each package's complete runtime
+folder together rather than mixing libraries from the two Windows ZIPs.
+
+The CUDA profile targets native architectures `75`, `80`, `86`, `89`, `90`, `100`
+and `120`. Hardware execution checks cover an RTX 5060 (`sm_120`), not every GPU
+represented by those compilation targets. Rendering acceleration is independent
+of the chosen numerical backend.
 
 ### macOS Apple Silicon
 
@@ -21,23 +36,21 @@ This documentation describes v0.3.41. Use the matching verified platform package
 
 The macOS target requires an Apple Silicon Mac running macOS 14 or later. Simulation runs on the CPU; this package does not include CUDA or support CUDA solver execution. Visualization uses the Mac's graphics hardware. Intel Macs are not included in this distribution.
 
-## New in v0.3.41
+## New in v0.3.42
 
-- **Check Model** tables now wrap headings and information automatically. **Material Pairs** displays **Normal stiffness parameter** and **Sliding stiffness parameter**, with explicit **N/m** or **N/m³** units to distinguish direct stiffness from stiffness per unit area.
-- The dedicated **Results analysis** and **Run Statistics** tools have been removed, including their unused query and timing backend. Saved-run playback, frame export, VTU/DAT output, live monitoring and solid-energy export remain available.
-- **Camera > Coordinate axes** now owns the coordinate-axis switch. It remains usable during calculation and follows saved display settings and Undo/Redo. Shared button templates keep navigation, add, visibility, move and playback icons centered.
-- Calculation preparation has clearer stage and cancellation behavior. Temporary preparation can be canceled safely; atomic installation and initialization finish without forced interruption. A failure after installation retains the session lock until Reset.
-- **Run**, **Resume** and **Continue** identify the calculation action. Monitor distinguishes cumulative steps from the round target and live values from recorded-frame values. Display-only Undo/Redo stays available without stopping playback.
-- New model warnings require explicit review before calculation. Save Project, Save Run, Export Frame as Project and Save Animation have clearer scopes; replacing or closing a session protects unarchived recorded frames.
-- **SPH Parameters** is separate from Loop Parameters, and the bottom **Console & Monitor** is distinct from file-output settings.
+- **Windows CUDA package** provides CPU, GPU and Hybrid solving separately from the default CPU Windows ZIP and CPU-only Apple Silicon package. Bundled particle-force modules include native CUDA implementations where applicable; requested device execution is never silently replaced by CPU.
+- **Periodic Boundary** handling has dedicated CPU/CUDA regressions for all seven nonempty X/Y/Z masks, shifted domains, unequal radii, changing populations, face/edge/corner contacts and native-contact preservation. CUDA workspace reuse and destruction preserve in-flight work and stream ordering.
+- **Locked check boxes remain readable**: checked controls retain a clear dark-gray check mark while calculation prevents model edits. Their values and lock rules are unchanged.
+- **Native ON-DEM benchmark** parameters follow ordinary editing rules before Run or after Reset instead of being permanently locked. Editing imported values creates a user variant, not a verified original reference calculation.
+- New ON-DEM imports default to **1,000 output steps**, approximately **0.072 simulated seconds** at their default time step. Existing saved projects retain their chosen intervals. GPU/Hybrid Live can follow the scheduled output without extra between-output solver snapshots; live time and step counters continue independently.
 
-The seven packaged examples, legend range modes, Contacts Eye control, protected run directories, saved-run archives, monitored solid-energy export and `FunDEM-cli` workflow remain available. This is a Workbench interface and workflow update; it does not change the FunDEMBeta contact laws or integration algorithms. Project schema 8 and stable object references are preserved. Model estimates are not physical validation or convergence proofs. Open Results accepts saved run archives for playback, not arbitrary raw run directories; archive checksums detect accidental corruption and are not cryptographic authentication.
+The seven packaged examples, legend range modes, Contacts Eye control, protected run directories, saved-run archives, monitored solid-energy export and `FunDEM-cli` workflow remain available. These Workbench changes do not change the FunDEMBeta contact laws or integration algorithms. Ordinary projects retain schema 8 and stable object references; the explicit ON-DEM benchmark uses schema 9 and independent application-owned contact and periodic-boundary modules. The benchmark importer verifies the author's original coordinates, which are not bundled; it does not run automatically. Its 100,000-step diagnostic is not the full-duration reference validation, and CPU/GPU long-time particle trajectories are not asserted to be identical. Model estimates and regression checks are not physical validation or convergence proofs. Open Results accepts saved run archives for playback, not arbitrary raw run directories; archive checksums detect accidental corruption and are not cryptographic authentication.
 
 See the [user manual](USER_MANUAL.md), [seven-example guide](EXAMPLE_GUIDE.md), and [workflow guide](WORKFLOW_IMPROVEMENTS.md) for operation and current limits. Project filenames and asset links in the example guide refer to the examples shipped inside the runtime, not private application source. Read the bundled guide in its installed examples folder to follow those relative links.
 
 ## Start on Windows
 
-1. Download and extract `FunDEM-Workbench-Windows-x64.zip`.
+1. Download and extract `FunDEM-Workbench-Windows-x64.zip` for CPU solving, or `FunDEM-Workbench-Windows-CUDA-x64.zip` for a compatible NVIDIA system.
 2. Keep the extracted directory intact.
 3. Open the extracted `Windows` folder and run `FunDEM.exe`.
 4. Read `Windows/docs/USER_MANUAL.md` in the extracted package, or download the matching manual above, for project setup, simulation, playback, export, and post-processing.
@@ -63,7 +76,7 @@ Use `--run project.fundem.json [--steps N --output root --archive newdir]` for a
 
 1. Download the macOS ZIP above, extract it, and move the complete `FunDEM.app` into Applications.
 2. Open `FunDEM.app`. Keep its contents intact; users do not need to compile the application or install CUDA.
-3. In the matching v0.3.41 app, use **File > Examples** to open a bundled project without starting calculation. Save edits with **File > Save As...** outside the application bundle.
+3. In the matching v0.3.42 app, use **File > Examples** to open a bundled project without starting calculation. Save edits with **File > Save As...** outside the application bundle.
 4. Read the [macOS guide](MACOS_GUIDE.md). The application bundle also contains `Contents/Resources/docs/USER_MANUAL.md`, the workflow guide, and the seven projects in `Contents/Resources/examples`; Finder's **Show Package Contents** reveals these folders.
 5. Check the Output directory before running a project. Relative output names resolve under `Documents/FunDEM` on macOS; an explicit absolute output path remains unchanged, so projects transferred from another computer may need a different output directory.
 
