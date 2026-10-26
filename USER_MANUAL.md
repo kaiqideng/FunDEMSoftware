@@ -1,6 +1,6 @@
 # FunDEM User Manual
 
-Version 0.4.0 — Windows x64
+Version 0.4.1 — Windows x64
 
 FunDEM prepares, runs and inspects DEM and coupled LSDEM–SPH simulations.
 Its numerical core is [FunDEMBeta](https://github.com/kaiqideng/FunDEMBeta).
@@ -16,7 +16,7 @@ device and driver. An unavailable backend is reported, not silently replaced
 with CPU. Do not mix runtime DLLs from different releases or compiler kits.
 
 This release targets Windows x64. A new macOS package has not been verified;
-older Mac downloads do not establish 0.4.0 compatibility. H.264 MP4 encoding
+older Mac downloads do not establish 0.4.1 compatibility. H.264 MP4 encoding
 currently uses Windows Media Foundation and is Windows-only.
 
 **File > New Project** offers **DEM** for Sphere/LS solids and **LSDEM + SPH**
@@ -253,10 +253,22 @@ selection, its wireframe and Box size (m) X/Y/Z use the exact same AABB.
 
 ### Filters and plots
 
+Large scenes retain shared LS surface buffers between frames; only changing
+particle state and appearance are uploaded again. LS triangle resolution is
+preserved, and spheres/SPH use GPU sphere impostors. There is no automatic
+particle-count truncation or mesh decimation. Available graphics memory and
+per-buffer API limits determine capacity; a failed allocation reports an error
+instead of displaying an incomplete population. Hiding an unused population
+can reduce rendering load without modifying saved results.
+
 Filter + offers disabled-by-default Clip and Threshold. Configure Target,
 plane or data range in Property. Sources are Solid particles, SPH particles,
-Contact instance pairs and Bond recipes. Empty Filter Objects means all
-available objects for that Source. Clip keeps the plane's positive side by
+Contact instance pairs and Bond recipes. Empty Filter Objects means None:
+the filter has no effect until objects are explicitly selected. The shared
+selector supports individual and group checkboxes. Uncheck every choice and
+confirm to remove all targets; Cancel retains the previous selection. Changing
+Source clears incompatible selections, never selects All.
+Clip keeps the plane's positive side by
 saved centers/interaction points. Selecting it shows a semitransparent guide,
 even if disabled; another selection removes it. Threshold is an inclusive
 range using shared Plot quantities. Masks are population-specific and do not

@@ -1,4 +1,4 @@
-# FunDEM 0.4.0 example guide
+# FunDEM 0.4.1 example guide
 
 Windows x64 — seven built-in examples and user-supplied benchmark data
 
@@ -49,6 +49,13 @@ Changing only Results colors, opacity, legends or camera does not alter physics.
 Full recomputation may take hours, especially for the cloth and high-resolution
 LS cases. Actual cost depends on the selected backend, hardware, contact count,
 SPH population and output cadence; there is no fixed completion-time promise.
+Brazil nut and the drum use one event boundary at the actual prescribed-motion
+onset, not an extra one-step event for output alignment. Their initial states,
+motion clocks and total duration are unchanged. Recording remains event-local
+at 0.05 s intervals; after motion starts, its regular grid is respectively
+one original DEM step (1e-5 s / 2e-5 s) earlier than the old global output grid.
+Do not delay motion to make the output frame numbers round.
+
 Keep enough free space for recorded frames and do not start a long run merely
 to test whether the project opens. Short runs verify only the executed prefix,
 not later events, convergence or agreement with experiment. Example material
@@ -111,5 +118,5 @@ converting or embedding the coordinates does not remove that requirement.
   Clip guide should be omitted. FPS changes encoded timing, not physical data.
 - The packaged [User Manual](USER_MANUAL.md) explains event inheritance,
   filters, plots, DAT interchange, replay caching and troubleshooting.
-- Version 0.4.0 is documented for Windows x64. No verified new macOS package
+- Version 0.4.1 is documented for Windows x64. No verified new macOS package
   or cross-platform MP4 support is implied by older releases.

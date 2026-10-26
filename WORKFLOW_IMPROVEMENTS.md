@@ -1,4 +1,4 @@
-# FunDEM 0.4.0 workflow guide
+# FunDEM 0.4.1 workflow guide
 
 This guide describes the rebuilt Windows application. It replaces the old
 single-workbench workflow, not the old files themselves. For complete
@@ -97,13 +97,24 @@ radius from their smaller endpoint radius. Scale by value distributes radius
 proportionally below that cap using the active Legend range; zero values have
 no glyph. Color, glyph size and filters do not change contact area or physics.
 
-Clip/Threshold target selected particle, SPH, Contact or Bond populations.
-Empty Filter Objects intentionally means all available targets. Selected Clip
-guides are visual aids, not automatic enable switches or additions to Fit bounds.
+Render View retains indexed geometry and shares repeated meshes across particle
+instances. Camera motion does not rebuild unchanged geometry. These display
+optimizations preserve full-resolution surfaces, depth/transparency relationships,
+filters and scalar values; they do not change archived records or the solver.
+
+Clip/Threshold target explicitly selected particle, SPH, Contact or Bond populations.
+Empty Filter Objects means None and has no filtering effect. Clear selections
+by unchecking the selected objects or groups and confirming; Cancel retains
+the previous targets. A Source change clears incompatible targets, and stale
+IDs never expand the selection. Selected Clip guides are visual aids, not
+automatic enable switches or additions to Fit bounds.
 Filters change scene/capture visibility, not Plot, DAT or archive records.
 
 Plot instead requires explicit nonempty valid objects for every applicable
-X/Y/data query. Scope chooses Events; each curve defines its data and ranges.
+X/Y/data query. Scope chooses Events; histories retain all recorded samples
+from those Events. The redundant curve time-window filter is removed. Property's
+X/Y limits control the chart view without removing table/CSV samples, including
+when a custom X range lies between or outside saved samples.
 Reload is manual rather than triggered by playback or every incoming frame.
 The accepted chart, data table and CSV share the same samples. Compatible units
 are required on shared axes. Solid-system energy does not include fluid energy.
@@ -136,12 +147,16 @@ example or the appropriate older application.
 
 Seven converted examples open as writable copies. They preserve supplied
 parameters, poses and event order; their presence is not physical validation.
+Brazil nut and mixing drum omit the old artificial one-step output-alignment
+event while retaining physical activation/motion boundaries and total time.
+Their event-local output interval remains 0.05 s; the final stage's regular
+recording grid shifts by one original time step rather than adding that event.
 The ON-DEM Benchmark menu requires user-supplied authorized original coordinates.
 No author dataset or converted payload is distributed publicly. A 100,000-step
 diagnostic is not the complete reference campaign.
 
-Application 0.4.0 targets Windows x64. Its local Store update package version
-is 1.0.10.0; packaging alone does not establish Store submission/certification.
+Application 0.4.1 targets Windows x64. Its local Store update package version
+is 1.0.11.0; packaging alone does not establish Store submission/certification.
 A new macOS package is not verified and MP4 export is Windows-only. Historical
 macOS releases retain their own workflow and documentation.
 

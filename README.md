@@ -1,6 +1,6 @@
 # FunDEM Software
 
-FunDEM 0.4.0 is a Windows desktop application for preparing, running and
+FunDEM 0.4.1 is a Windows desktop application for preparing, running and
 analyzing sphere/level-set DEM and coupled LSDEM–SPH simulations. Three
 workspaces—Setup, Simulation and Results—separate reusable definitions,
 ordered simulation events and recorded-data analysis.
@@ -21,7 +21,7 @@ A deployed application needs no source checkout or compilation.
 These stable links follow the latest **published** release. Check the
 [release page](https://github.com/kaiqideng/FunDEMSoftware/releases/latest)
 for its version, exact asset inventory and checksums. This documentation
-describes 0.4.0; do not assume an earlier downloaded binary has these features.
+describes 0.4.1; do not assume an earlier downloaded binary has these features.
 
 The CPU ZIP is CPU-only. The separate MSVC/CUDA ZIP provides CPU, GPU and
 Hybrid and includes the selected CUDA 13.2 runtime. GPU/Hybrid require a
@@ -35,12 +35,38 @@ The CUDA package is compiled for architectures **75, 80, 86, 89, 90, 100 and
 every listed GPU. GPU visualization and the numerical compute backend are
 different capabilities.
 
-The Microsoft Store update uses package version **1.0.10.0** for application
-0.4.0, preserving the existing product identity. Preparing a local MSIX is not
+The Microsoft Store update uses package version **1.0.11.0** for application
+0.4.1, preserving the existing product identity. Preparing a local MSIX is not
 the same as submitting, certifying or publishing it in the Store; this page
 does not claim those steps are complete.
 
-## New in v0.4.0
+## New in v0.4.1
+
+- **Render View capacity:** retained indexed surfaces, shared instanced meshes
+  and reusable GPU scene buffers reduce geometry duplication and unnecessary
+  work when moving the camera or replaying frames. Full-resolution geometry,
+  independent visibility, filtering, transparency and scientific display rules
+  are retained; this does not silently reduce mesh resolution.
+- **Result preparation:** faster scalar coloring and frame-local Contact/Bond
+  lookups, fewer glyph copies and no full interaction scan when those displays
+  are hidden. These are display-side changes, not new physical models.
+- **Explicit Filter targets:** empty Objects means **None** for Clip and
+  Threshold. Clearing targets, changing Source or encountering stale references
+  never expands the selection to All.
+- **Plot corrections:** the redundant curve time-window filter is removed.
+  Event Scope selects recorded data; Property's X/Y limits change the chart
+  view without discarding table/CSV samples. Custom ranges between or outside
+  recorded samples keep the axes visible, with consistent axis-title fonts.
+- **Example staging:** Brazil nut and mixing drum no longer include an
+  artificial one-step alignment event. Original physical stages, duration
+  and motion onset are preserved. Recording remains 0.05 s per event; the
+  final stage's regular frame grid shifts by one original time step.
+
+Rendering capacity depends on visible geometry, selected scalar displays,
+memory and graphics hardware/driver. Rendering improvements are not a claim
+of a fixed particle limit, universal FPS or faster numerical integration.
+
+## Workflow introduced in v0.4.0
 
 - **Setup / Simulation / Results:** a rebuilt three-workspace desktop with
   compact common controls, transactional Configuration and contextual Property.
@@ -141,7 +167,7 @@ Read the [User Manual](USER_MANUAL.md),
 
 ## macOS history
 
-There is **no verified new macOS package for 0.4.0**. Do not use a latest-release
+There is **no verified new macOS package for 0.4.1**. Do not use a latest-release
 Mac link or assume that an older Mac application implements this new workflow.
 The historical [v0.3.42 release](https://github.com/kaiqideng/FunDEMSoftware/releases/tag/v0.3.42)
 remains available with its own version-specific behavior. See
