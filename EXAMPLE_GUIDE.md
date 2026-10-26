@@ -1,4 +1,4 @@
-# FunDEM 0.4.1 example guide
+# FunDEM 0.4.2 example guide
 
 Windows x64 — seven built-in examples and user-supplied benchmark data
 
@@ -45,6 +45,15 @@ The converted projects retain their supplied geometry, accepted particle poses,
 physical parameters, event/activation order and recording intervals. The
 presentation also retains the prior examples' per-group colors and transparency.
 Changing only Results colors, opacity, legends or camera does not alter physics.
+
+Before Run/Step, these are ordinary editable projects: change Materials, Event
+parameters, Particle Instance placement/initial motion or compute mode, then
+use Undo/Redo and Save As normally. Converted finite Particle Templates are
+accepted imported samples, so their Reconfigure changes the Name only; it does
+not regenerate their particle positions, orientations or count from a new
+lattice recipe. Single-wall templates retain their geometry/orientation
+configuration. Embedded accepted geometry remains available even if an
+original OBJ path belongs to the example author's machine.
 
 Full recomputation may take hours, especially for the cloth and high-resolution
 LS cases. Actual cost depends on the selected backend, hardware, contact count,
@@ -118,5 +127,5 @@ converting or embedding the coordinates does not remove that requirement.
   Clip guide should be omitted. FPS changes encoded timing, not physical data.
 - The packaged [User Manual](USER_MANUAL.md) explains event inheritance,
   filters, plots, DAT interchange, replay caching and troubleshooting.
-- Version 0.4.1 targets Windows x64; H.264 MP4 export uses Windows Media
+- Version 0.4.2 targets Windows x64; H.264 MP4 export uses Windows Media
   Foundation.

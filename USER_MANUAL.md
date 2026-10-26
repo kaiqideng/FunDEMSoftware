@@ -1,6 +1,6 @@
 # FunDEM User Manual
 
-Version 0.4.1 — Windows x64
+Version 0.4.2 — Windows x64
 
 FunDEM prepares, runs and inspects DEM and coupled LSDEM–SPH simulations.
 Its numerical core is [FunDEMBeta](https://github.com/kaiqideng/FunDEMBeta).
@@ -66,6 +66,12 @@ Cancel leaves accepted data unchanged. Errors and generation feedback remain
 in that dialog. Valid Property edits commit directly without generic Apply.
 Enter commits, Esc restores the uncommitted value. Units follow labels; vectors
 use X/Y/Z and orientation angles are world X, then Y, then Z in degrees.
+
+Selected non-obvious parameters have a circled-question button before the name.
+Click it for a concise explanation; hovering does not open parameter help.
+Only one help popover is shown at a time. Its text is selectable, remains
+available for locked values, and closes with Esc or a click outside. Reading
+help does not change parameter values or unlock editing.
 
 Undo/Redo retains up to 100 accepted project states. Reconfigure preserves
 object identity. References protect unsafe deletion. Same-category duplicate

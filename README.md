@@ -1,6 +1,6 @@
 # FunDEM Software
 
-FunDEM 0.4.1 is a Windows desktop application for preparing, running and
+FunDEM 0.4.2 is a Windows desktop application for preparing, running and
 analyzing sphere/level-set DEM and coupled LSDEM–SPH simulations. Three
 workspaces—Setup, Simulation and Results—separate reusable definitions,
 ordered simulation events and recorded-data analysis.
@@ -21,7 +21,7 @@ A deployed application needs no source checkout or compilation.
 These stable links follow the latest **published** release. Check the
 [release page](https://github.com/kaiqideng/FunDEMSoftware/releases/latest)
 for its version, exact asset inventory and checksums. This documentation
-describes 0.4.1; do not assume an earlier downloaded binary has these features.
+describes 0.4.2; do not assume an earlier downloaded binary has these features.
 
 The CPU ZIP is CPU-only. The separate MSVC/CUDA ZIP provides CPU, GPU and
 Hybrid and includes the selected CUDA 13.2 runtime. GPU/Hybrid require a
@@ -35,38 +35,31 @@ The CUDA package is compiled for architectures **75, 80, 86, 89, 90, 100 and
 every listed GPU. GPU visualization and the numerical compute backend are
 different capabilities.
 
-The Microsoft Store update uses package version **1.0.11.0** for application
-0.4.1, preserving the existing product identity. Preparing a local MSIX is not
+The Microsoft Store update uses package version **1.0.12.0** for application
+0.4.2, preserving the existing product identity. Preparing a local MSIX is not
 the same as submitting, certifying or publishing it in the Store; this page
 does not claim those steps are complete.
 
-## New in v0.4.1
+## New in v0.4.2
 
-- **Render View capacity:** retained indexed surfaces, shared instanced meshes
-  and reusable GPU scene buffers reduce geometry duplication and unnecessary
-  work when moving the camera or replaying frames. Full-resolution geometry,
-  independent visibility, filtering, transparency and scientific display rules
-  are retained; this does not silently reduce mesh resolution.
-- **Result preparation:** faster scalar coloring and frame-local Contact/Bond
-  lookups, fewer glyph copies and no full interaction scan when those displays
-  are hidden. These are display-side changes, not new physical models.
-- **Explicit Filter targets:** empty Objects means **None** for Clip and
-  Threshold. Clearing targets, changing Source or encountering stale references
-  never expands the selection to All.
-- **Plot corrections:** the redundant curve time-window filter is removed.
-  Event Scope selects recorded data; Property's X/Y limits change the chart
-  view without discarding table/CSV samples. Custom ranges between or outside
-  recorded samples keep the axes visible, with consistent axis-title fonts.
-- **Example staging:** Brazil nut and mixing drum no longer include an
-  artificial one-step alignment event. Original physical stages, duration
-  and motion onset are preserved. Recording remains 0.05 s per event; the
-  final stage's regular frame grid shifts by one original time step.
+- **Parameter help:** selected non-obvious fields have a shared circled-question
+  button. Click for concise English explanations, also when values are locked.
+  Help never changes parameter values or opens merely from hovering.
+- **Reliable diagnostics:** result/archive and PNG failures retain the affected
+  path and consistent English text. A failed run's cleanup cannot replace the
+  original calculation or recording error with a second write failure.
+- **Archive memory:** switching Results archives releases inactive project/SDF
+  and initial-state data. Reopening restores references without resetting the
+  existing color, opacity or other display settings.
+- **Editable examples:** all seven installed projects are exercised through
+  shared Configuration, material/mode editing, Undo/Redo and Save As paths.
+  Their physical parameters, poses and event schedules are preserved. Short
+  execution checks are not full-duration physical validation.
 
-Rendering capacity depends on visible geometry, selected scalar displays,
-memory and graphics hardware/driver. Rendering improvements are not a claim
-of a fixed particle limit, universal FPS or faster numerical integration.
+FunDEMBeta's numerical algorithms and supported project/result identities
+are unchanged. Rendering capacity still depends on scene detail and hardware.
 
-## Workflow introduced in v0.4.0
+## Workflow
 
 - **Setup / Simulation / Results:** a rebuilt three-workspace desktop with
   compact common controls, transactional Configuration and contextual Property.

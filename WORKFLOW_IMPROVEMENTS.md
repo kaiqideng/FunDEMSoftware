@@ -1,9 +1,16 @@
-# FunDEM 0.4.1 workflow guide
+# FunDEM 0.4.2 workflow guide
 
 This guide describes the rebuilt Windows application. It replaces the old
 single-workbench workflow, not the old files themselves. For complete
 operating steps read the [User Manual](USER_MANUAL.md); for supplied cases
 read the [Example Guide](EXAMPLE_GUIDE.md).
+
+Version 0.4.2 adds selective, click-open parameter help through the shared form
+template. Straightforward fields remain uncluttered; definitions of physical
+coefficients and non-obvious controls stay available even when authoring is
+locked. Switching result archives releases inactive particle/SDF references
+while preserving display choices. File failures identify the affected path in
+English, and failed cleanup cannot replace the original calculation error.
 
 ## 1. Separate definitions, execution and analysis
 
@@ -155,8 +162,8 @@ The ON-DEM Benchmark menu requires user-supplied authorized original coordinates
 No author dataset or converted payload is distributed publicly. A 100,000-step
 diagnostic is not the complete reference campaign.
 
-Application 0.4.1 targets Windows x64. Its local Store update package version
-is 1.0.11.0; packaging alone does not establish Store submission/certification.
+Application 0.4.2 targets Windows x64. Its local Store update package version
+is 1.0.12.0; packaging alone does not establish Store submission/certification.
 H.264 MP4 export uses Windows Media Foundation.
 
 There is no published headless CLI workflow in this rebuilt runtime; do not

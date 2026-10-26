@@ -1,6 +1,6 @@
 # FunDEM computation core
 
-FunDEM 0.4.1 uses [FunDEMBeta](https://github.com/kaiqideng/FunDEMBeta) as its
+FunDEM 0.4.2 uses [FunDEMBeta](https://github.com/kaiqideng/FunDEMBeta) as its
 in-process numerical computation core. The desktop application maps accepted
 project definitions to native materials, LS geometries, particles, contact
 pairs, Bonds and solver configuration. FunDEMBeta provides geometry generation,
