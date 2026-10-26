@@ -165,15 +165,6 @@ Read the [User Manual](USER_MANUAL.md),
 [Example Guide](EXAMPLE_GUIDE.md) and
 [Workflow Guide](WORKFLOW_IMPROVEMENTS.md).
 
-## macOS history
-
-There is **no verified new macOS package for 0.4.1**. Do not use a latest-release
-Mac link or assume that an older Mac application implements this new workflow.
-The historical [v0.3.42 release](https://github.com/kaiqideng/FunDEMSoftware/releases/tag/v0.3.42)
-remains available with its own version-specific behavior. See
-[macOS status](MACOS_GUIDE.md). Current documentation does not delete or
-replace historical release records. No DMG download is offered here.
-
 ## Local operation and safe downloads
 
 Simulation, replay and export operate locally. The Benchmark importer reads

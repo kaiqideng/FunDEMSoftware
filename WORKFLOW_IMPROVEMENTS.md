@@ -157,8 +157,7 @@ diagnostic is not the complete reference campaign.
 
 Application 0.4.1 targets Windows x64. Its local Store update package version
 is 1.0.11.0; packaging alone does not establish Store submission/certification.
-A new macOS package is not verified and MP4 export is Windows-only. Historical
-macOS releases retain their own workflow and documentation.
+H.264 MP4 export uses Windows Media Foundation.
 
 There is no published headless CLI workflow in this rebuilt runtime; do not
 apply old FunDEM-cli commands or external-DLL instructions to it. Public

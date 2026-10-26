@@ -15,9 +15,8 @@ package offers CPU, GPU and Hybrid; GPU modes also need a compatible NVIDIA
 device and driver. An unavailable backend is reported, not silently replaced
 with CPU. Do not mix runtime DLLs from different releases or compiler kits.
 
-This release targets Windows x64. A new macOS package has not been verified;
-older Mac downloads do not establish 0.4.1 compatibility. H.264 MP4 encoding
-currently uses Windows Media Foundation and is Windows-only.
+This release targets Windows x64. H.264 MP4 encoding uses Windows Media
+Foundation.
 
 **File > New Project** offers **DEM** for Sphere/LS solids and **LSDEM + SPH**
 for LS solids and fluid. The latter does not support DEM spheres. The left

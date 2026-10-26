@@ -118,5 +118,5 @@ converting or embedding the coordinates does not remove that requirement.
   Clip guide should be omitted. FPS changes encoded timing, not physical data.
 - The packaged [User Manual](USER_MANUAL.md) explains event inheritance,
   filters, plots, DAT interchange, replay caching and troubleshooting.
-- Version 0.4.1 is documented for Windows x64. No verified new macOS package
-  or cross-platform MP4 support is implied by older releases.
+- Version 0.4.1 targets Windows x64; H.264 MP4 export uses Windows Media
+  Foundation.
