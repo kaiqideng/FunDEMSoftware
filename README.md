@@ -1,89 +1,164 @@
 # FunDEM Software
 
-FunDEM Workbench is a desktop application for Windows and Apple Silicon macOS, for preparing, running, and reviewing particle-based simulations. DEM and SPH solving default to CPU, with GPU-accelerated visualization. A separate Windows CUDA package also supports GPU and Hybrid solving on compatible NVIDIA hardware. The packages include the FunDEMBeta computation core; users do not need to compile anything.
+FunDEM 0.4.0 is a Windows desktop application for preparing, running and
+analyzing sphere/level-set DEM and coupled LSDEM–SPH simulations. Three
+workspaces—Setup, Simulation and Results—separate reusable definitions,
+ordered simulation events and recorded-data analysis.
 
-This public repository distributes the packaged application and English documentation. The Workbench application source remains private. Its computation core is available separately in the [FunDEMBeta source repository](https://github.com/kaiqideng/FunDEMBeta); users of the application package do not need to download or compile it.
+This public repository distributes reviewed application packages and English
+user documentation. The desktop application source remains private. The
+numerical computation core is separately open source:
+[FunDEMBeta](https://github.com/kaiqideng/FunDEMBeta), under Apache License 2.0.
+A deployed application needs no source checkout or compilation.
 
 ## Download
 
-[Download the latest Windows x64 CPU package](https://github.com/kaiqideng/FunDEMSoftware/releases/latest/download/FunDEM-Workbench-Windows-x64.zip)
+- [Latest Windows x64 CPU ZIP](https://github.com/kaiqideng/FunDEMSoftware/releases/latest/download/FunDEM-Workbench-Windows-x64.zip)
+- [Latest Windows x64 CUDA ZIP](https://github.com/kaiqideng/FunDEMSoftware/releases/latest/download/FunDEM-Workbench-Windows-CUDA-x64.zip)
+- [Matching English user manual](https://github.com/kaiqideng/FunDEMSoftware/releases/latest/download/USER_MANUAL.md)
+- [Seven-example guide](https://github.com/kaiqideng/FunDEMSoftware/releases/latest/download/EXAMPLE_GUIDE.md)
 
-[Download the latest Windows x64 CUDA package](https://github.com/kaiqideng/FunDEMSoftware/releases/latest/download/FunDEM-Workbench-Windows-CUDA-x64.zip)
+These stable links follow the latest **published** release. Check the
+[release page](https://github.com/kaiqideng/FunDEMSoftware/releases/latest)
+for its version, exact asset inventory and checksums. This documentation
+describes 0.4.0; do not assume an earlier downloaded binary has these features.
 
-[Download the matching English user manual](https://github.com/kaiqideng/FunDEMSoftware/releases/latest/download/USER_MANUAL.md)
+The CPU ZIP is CPU-only. The separate MSVC/CUDA ZIP provides CPU, GPU and
+Hybrid and includes the selected CUDA 13.2 runtime. GPU/Hybrid require a
+compatible NVIDIA GPU and driver, not a local CUDA toolkit. Hybrid runs
+Sphere/SPH on GPU and LS on CPU; GPU runs both participating families on GPU.
+Requested device modes are never silently replaced by CPU.
 
-These stable links follow the latest published release. See the [latest release page](https://github.com/kaiqideng/FunDEMSoftware/releases/latest) for the current version and available downloads.
+The CUDA package is compiled for architectures **75, 80, 86, 89, 90, 100 and
+120**. The physical device used for release execution checks is an RTX 5060
+(sm_120); the architecture list is not a claim of hardware verification on
+every listed GPU. GPU visualization and the numerical compute backend are
+different capabilities.
 
-This documentation describes v0.3.42. Use the matching verified platform package from its release page; the latest links change only after the release assets are published. Older packages may not include the CUDA backend, native ON-DEM benchmark, or control-display fixes described here.
+The Microsoft Store update uses package version **1.0.10.0** for application
+0.4.0, preserving the existing product identity. Preparing a local MSIX is not
+the same as submitting, certifying or publishing it in the Store; this page
+does not claim those steps are complete.
 
-The default Windows ZIP is CPU-only. The separate MSVC/CUDA ZIP provides CPU,
-GPU and Hybrid modes and includes its CUDA 13.2 runtime; running it requires a
-supported NVIDIA GPU and an NVIDIA driver compatible with that runtime, not a
-CUDA toolkit installation. Hybrid keeps LS particles on CPU and advances spheres
-or SPH on CUDA; GPU advances both participating particle families on CUDA.
-Neither mode silently falls back to CPU. Keep each package's complete runtime
-folder together rather than mixing libraries from the two Windows ZIPs.
+## New in v0.4.0
 
-The CUDA profile targets native architectures `75`, `80`, `86`, `89`, `90`, `100`
-and `120`. Hardware execution checks cover an RTX 5060 (`sm_120`), not every GPU
-represented by those compilation targets. Rendering acceleration is independent
-of the chosen numerical backend.
+- **Setup / Simulation / Results:** a rebuilt three-workspace desktop with
+  compact common controls, transactional Configuration and contextual Property.
+- **Reusable definitions:** unified Materials, LS Geometries generated by the
+  core, and centered Particle Templates separated from material-assigned
+  Particle Instances.
+- **Ordered Events:** calculated particles, material responses and Bond state
+  carry forward; prescribed motion and force modules are event-local.
+- **Native execution:** CPU/GPU/Hybrid Run, Pause, Step and Reset, including
+  regular SPH Blocks and true outlet-driven Jets for LSDEM + SPH.
+- **Recorded results:** immutable particle/Contact/Bond frames, asynchronous
+  replay and a bounded decoded-frame playback cache.
+- **Independent displays:** particle, Contact and Bond tree visibility,
+  cylinder/disk interaction glyphs, proportional value sizing and movable
+  legends. Hidden particles do not hide their interactions.
+- **Visual filters:** Clip and Threshold for particles, Contacts or Bonds,
+  using the same recorded quantities as Plot. Selected Clip planes can be
+  inspected directly in Render View.
+- **Custom Plot:** Time history, XY curve, Scatter and Histogram, explicit
+  object selection, manual Reload, data tables and matching CSV export.
+- **Interchange:** DAT solid-instance import/export with materials, LS meshes,
+  poses and per-particle velocities/angular velocities.
+- **Images and animation:** high-resolution PNG and Windows H.264 MP4 with
+  accepted camera, colors, legends and scene overlays.
+- **Seven examples:** converted projects open as separate writable copies,
+  without changing installed inputs or automatically starting a run.
 
-### macOS Apple Silicon
-
-- [macOS Apple Silicon ZIP](https://github.com/kaiqideng/FunDEMSoftware/releases/latest/download/FunDEM-Workbench-macOS-arm64.zip)
-- [English macOS guide](https://github.com/kaiqideng/FunDEMSoftware/releases/latest/download/MACOS_GUIDE.md)
-
-The macOS target requires an Apple Silicon Mac running macOS 14 or later. Simulation runs on the CPU; this package does not include CUDA or support CUDA solver execution. Visualization uses the Mac's graphics hardware. Intel Macs are not included in this distribution.
-
-## New in v0.3.42
-
-- **Windows CUDA package** provides CPU, GPU and Hybrid solving separately from the default CPU Windows ZIP and CPU-only Apple Silicon package. Bundled particle-force modules include native CUDA implementations where applicable; requested device execution is never silently replaced by CPU.
-- **Periodic Boundary** handling has dedicated CPU/CUDA regressions for all seven nonempty X/Y/Z masks, shifted domains, unequal radii, changing populations, face/edge/corner contacts and native-contact preservation. CUDA workspace reuse and destruction preserve in-flight work and stream ordering.
-- **Locked check boxes remain readable**: checked controls retain a clear dark-gray check mark while calculation prevents model edits. Their values and lock rules are unchanged.
-- **Native ON-DEM benchmark** parameters follow ordinary editing rules before Run or after Reset instead of being permanently locked. Editing imported values creates a user variant, not a verified original reference calculation.
-- New ON-DEM imports default to **1,000 output steps**, approximately **0.072 simulated seconds** at their default time step. Existing saved projects retain their chosen intervals. GPU/Hybrid Live can follow the scheduled output without extra between-output solver snapshots; live time and step counters continue independently.
-
-The seven packaged examples, legend range modes, Contacts Eye control, protected run directories, saved-run archives, monitored solid-energy export and `FunDEM-cli` workflow remain available. These Workbench changes do not change the FunDEMBeta contact laws or integration algorithms. Ordinary projects retain schema 8 and stable object references; the explicit ON-DEM benchmark uses schema 9 and independent application-owned contact and periodic-boundary modules. The benchmark importer verifies the author's original coordinates, which are not bundled; it does not run automatically. Its 100,000-step diagnostic is not the full-duration reference validation, and CPU/GPU long-time particle trajectories are not asserted to be identical. Model estimates and regression checks are not physical validation or convergence proofs. Open Results accepts saved run archives for playback, not arbitrary raw run directories; archive checksums detect accidental corruption and are not cryptographic authentication.
-
-See the [user manual](USER_MANUAL.md), [seven-example guide](EXAMPLE_GUIDE.md), and [workflow guide](WORKFLOW_IMPROVEMENTS.md) for operation and current limits. Project filenames and asset links in the example guide refer to the examples shipped inside the runtime, not private application source. Read the bundled guide in its installed examples folder to follow those relative links.
+The desktop calls FunDEMBeta for geometry/SDF/mass preparation, contact
+detection, constitutive response and native DEM/SPH dynamics. It does not
+implement a second calculation core. Read the
+[core attribution](FUNDEM_CORE.md) and [third-party notices](THIRD_PARTY_NOTICES.md).
 
 ## Start on Windows
 
-1. Download and extract `FunDEM-Workbench-Windows-x64.zip` for CPU solving, or `FunDEM-Workbench-Windows-CUDA-x64.zip` for a compatible NVIDIA system.
-2. Keep the extracted directory intact.
-3. Open the extracted `Windows` folder and run `FunDEM.exe`.
-4. Read `Windows/docs/USER_MANUAL.md` in the extracted package, or download the matching manual above, for project setup, simulation, playback, export, and post-processing.
-5. Choose **File > Examples** to inspect a bundled model. This only opens it; press **Run** explicitly when ready. Save edits with **File > Save As...** in a writable user-owned folder.
+1. Download the CPU ZIP, or the CUDA ZIP for a compatible NVIDIA system.
+2. Extract the complete archive. Keep its Windows folder, libraries, plugins,
+   built-ins, documentation and licenses together.
+3. Run **Windows/FunDEM.exe**. No compiler, SDK or separate Qt installation
+   is needed for a deployed package.
+4. Choose **File > New Project**, or
+   **File > Open Project > Examples** to inspect a converted example.
+5. Use **Save As** to retain a user-owned project, review Simulation Execution
+   and Output, then press Run explicitly.
+6. Open Results for committed saved frames, visual analysis and export.
 
-The seven bundled examples cover Gomboc self-righting, a physically interlocked chain, bonded cloth falling onto a box, dam-break flow around a square column, Brazil-nut segregation, superellipsoids in a rotating drum, and irregular particles in a cylindrical mold. These are demonstration projects; their presence is not a claim of experimental validation.
+Do not mix runtime files from the CPU/CUDA ZIPs or an older application.
+Keep projects and results in a writable user-owned location; example opens
+create separate working copies. Each fresh run reserves a new result directory.
+A missing input or failed open leaves the previously accepted project intact.
 
-In the Windows x64 package, keep `FunDEM.exe`, `FunDEM-cli.exe`, the runtime libraries, `platforms`, `force-modules`, example assets, documentation, and licenses together. The package includes the required meshes and compiled particle-force modules; no compiler, SDK, or separate Qt installation is needed. A missing installed example warns without replacing the current project.
+Once Run/Step begins, all Setup/Simulation editing stays locked until Reset,
+including while Paused and after Completed or Failed. Read-only navigation
+and independent Results editing remain available. Run after completion starts
+fresh from unchanged authored initial data, not from the previous final frame.
+Reset does not delete saved archives.
 
-For a Microsoft Store installation, launch FunDEM from Start and use the same **File > Examples** menu. Installed resources are read-only. Relative result roots resolve under `Documents/FunDEM`; portable Windows roots resolve beside the executable. Each fresh calculation creates its own child directory, and explicit absolute output paths remain unchanged.
+## Examples and benchmark
 
-From the extracted `Windows` folder, the headless check is:
+The seven examples are Gömböc self-righting, interlocked chain, cloth box drop,
+dam break around a square column, Brazil nut segregation, superellipsoid mixing
+drum and random-shape particle column. See the
+[example guide](EXAMPLE_GUIDE.md) for opening, staged runs, preserved settings
+and workload warnings. Full cases may take hours; demonstration availability
+and short-run checks do not establish calibration, convergence or experimental
+validation.
 
-```powershell
-.\FunDEM-cli.exe --check .\examples\gombocSelfRighting.fundem.json
-```
+The ON-DEM periodic-shear entry remains under
+**File > Open Project > Benchmarks**, but the author's coordinate dataset
+and converted payload are **not distributed**. Users supply their own
+authorized original input. The application verifies that input, creates a
+working project and does not run automatically. Its 100,000-step native-law
+diagnostic is not the full 200-million-step reference campaign, nor an exact
+trajectory/energy agreement claim.
 
-Use `--run project.fundem.json [--steps N --output root --archive newdir]` for an explicit calculation. The archive destination must be new. See the [workflow guide](WORKFLOW_IMPROVEMENTS.md#headless-checks-and-runs) for exit codes, interruption behavior, and argument limits.
+## Files and current boundaries
 
-**Settings > Display Storage** separates the **Viewport** presentation budget from the **Playback Cache** budget. Playback defaults to 256 MiB of recently used frames with shared LS geometry reuse; it can be adjusted or turned off without deleting the recorded disk history. These budgets do not limit total application memory. See the user manual for available settings and memory tradeoffs.
+- Supported existing Next projects keep the technical suffix
+  .fundem-next.json, marker FunDEM-Next-Preprocessor and schema 3. Result
+  archives keep FunDEM-Next-Results and their supported frame versions.
+  Formal branding does not change these user-file identifiers.
+- Legacy Software schema-10 projects and old archives are not generally
+  auto-migrated. Keep the older application for those files; do not relabel
+  JSON schemas to pretend to convert them. The seven examples were explicitly
+  converted.
+- Current recording writes native result archives, not VTU or energy.dat.
+  Plots read recorded solid-system energy without enabling those file outputs.
+- DAT is solid-instance interchange, not an exact solver checkpoint; it does
+  not restore SPH or Contact/Bond histories.
+- Results queries and rendering do not run the solver. Plot object selection
+  is explicit; Reload is manual. Playback cache defaults to 512 MiB of reusable
+  decoded frames, not a limit on total application/GPU memory.
+- Public packages contain no desktop source, SDK, tests, private design
+  documents or ON-DEM coordinate data.
 
-## Start on macOS
+Read the [User Manual](USER_MANUAL.md),
+[Example Guide](EXAMPLE_GUIDE.md) and
+[Workflow Guide](WORKFLOW_IMPROVEMENTS.md).
 
-1. Download the macOS ZIP above, extract it, and move the complete `FunDEM.app` into Applications.
-2. Open `FunDEM.app`. Keep its contents intact; users do not need to compile the application or install CUDA.
-3. In the matching v0.3.42 app, use **File > Examples** to open a bundled project without starting calculation. Save edits with **File > Save As...** outside the application bundle.
-4. Read the [macOS guide](MACOS_GUIDE.md). The application bundle also contains `Contents/Resources/docs/USER_MANUAL.md`, the workflow guide, and the seven projects in `Contents/Resources/examples`; Finder's **Show Package Contents** reveals these folders.
-5. Check the Output directory before running a project. Relative output names resolve under `Documents/FunDEM` on macOS; an explicit absolute output path remains unchanged, so projects transferred from another computer may need a different output directory.
+## macOS history
 
-The macOS package uses an **ad-hoc signature**. It is **not signed with an Apple Developer ID and has not been notarized by Apple**. If Gatekeeper blocks the first launch, proceed only if you trust the download and have verified its source: first try opening the app, then follow Apple's application-specific **System Settings → Privacy & Security → Open Anyway** procedure. See [Apple's official instructions](https://support.apple.com/en-us/102445). Do not globally disable Gatekeeper or other macOS security protections. If macOS reports malware or a damaged application, stop and obtain a verified package instead of bypassing the warning.
+There is **no verified new macOS package for 0.4.0**. Do not use a latest-release
+Mac link or assume that an older Mac application implements this new workflow.
+The historical [v0.3.42 release](https://github.com/kaiqideng/FunDEMSoftware/releases/tag/v0.3.42)
+remains available with its own version-specific behavior. See
+[macOS status](MACOS_GUIDE.md). Current documentation does not delete or
+replace historical release records. No DMG download is offered here.
 
-## Offline operation and platform security
+## Local operation and safe downloads
 
-Built-in simulation, visualization, playback, and file export operate locally. They do not require an online account, online activation, an incoming network port, or a firewall exception. Third-party force modules and user-selected network file locations can have their own network requirements.
+Simulation, replay and export operate locally. The Benchmark importer reads
+user-selected data; it does not automatically fetch the author's coordinates.
+Verify the download source and release checksums, and keep the complete package.
+An unsigned portable download may trigger Windows application-reputation checks;
+local MSIX creation is not Store certification or trusted standalone signing.
+Do not disable antivirus, a firewall or platform security protections to run
+the application. Follow your organization's software policy if execution is
+blocked.
 
-Network firewalls are separate from application trust checks. The Windows application is currently unsigned, so SmartScreen or Smart App Control may warn or block it; the Mac signature limitations are described above. No claim is made that every antivirus product or managed-computer policy will allow execution. Do not disable your firewall or antivirus to run FunDEM. Verify downloads from this repository, and consult your administrator if your organization's policy blocks the application. Microsoft notes that even a newly signed Windows release can receive a reputation warning; see its [SmartScreen guidance](https://learn.microsoft.com/en-us/windows/apps/package-and-deploy/smartscreen-reputation).
+The license texts and component notices shipped with each actual package govern
+its dependencies. FunDEMBeta's Apache-2.0 license does not make all desktop
+application source or third-party components available under that same license.

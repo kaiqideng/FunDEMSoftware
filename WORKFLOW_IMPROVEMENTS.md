@@ -1,153 +1,152 @@
-# Model checks, complete runs, and saved playback
+# FunDEM 0.4.0 workflow guide
 
-This guide describes the workflow implemented in the current source tree. It extends the existing Project, Properties, View, and Console & Monitor layout with model reports, protected run directories, saved-run playback, monitored solid-energy export, and a headless command. These changes are in the Workbench application; the FunDEMBeta contact laws, solvers, and integration algorithms have not been changed.
+This guide describes the rebuilt Windows application. It replaces the old
+single-workbench workflow, not the old files themselves. For complete
+operating steps read the [User Manual](USER_MANUAL.md); for supplied cases
+read the [Example Guide](EXAMPLE_GUIDE.md).
 
-## v0.3.42 maintenance and distribution profiles
+## 1. Separate definitions, execution and analysis
 
-- Disabled check boxes retain a clearly visible dark-gray check mark when a
-  calculation locks model editing. Checked values and lifecycle locks are
-  unchanged; the shared control template fixes contrast rather than changing data.
-- Periodic-boundary regression coverage compares core-plus-seam contacts against
-  an independent all-pairs/all-images oracle for all seven nonempty axis masks,
-  shifted domains, unequal radii, face/edge/corner seams, repeated wrapping,
-  fixed-particle ordering and changing particle counts. Additional lifecycle
-  checks cover moving infinite-mass walls and persistent contact history across
-  interior/seam transitions. This is focused implementation checking, not a
-  completed physical validation of the full ON-DEM reference benchmark.
-- The default LLVM-MinGW Windows ZIP and Apple Silicon package remain CPU-only.
-  A separate MSVC/CUDA Windows ZIP provides CPU, GPU and Hybrid with the CUDA
-  13.2 runtime bundled. Running it requires a supported NVIDIA GPU and a driver
-  compatible with that runtime, not a CUDA toolkit installation. The profiles
-  are separate runtime sets and must not be mixed. Packaging and source updates
-  do not imply Microsoft Store approval.
+| Workspace | Owns | Does not do |
+| --- | --- | --- |
+| Setup | Materials, LS Geometries and centered Particle Templates | Assign event state, insert native particles or run a solver |
+| Simulation | Execution/output settings and ordered Events with Particle Instances, pairs, Bonds, Wall motion, force modules and SPH | Replace integrated old particles with template initial data |
+| Results | Immutable recorded definitions/frames and separate display, filters and plots | Edit physical records, recalculate contacts or resume an exact solver checkpoint |
 
-## Check a project before calculation
+Configure expensive geometry/template generation in transactional dialogs.
+Add or Apply publishes accepted data; Cancel/failure does not leave partial
+objects. Common Property edits apply when valid, without a generic Apply.
+Stable IDs, reference-safe deletion and Undo/Redo preserve object relationships.
 
-Choose **Simulation > Check Model...** (`Ctrl+F5`). The report uses the shared report dialog and contains:
+## 2. Build a case in dependency order
 
-- **Issues**: errors, warnings, and information, including the owning stable object ID and parameter key. Double-click a row to select the owning object; project-wide issues select Loop Parameters, SPH Parameters, or Output.
-- **Run & Resources**: particle counts, estimated SDF nodes, current and target step/time, expected new output frames, and a particle-VTU storage estimate.
-- **Geometry**: available source mesh checks, surface counts, and estimated grid size, including the sphere-contact padding requirement.
-- **Activation & Motion**: Packing/source activation and prescribed-motion start in both steps and seconds. An SPH Jet's length/speed estimate describes its initial column transit time, not a configured injection duration.
-- **Material Pairs**: the core's material ownership and combination rules, including mixed Sphere/LS contacts. **Normal stiffness parameter** and **Sliding stiffness parameter** distinguish direct stiffness (N/m, Sphere/Sphere or Sphere/LS) from stiffness per unit area (N/m³, LS/LS). The latter is not the assembled contact stiffness until the contact-node area is applied. The exported report retains these names and units. Damping also depends on effective mass and, for LS contacts, patch area. The preview is limited to the first 512 pairs; input validation still covers all materials.
+1. Choose DEM or LSDEM + SPH in New Project.
+2. Define unified finite/Wall Materials and applicable LS Geometries.
+3. Generate Particle Templates without materials, event placement or motion.
+4. Add ordered Events and instantiate templates with material and initial state.
+5. Define required unordered Contact Material Pairs, including same-material
+   combinations. Use a later event's explicit Override/Revert for local changes.
+6. Add Bonds, event-local prescribed Wall motion and force modules as needed.
+7. For LSDEM + SPH, set shared SPH Parameters and add regular Blocks or true Jets.
+8. Check the compute mode, writable output root, event steps and recording interval.
 
-**Export Report...** saves the report as text. The check reads project definitions and available source data without constructing the solver or generating an SDF. It checks references, checkpoint consistency, enabled force-library paths, counts, schedules, and numeric inputs. Basic source geometry diagnostics do not constitute a complete mesh-quality assessment.
+Zero-volume LS geometry requires Wall material and cannot acquire a made-up
+finite mass. Wall geometry's skipped physical integration is not a numeric
+zero-volume measurement of a finite material. Random LS placement uses bounded,
+nonzero-volume geometries and conservative sphere non-overlap.
 
-Run and Step invoke this check before preparation. Errors prevent preparation. New warnings open the same report and require **Run Anyway**; Cancel or locating an issue leaves the solver stopped. Unchanged warnings already accepted in the same model do not prompt on every Resume or Step. Model edits, model Undo/Redo, or different warning content require review again. The desktop caches the report for the current project and run context. Model changes invalidate it; a changed current step/time, target, or next output boundary requires a new report. Display-only changes do not require a new model check. This is a preparation check, not a repeated scan in every solver step.
+## 3. Preserve event meaning
 
-Storage numbers are estimates for particle VTU output, not a promise of total disk use. Contacts, Bonds, checkpoints, geometry resources, temporary playback storage, and archive copies add costs. The Sphere time-step heuristic and configured-state SPH limits are guidance, not convergence tests or guaranteed LS/Bond stability limits.
+Existing solid particles retain computed position, orientation, velocity and
+angular velocity across events. Only new instances receive initial authored
+state. Existing Bonds retain deformation/history, damage and broken status.
+Effective material-pair values carry forward with explicit local overrides.
 
-## Run directories and complete frames
+Prescribed motion and force modules are event-local; add them again if needed
+later. SPH sources carry forward but inherited source definitions are not
+editable in later events. Owned objects appear once under their original
+event; the absence of duplicate rows does not remove cumulative particles.
 
-**Steps this run** is the requested number of additional DEM steps. The existing JSON key remains `solver.totalStepCount`. The toolbar shows **Run** for the first round, **Resume** for a paused round, and **Continue** after completion. Resume keeps the existing target; Continue adds the configured number of steps from the current state. The Monitor distinguishes **Cumulative step** from **Round target step**. Its **Value · Live** or **Value · Recorded** header identifies the source of the displayed statistics; browsing a frame does not rewind the solver or its round target.
+Do not replace staged filling/settling with one simultaneous addition or turn
+on wall vibration/rotation in an earlier event merely to shorten a demonstration.
 
-Preparation uses truthful stage messages and elapsed time. Percentages appear only when an actual completed/total count exists. Cancel is available during temporary geometry/model preparation. At the atomic installation boundary, cancellation is sealed: the status explains that finalization must finish safely. Solver initialization is not forcibly interrupted. A canceled temporary preparation keeps the old session; a failure after installation retains the failed session and its lock until Reset. This is an application workflow change, not a change to the numerical algorithm.
+## 4. Execution and locking
 
-**Analysis > Loop Parameters** contains time stepping and gravity. SPH projects also have **Analysis > SPH Parameters**, with static **Fluid Properties** and **Numerical Parameters** sections. Output settings remain under **Output**. The bottom **Console & Monitor** dock contains operation messages and monitoring; it is not another file-output settings page. Visual controls remain under **Post-processing**. File provides saved-run playback and monitored solid-energy export.
+CPU is default. The CPU ZIP has no CUDA execution. The separate Windows CUDA
+ZIP supports CPU, GPU and Hybrid; Hybrid runs Sphere/SPH on GPU and LS on CPU.
+Both device modes require compatible hardware/driver, and never silently
+substitute CPU. Compiled GPU targets do not establish testing on every device.
 
-The configured output directory is a result root. Every new calculation reserves a unique `run-<timestamp>-<suffix>` child. Existing runs are retained. A continuation uses the same child and keeps cumulative frame numbers, steps, and time. The core writes only inside that child's private `.pending` directory.
+Run starts the ordered native session; Pause waits at a safe boundary; Run
+resumes that same session. Step advances one DEM step. Once Run/Step begins,
+Setup/Simulation Add controls and all editable Property controls remain locked
+through Paused, Completed and Failed until Reset. Read-only navigation and
+Results editing stay available.
 
-Each output event prepares a complete numbered bundle before publishing it:
+Run after completion creates a new session/archive from unchanged authored
+initial data, not the old final state. Reset releases authoring and discards
+runtime state without deleting recorded results. A displayed snapshot is not
+a native restart checkpoint.
 
-```text
-result-root/
-  run-<timestamp>-<suffix>/
-    project.json
-    run-manifest.json
-    energy.dat
-    <particle-family>.pvd
-    frames/
-      000000/
-        frame.json
-        energy.dat
-        <scientific output>.vtu
-        history/                 playback, checkpoint, and shared-resource references
-      000001/
-        ...
-    history-resources/           immutable resources shared by frame bundles
-    .pending/                    unfinished core output; not a complete result frame
-```
+## 5. Recording and playback
 
-VTU, the frame's energy row, playback records, and the full checkpoint are closed before the frame bundle is renamed into place. The master manifest describes the committed prefix with explicit `frame`, `step`, and `time`. Playback metadata is published only after the external output transaction succeeds. Shared geometry uses hard links when available, with copying as a fallback.
+Output chooses a shared writable root; each event supplies a recording interval.
+Fresh runs reserve new child directories and do not erase old results.
+Recording currently produces native particle/Contact/Bond archives, not VTU
+or energy.dat. Keep the run's manifest, project snapshot and frame files together.
 
-PVD collections use recorded physical timestamps and point to complete VTUs. Root `energy.dat` retains the scientific solid-system series; each bundle also contains its frame's row. Solid energy excludes SPH-fluid energy. Live monitored energy remains a separate, optional series and can include solver states between output frames.
+Results opens saved frames without searching neighbors or rerunning physical
+laws. Playback uses saved physical times. The accepted n / N counter stays
+visible during asynchronous reads; a failed read retains the last valid frame.
 
-An interrupted or failed run leaves its completed scientific bundles and manifest on disk. A failure between sidecar publication and the master commit can leave an extra complete bundle or sidecar entry beyond the master prefix. The saved-run exporter rebuilds PVD and root energy output from its authoritative committed history prefix. **Automatic Open Results recovery from a raw run directory has not been implemented**: Open Results accepts the saved archive format below, not an arbitrary `run-*` directory. Inspect retained raw VTUs/metadata directly when an archive was not saved.
+View > Playback cache... controls bounded decoded-frame LRU reuse, default
+512 MiB, zero off. It is not a total process/GPU memory limit; currently
+displayed and pending frames are outside its estimate. Clear cache does not
+delete archive files. A draft budget applies only on Apply; Cancel does not
+undo an explicitly executed Clear.
 
-## Save a run and reopen it
+## 6. Independent display and analysis
 
-After at least one complete frame exists, choose **File > Save Run...** and select a new directory, conventionally `simulation.fundem-run`. Saving pauses calculation at a safe boundary and exports the committed prefix. The destination must not already exist. Files are staged in a sibling directory, validated, and published by a directory rename; cancellation or failure does not publish a partial destination.
+Particles initially show; Contacts/Bonds initially hide. Their Work Tree
+checkboxes and opacity are independent. Hidden particles do not hide their
+interactions. Results starts with recorded colors/opacity and owns later edits
+separately from Simulation.
 
-The archive contains:
+Contact/Bond cylinders or point-normal disks use Display size as maximum
+radius from their smaller endpoint radius. Scale by value distributes radius
+proportionally below that cap using the active Legend range; zero values have
+no glyph. Color, glyph size and filters do not change contact area or physics.
 
-```text
-simulation.fundem-run/
-  project.json                   frozen initial run project; mesh sources embedded
-  manifest.bin                   archive version, provenance, frame index, and checksums
-  history/
-    frame-<index>.bin
-    checkpoint-<index>.bin
-    grids-<resource>.bin
-    surfaces-<resource>.bin
-  scientific/                    completed VTU/DAT output and regenerated PVD/energy sidecars
-```
+Clip/Threshold target selected particle, SPH, Contact or Bond populations.
+Empty Filter Objects intentionally means all available targets. Selected Clip
+guides are visual aids, not automatic enable switches or additions to Fit bounds.
+Filters change scene/capture visibility, not Plot, DAT or archive records.
 
-The archive preserves all recorded render frames, full-precision checkpoints, shared immutable geometry, Packing/source/Bond ID ranges, application/core version information, saved random seeds, and collected monitored solid-energy samples through the last committed frame. Project geometry definitions and triangle mesh data are embedded so playback does not depend on the original mesh file. External particle-force module binaries, SDK files, and implementation source are **not** embedded. Module references remain project metadata; read-only opening does not compile a solver or load those modules. Restarting a model that uses a module still requires a compatible installed library.
+Plot instead requires explicit nonempty valid objects for every applicable
+X/Y/data query. Scope chooses Events; each curve defines its data and ranges.
+Reload is manual rather than triggered by playback or every incoming frame.
+The accepted chart, data table and CSV share the same samples. Compatible units
+are required on shared axes. Solid-system energy does not include fluid energy.
 
-The current archive manifest version is 1 and its binary history record version is 4. Readers reject unsupported versions, incompatible byte order, missing records, truncation, changed project bytes, and invalid checksums before installing the results. The default source fingerprint is explicitly labeled `fnv1a64:<hex>`; file/record checksums also use non-cryptographic FNV-1a. They detect accidental corruption and are not authentication or protection against intentional modification. There is no migration reader for arbitrary future or older binary archive formats.
+Legend supports History, Current frame and Custom. Current excludes masked
+samples; History retains original archived scope without re-scanning against
+filters. Enabling a filter never silently changes the range mode.
 
-Archive copying, checksums, project reads, and history decoding check cancellation between chunks. Declared manifest text/count lengths are checked against their limits and remaining encoded bytes before allocation. The latest frame is prepared on the loading worker, so installation does not reread a large archive record on the desktop thread. A canceled open keeps the previous document and scene; a canceled save leaves the destination absent. Geometry generation may still need to finish its current underlying construction stage before cancellation is acknowledged.
+## 7. Interchange and export
 
-Choose **File > Open Results...** and select the archive directory. Validation and cancelable scene preparation complete before replacing the current document. The reopened session is results-only: playback, display settings, solid-energy export, frame export, and saving another archive are available; Run and Step are disabled. Playback uses the same bounded cache as live recordings. Closing or replacing this session does not delete the archive files.
+DAT import/export preserves self-contained solid-instance material, geometry,
+pose/radius and per-particle velocity/angular velocity. It is not a complete
+simulation restart format: SPH and Contact/Bond history are not restored.
+Export includes the complete instance even if its display is hidden or filtered.
 
-Two actions have different meanings:
+PNG and Windows H.264 MP4 re-render accepted presentation at the chosen
+resolution, not screen-capture the surrounding application. They include enabled
+legends, the selected box-size overlay and selected Clip guide; choose another
+node to omit that guide. FPS does not add physical time-step information.
+Cancellation/failure does not overwrite a pre-existing destination with a
+partial export.
 
-- **Reset** releases the current playback session and returns to the archive's saved initial project for authoring/calculation. It does not restart from the displayed final frame or delete the saved archive. Any checkpoint restrictions already present in that initial project still apply.
-- **File > Export Frame as Project...** creates a restart project from the selected recorded state and chosen Packings/sources. The checkpoint retains source frame provenance, while a newly compiled restart begins at local step/time zero with rebased schedules. Use this when calculation should continue from a particular recorded frame.
+## 8. Compatibility, examples and release status
 
-During a prepared run, scene geometry, calculated geometry summaries, and Surface & SDF Preview use the frozen run definitions rather than rereading an external OBJ that may have changed or disappeared. Authoring-time cache lookups still verify the current definition/source.
+Supported Next technical formats remain unchanged: project schema 3 with
+FunDEM-Next-Preprocessor and versioned FunDEM-Next-Results archives. Legacy
+Software schema-10 projects and archives are not generally auto-migrated.
+Do not edit format markers to bypass validation; use an explicitly converted
+example or the appropriate older application.
 
-Temporary live history is still removed after Reset/project replacement when active readers release it, and on normal shutdown. Save a run before discarding that history if all frames and scientific files must remain reopenable.
+Seven converted examples open as writable copies. They preserve supplied
+parameters, poses and event order; their presence is not physical validation.
+The ON-DEM Benchmark menu requires user-supplied authorized original coordinates.
+No author dataset or converted payload is distributed publicly. A 100,000-step
+diagnostic is not the complete reference campaign.
 
-The four save/export commands have different scopes:
+Application 0.4.0 targets Windows x64. Its local Store update package version
+is 1.0.10.0; packaging alone does not establish Store submission/certification.
+A new macOS package is not verified and MP4 export is Windows-only. Historical
+macOS releases retain their own workflow and documentation.
 
-| Command | Preserves | Does not preserve |
-|---|---|---|
-| Save Project | Model definitions, references and display settings | The live calculation or its recorded playback history |
-| Save Run | Committed frames, restart checkpoints and scientific results | A running calculation worker |
-| Export Frame as Project | One selected recorded state and its rebased restart schedule | The complete animation/history |
-| Save Animation | A presentation video or animated image | Restart checkpoints or authoritative numerical data |
-
-Closing or replacing a live session with frames not yet archived offers Save Run, Discard or Cancel. Closing a running session first pauses it so the check uses the final committed prefix. Discard releases in-memory playback only; existing scientific output and saved archives are never deleted. A failed or canceled Save Run does not proceed with replacement. Reset retains its separate explicit confirmation.
-
-Display-only edits and their Undo/Redo remain available after calculation starts, including while playing recorded frames. They do not stop playback or rebuild a solver. History remains chronological: a locked model/document command is a barrier, not an entry that Undo silently skips. Both editing domains are temporarily disabled during preparation or export. Display restoration merges lightweight presentation state by stable object IDs and never replaces materials, geometry, particle placement, output settings or checkpoint data.
-
-## Monitored solid-energy export
-
-**File > Export Solid Energy...** exports collected monitored energy with `step`, `time_s`, component energies in joules, and their total. Enable **Monitor solid energy** before running to collect this series. This export does not infer missing samples from `energy.dat`, and its solid energies exclude SPH fluid. Live Monitor and its optional solid-energy plot remain available alongside recorded-frame playback. Use VTU and DAT scientific output for further numerical inspection in external tools.
-
-## Headless checks and runs
-
-The Qt Core-only `FunDEM-cli` target uses the same serializer, preflight, selected CPU/GPU/Hybrid session, protected output, and archive writer without a window or OpenGL context. CPU is the default. GPU and Hybrid require a CUDA-enabled build and an available NVIDIA device, just as in the desktop application; neither silently falls back to CPU. GPU advances both participating particle families on CUDA, while Hybrid keeps LS on CPU and uses CUDA for spheres or SPH. Use the executable built or installed with this source version. In v0.3.42, the separate MSVC/CUDA Windows profile supplies these device modes; the default LLVM-MinGW Windows and Apple Silicon profiles remain CPU-only. The CUDA runtime is bundled in the CUDA ZIP, while a compatible NVIDIA driver remains a user-system prerequisite.
-
-```text
-FunDEM-cli --check project.fundem.json
-FunDEM-cli --run project.fundem.json [--steps N --output root --archive newdir]
-```
-
-For example, on Windows PowerShell:
-
-```powershell
-.\FunDEM-cli.exe --check .\examples\gombocSelfRighting.fundem.json
-.\FunDEM-cli.exe --run .\project.fundem.json --steps 100 --output C:\FunDEM-results --archive C:\FunDEM-results\test.fundem-run
-```
-
-`--check` prints a JSON preflight report on stdout, does not compile a solver, and does not generate output. It rejects run-only overrides. `--run` checks first, then performs the configured calculation. `--steps` must be a positive supported integer; overrides are in memory and do not rewrite the project. `--output` chooses the parent root; a unique child is reserved. `--archive` saves a new archive after successful completion and must name a nonexistent destination. Preparation, progress, and the actual result path are written to stderr; stdout includes the check report and a completion message.
-
-Exit codes are 0 for success, 2 for invalid command combinations, 3 for preflight errors, 4 for load/preparation/run/archive failure, and 130 for a handled interruption. Ctrl+C requests a safe pause and retains committed scientific frames; it does not automatically save an archive.
-
-Malformed or nonpositive `--steps`, empty destination arguments, and an already existing `--archive` destination are rejected with exit code 2 before compiling or calculating. The final archive writer also refuses replacement, including if another process creates that destination after the argument check.
-
-## Work that remains planned
-
-Full mesh-quality inspection, Packing overlap/porosity diagnostics, geometry problem highlighting, separate contact-search/force-phase profiling, physical convergence suites, and repeatable performance baselines remain planned. The activation report is a table rather than a graphical timeline. Example/help browsers and other later roadmap items are not implied by the features documented here.
+There is no published headless CLI workflow in this rebuilt runtime; do not
+apply old FunDEM-cli commands or external-DLL instructions to it. Public
+packages do not contain desktop source, SDKs, tests, private design documents
+or restricted benchmark data. The numerical core remains
+[FunDEMBeta](https://github.com/kaiqideng/FunDEMBeta), under Apache-2.0.

@@ -1,127 +1,115 @@
-# Example projects
+# FunDEM 0.4.0 example guide
 
-The seven projects below are complete FunDEMSoftware models. Choose one from **File > Examples** to inspect its initial model without starting a calculation; **File > Open Project** can also open a copied project. Save edits with **File > Save As...** in a writable, user-owned folder, then choose **Run** explicitly to simulate. Each file contains its materials, geometries, internal particle types, Packings, solver settings, and output selection. Generated random-sample geometries follow ordinary editing and reference-safe deletion rules; their Packing placement and display settings remain editable before calculation. Referenced OBJ meshes are included in `assets`; keep that directory with the project files. The cloth example also uses the bundled Particle Damping library in `force-modules`. The `randomShapeColumn` example starts with global coordinate axes visible; the other projects start with them hidden. Change this setting under **Post-processing > Filters** if needed. The Brazil-nut project also starts with Clip Plane filtering and its plane display disabled.
+Windows x64 — seven built-in examples and user-supplied benchmark data
 
-| Project | File | Calculation time | Output interval |
-| --- | --- | --- | --- |
-| Gomboc self-righting | [`gombocSelfRighting.fundem.json`](gombocSelfRighting.fundem.json) | 120 s | 0.05 s |
-| Physically interlocked anchor chain | [`interlockedChain.fundem.json`](interlockedChain.fundem.json) | 3 s | 0.05 s |
-| Damped fine-grain cloth on a box | [`clothBoxDrop.fundem.json`](clothBoxDrop.fundem.json) | 3 s | 0.05 s |
-| Dam break around a square column | [`damBreakSquareColumn.fundem.json`](damBreakSquareColumn.fundem.json) | 3 s | 0.05 s |
-| Brazil nut segregation | [`brazilNut.fundem.json`](brazilNut.fundem.json) | 8 s | 0.05 s |
-| Layered superellipsoids in a rotating drum | [`superellipsoidDrum.fundem.json`](superellipsoidDrum.fundem.json) | 8 s | 0.05 s |
-| Irregular particles in a cylindrical mold | [`randomShapeColumn.fundem.json`](randomShapeColumn.fundem.json) | 2 s per Run | 0.05 s |
+## Open, run and inspect an example
 
-The files use the current project schema (version 8). The application still loads supported older schemas; the examples no longer depend on migration during normal use. Their physical parameters, stable IDs, object order, and references are retained. The `fundem_software_example_documents_check` development check loads and round-trips all seven files through the production serializer without running a simulation. Its optional `--normalize` argument writes only these seven files through the same atomic save operation.
+1. Start `FunDEM.exe` from the complete application folder, or open the installed
+   application. No compiler or source checkout is needed.
+2. Choose **File > Open Project > Examples**, then an example below. Opening
+   creates a separate writable working copy; it does not run the simulation
+   or overwrite the installed input. Use **Save As** to keep your own copy.
+3. In **Simulation**, select an Event to inspect its particles. Review
+   **Execution**, **Output** and the ordered Events before running. CPU is the
+   default. GPU/Hybrid need the CUDA-enabled package and a compatible NVIDIA
+   GPU/driver; unavailable modes are reported, not silently replaced by CPU.
+4. Use the Render View **Run** button. **Pause** waits for a safe boundary;
+   Run then resumes that same session. **Step** advances one DEM step.
+5. Open **Results** to view committed recorded frames. Use the timeline to
+   play, step or seek; an early recorded frame is not necessarily the final
+   state. The run's `run.json` can also be reopened later.
+6. Use Results Work Tree checkboxes to show particles, Contacts or Bonds.
+   These populations are independent: hiding particles does not hide their
+   interactions. Use **File > Export current frame image...** for PNG or
+   **Export animation...** for Windows H.264 MP4.
 
-Calculation times are physical simulation times, not estimates of wall-clock execution time. Relative result roots are resolved beside the executable in the portable Windows package, and under `Documents/FunDEM` in Microsoft Store and macOS installations. Each fresh calculation creates a unique child run directory without clearing existing results. Existing results are not part of the bundled example projects. See the [user manual](../docs/USER_MANUAL.md) for execution, playback, restart export, and energy output.
+Once Run/Step starts, Setup/Simulation settings remain locked until **Reset**,
+including while paused and after completion/failure. Read-only inspection and
+Results editing remain available. Reset releases authoring but does not delete
+saved results. A new Run after completion starts from the unchanged authored
+initial state, not from the old final frame.
 
-## Gomboc self-righting
+## The seven examples
 
-`gombocSelfRighting.fundem.json` uses the unchanged `assets/Gomboc.obj` mesh, the original Euler-derived orientation, a `0.0023125 m` LS grid spacing, and a `0.1 m` initial center height. Ceramic and floor LS materials retain their existing stiffness, density, restitution, and friction settings. The Gomboc and the infinite-mass floor are separate single-particle LS Packings.
-
-The CPU SphereDEM solver advances 1,200,000 steps at `1e-4 s` and records one frame every 500 steps. Results are written to `gombocSelfRighting_files`. This is a dissipative self-righting example: restitution and friction allow mechanical energy to decrease as the particle comes to rest, so it is not an energy-conservation test.
-
-```powershell
-.\FunDEM.exe examples\gombocSelfRighting.fundem.json
-```
-
-## Physically interlocked anchor chain
-
-`interlockedChain.fundem.json` contains eleven links at `0.07 m` pitch and `0.3 m` initial height. Alternating links use identity and 90-degree X-axis orientations. The two endpoint links have infinite mass; the nine interior links can fall under gravity. There are no Bonds: the links are connected by their physical interlocking.
-
-Three Packings reproduce this arrangement. The shared `assets/anchorChainLink.obj` mesh contains 4,480 vertices and 8,960 triangles, generated with 30 straight, 40 arc, and 32 cross-section segments. The source utility is `scripts/generateAnchorChainLink.cpp`.
-
-The CPU solver advances 150,000 steps at `2e-5 s`, for a total of 3 s, and records one frame every 2,500 steps (`0.05 s`). Results are written to `interlockedChain_files`.
-
-```powershell
-.\FunDEM.exe examples\interlockedChain.fundem.json
-```
-
-## Damped fine-grain cloth on a box
-
-`clothBoxDrop.fundem.json` matches the physical parameters of FunDEMBeta's `tutorial2.cpp`: a bonded triangular cloth falls onto the outside of a fixed solid box. The box dimensions remain exactly `0.24 x 0.24 x 0.24 m`, centered at `(0.30, 0.30, 0.12) m`. Its SDF is not reversed: this is an obstacle under the cloth, not an enclosing container. The sphere centers start at `z = 0.38 m`, leaving approximately `0.13679 m` between the sphere undersides and the box top.
-
-One `93 x 107 x 1` hexagonal Packing provides 9,951 spheres, below the requested 10,000-particle ceiling. Their diameter is `0.006417112299 m`; the cloth spans `0.60 x 0.59550 m`, centered in X/Y over the original box. This preserves an equilateral triangular neighborhood instead of changing the cloth into a square spring grid. A single Distance Bond Packing connects only nearest neighbors at a threshold of `1.01` diameters, generating 29,454 undirected bonds. Reference lengths come from particle-center separation. Zero cross-section area retains the tutorial's unbreakable bonds; these zero-area bonds do not produce visible cylinders, although their force and energy fields are written to VTU.
-
-The beam coefficients are recomputed for the finer diameter using the tutorial's `E = 1e6 Pa`, `nu = 0.3`, circular section `A = pi r^2`, `I = pi r^4 / 4`, and `J = 2I`:
-
-| Coefficient | Formula | Value |
+| Example menu entry | What to inspect | Workload and operating note |
 | --- | --- | --- |
-| Normal stiffness | `E A / d` | `5039.988214 N/m` |
-| Shear stiffness | `12 E I / d^3` | `3779.991161 N/m` |
-| Bending stiffness | `0.01 E I / d` | `0.000129714587 N m` |
-| Torsional stiffness | `0.01 G J / d`, `G = E / (2 (1 + nu))` | `0.000099780452 N m` |
+| Gömböc self-righting | The non-spherical body's original orientation, contact with its support and subsequent self-righting motion | A useful first example. Preserve its supplied orientation and drop position; changing them changes the problem. |
+| Interlocked chain | Links physically interlock; fixed end bodies and free links evolve under gravity | The connections are geometric, not replacement Bonds. Keep the original link shapes, resolution and placement. |
+| Cloth drop into a box | The bonded sheet falls and deforms against the box | Many Bonds make a full CPU run expensive. Enable the Bond recipe's Results checkbox if you want to inspect links. |
+| Dam break around a square column | Fluid release, flow around the column and interaction with LS boundaries | Uses LSDEM + SPH. SPH computation and frequent stored frames can be expensive. Fluid pressure/velocity colors are Results display choices, not changes to the solver. |
+| Brazil nut segregation | Sequential additions followed by prescribed vibration | Keep the event order. An early short run cannot demonstrate the later vibration or segregation stage. |
+| Superellipsoid mixing drum | Sequential filling/settling followed by drum rotation | Keep all stages and the event-local wall-motion commands. Beginning rotation early changes the intended scenario. |
+| Random-shape particle column | Irregular high-resolution LS bodies settling within their boundary | Large geometry caches require substantial RAM and load/generation time. Do not lower surface/grid resolution silently to make a run appear faster. |
 
-Density remains `1500 kg/m3`. Each sphere has mass approximately `0.000207543339 kg`, and total cloth mass is approximately `2.06526 kg`. Reducing sphere and beam thickness at unchanged density reduces the mass from the former 4,106-sphere tutorial's approximately `3.22484 kg`; the current tutorial and software sample both use the fine discretization. This is a finer-grain demonstration, not a fixed-thickness continuum mesh-convergence test.
+The converted projects retain their supplied geometry, accepted particle poses,
+physical parameters, event/activation order and recording intervals. The
+presentation also retains the prior examples' per-group colors and transparency.
+Changing only Results colors, opacity, legends or camera does not alter physics.
 
-Contact restitution is reduced to `0.05` and sliding friction increased to `0.6` for stronger collision dissipation. The separately loaded **Particle Damping** module also damps free cloth motion, which restitution alone cannot do: `F = -20 m v` and `torque = -3.418598284e-8 omega` in SI units. For these uniform spheres, the torque coefficient corresponds to an angular decay rate of `40 /s`. The infinite-mass box is excluded. This deliberately dissipative demonstration changes both the settling trajectory and energy history; it is not an energy-conservation test or a calibrated textile material model.
+Full recomputation may take hours, especially for the cloth and high-resolution
+LS cases. Actual cost depends on the selected backend, hardware, contact count,
+SPH population and output cadence; there is no fixed completion-time promise.
+Keep enough free space for recorded frames and do not start a long run merely
+to test whether the project opens. Short runs verify only the executed prefix,
+not later events, convergence or agreement with experiment. Example material
+coefficients are demonstrations, not measured calibration for another material.
 
-The CPU solver runs 300,000 steps at `1e-5 s`, for exactly 3 s, with output every 5,000 steps (`0.05 s`) to `clothBoxDrop_files`. The tutorial's single-bond time-step estimate at this diameter is approximately `1.275e-5 s`; the selected smaller step also divides the requested duration and output interval exactly. This estimate is not a proof of nonlinear stability for every configuration. Results and DEM energy histories use the ordinary software output path.
+## ON-DEM periodic-shear benchmark
 
-```powershell
-.\FunDEM.exe examples\clothBoxDrop.fundem.json
-```
+The entry is **File > Open Project > Benchmarks > ON-DEM bumpy-wall shear flow
+(import data)...**. Unlike the seven examples, it requests an external data file.
+The original author coordinates and converted benchmark payload are not
+distributed in the public application package.
 
-Keep `force-modules/fundemParticleDamping.dll` with the executable. The case intentionally fails to compile its solver if that enabled module is missing, rather than silently omitting the requested damping. On a non-Windows source build, replace the module filename with the corresponding built `.so` or `.dylib` library before loading the project.
+1. Read the [ON-DEM benchmark description](https://on-dem.atlassian.net/wiki/spaces/Index/pages/244744204).
+2. Obtain your own authorized copy of the author's original
+   [GranularShearFlow.data](https://raw.githubusercontent.com/dalilavescovi/GranularShearFlows/56b7cfdfd774cf5ae057a1c5c90e5191a0deb97b/InitialGeometricalConfiguration/GranularShearFlow.data),
+   or locate your existing unmodified copy. The application does not download it.
+3. Select that `.data` file through the Benchmark import entry. The importer
+   verifies the original file and ordered coordinates; an edited/reformatted
+   substitute is rejected. Cancellation/failure preserves the open project.
+4. Successful import creates a separate editable project and does not start
+   calculation. Inspect its settings and use Save As before running.
 
-## Dam break around a square column
+The imported diagnostic uses the following preset:
 
-`damBreakSquareColumn.fundem.json` uses five SPH Blocks to create a `0.40 x 0.61 x 0.30 m` reservoir and a one-particle-deep wet bed around a `0.12 x 0.12 x 0.75 m` square column. There are 80,376 fluid particles inside a closed `1.60 x 0.61 x 0.75 m` tank. The tank and column are fixed LS Packings.
+| Setting | Value |
+| --- | --- |
+| Total sphere count | 3,480, including both bumpy walls |
+| Sphere radius; finite-particle density | 0.5 m; 1 kg/m³ |
+| Gravity | Zero |
+| Periodic directions | X and Y |
+| Bottom/top wall X velocity | −1 / +1 m/s |
+| Time step | 7.192545032e−5 s |
+| Steps; recording interval | 100,000; 1,000 steps |
+| Normal/sliding stiffness | 200,000 / (400,000/7) N/m |
+| Normal/sliding explicit damping | 15 / (30/7) N·s/m |
+| Sliding friction | 0.3 |
+| Rotational stiffness, damping and friction | Zero |
 
-The CPU SPHDEM solver uses `0.01 m` spacing, `0.013 m` smoothing length, `1,000 kg/m3` reference density, and `0.001 Pa s` dynamic viscosity. It advances 150,000 base steps at `2e-5 s` and records one frame every 2,500 steps. Results are written to `damBreakSquareColumn_files`. No column-force recording hook is installed, so there is no separate `columnForce.dat` or filtered column-load history.
+The linear-stiffness and explicit-damping switches are enabled. The external
+periodic-boundary service wraps the selected directions and supplements seam
+contacts; FunDEMBeta evaluates native contact force/history on the combined
+pairs once. No old external benchmark contact-force override is used.
 
-The fluid is displayed as SPH particles during calculation, recorded playback, and animation export. After pausing or finishing, inspect any recorded frame or press **Play** directly; no liquid-surface preparation is required. Packing visibility, opacity, color, velocity-magnitude coloring, and Clip Plane settings remain available in Post-processing. See [Playback](../docs/USER_MANUAL.md#16-playback).
+This 100,000-step diagnostic is **not** the full 200-million-step reference
+campaign, nor a claim of exact trajectory/contact/energy agreement with another
+implementation. Obtain permission before redistributing the author's data;
+converting or embedding the coordinates does not remove that requirement.
 
-```powershell
-.\FunDEM.exe examples\damBreakSquareColumn.fundem.json
-```
+## Result and export reminders
 
-## Brazil nut segregation
-
-`brazilNut.fundem.json` models both grain species with level sets. The lower bed retains six layers; the upper bed now has thirty layers, six more than the previous twenty-four-layer configuration:
-
-| Event | Activation step | Time | Objects |
-| --- | --- | --- | --- |
-| Lower bed | 0 | 0 s | `5 x 5 x 6` = 150 small ellipsoids |
-| Large grain | 30,000 | 0.3 s | One LS sphere of radius 22 mm |
-| Upper bed | 60,000 | 0.6 s | `5 x 5 x 30` = 750 small ellipsoids |
-| Start box vibration | 120,000 | 1.2 s | Infinite-mass box |
-
-There are 901 finite-mass grains and one box. Small grains have semi-axes of 7, 5, and 5 mm and reproducibly randomized orientations. Both species use the same `2,500 kg/m3` density. The large grain and upper bed retain their existing origins. The box is `0.583 m` high, centered at `z = 0.1715 m`: its bottom remains at `z = -0.12 m`, and its top is at `z = 0.463 m`. Increasing its height by six layer spacings (`0.087 m`) preserves about 50 mm of headspace above the enlarged upper bed, using a conservative all-orientation particle extent. Activation, vibration, material, and output settings are unchanged.
-
-The small ellipsoid retains subdivision level 3 (642 surface nodes), and the large sphere retains subdivision level 5 (10,242 surface nodes). These settings provide similar mean surface-node tributary areas without changing the existing contact resolution.
-
-After the filling schedule, the box begins 20 Hz harmonic Z translation with 4 mm amplitude. The dimensionless peak acceleration is `Gamma = A (2 pi f)^2 / g = 6.44`. The calculation uses 800,000 steps at `1e-5 s` (8 s), with output every 5,000 steps to `brazilNut_files`. Activation and vibration use fixed times, not a measured settling criterion. This is a qualitative segregation example; the schedule alone does not guarantee a particular rise time or complete rest before vibration.
-
-```powershell
-.\FunDEM.exe examples\brazilNut.fundem.json
-```
-
-## Layered superellipsoids in a rotating drum
-
-`superellipsoidDrum.fundem.json` uses three superellipsoid species in bottom-to-top layers inside a narrow, closed cylindrical LS drum. The species are introduced in sequence while the drum is stationary. All loading layers are placed inside the drum without overlapping the other species' initial loading regions.
-
-The drum has a `0.62 m` radius and a `0.30 m` axial length, reduced from `1.4 m`. There are exactly three granular Packings, one per species, plus the drum Packing. The lower Packing has `15 x 6 x 8 = 720` boxy grains; the middle has `20 x 5 x 6 = 600` prolate grains; and the upper has `17 x 7 x 9 = 1,071` oblate grains, for 2,391 movable grains. Each Packing contains multiple close-packed horizontal layers. Species-specific spacing and origins keep the three initial loading bands separate and inside the closed drum for every generated random orientation. The three reusable particle types are unchanged.
-
-Analytic grain volume is approximately 18.15% of the drum volume. Assuming a settled-bed solid fraction of 0.60 gives a bulk bed occupying about 30.26% of the drum; a looser fraction of 0.55 gives about 33.01%. This is approximately one-third loading rather than an exact fill requirement. It is a design estimate, not a measured settled volume; the actual bed depends on packing density, particle shape, and motion. Initial loose layers occupy a larger height before falling and settling. Conservative shape envelopes leave at least 3.04 mm between initial species bands, 7.53 mm from the cylindrical wall, and 4.49 mm from the end walls.
-
-The first species is active at 0 s, the second at 1 s, and the third at 2 s. The infinite-mass drum begins prescribed rotation at 3 s, at `2 rad/s` about its longitudinal Y axis. These are fixed settling intervals, not an automatic test for zero particle velocity.
-
-The CPU solver uses a `2e-5 s` step for 400,000 steps (8 s total) and records every 2,500 steps (0.05 s) to `superellipsoidDrum_files`. Material properties, grain shapes, surface resolutions, and deterministic random orientations retain their existing settings. The translucent drum permits inspection of the loading and mixing process.
-
-```powershell
-.\FunDEM.exe examples\superellipsoidDrum.fundem.json
-```
-
-## Irregular particles in a cylindrical mold
-
-`randomShapeColumn.fundem.json` contains 240 finite-mass irregular LS particles in one Random particle packing. Twelve generated shapes are reused 20 times each, with random orientations. Before volume-preserving reshaping into elongated, flat, and blocky families, base radii span `8–12 mm` and radial surface offsets are bounded by `−4 to +4 mm`. These initial bounds are not the final reshaped particle extents. Each shape has an actual level-5 surface mesh: 10,242 vertices and 20,480 triangles. A second packing contains the infinite-mass, closed cylindrical mold, with a `0.075 m` radius, `0.9 m` height, reversed SDF, and opacity `0.10`.
-
-The starting arrangement is a conservative enclosing-sphere deposition, not a settled DEM state. Gravity, friction, and restitution subsequently allow the irregular surfaces to find their contacts. The prepared project has been checked for solver-corrected surface containment and save/reload consistency, but no settling simulation was run when authoring it. The configured `2 s` is an initial calculation round, not a verified convergence time. Monitor kinetic energy and particle velocities, and continue with another Run if needed. There are no bonds, and the mold remains present; this is not a self-supporting column demonstration.
-
-The CPU SphereDEM solver uses `1e-5 s` for 200,000 steps and writes every 5,000 steps (`0.05 s`) to `randomShapeColumn_files`. Although it uses the SphereDEM formulation, every solid in this project is an LS particle; no ordinary sphere particles are present. High-resolution surface output can be large with 41 scheduled frames including the initial frame. See the [dedicated example guide](randomShapeColumn.md) for geometry, material values, initialization, execution, and result interpretation.
-
-```powershell
-.\FunDEM.exe examples\randomShapeColumn.fundem.json
-```
+- Output creates a new run directory; preserve it with its manifest, project
+  snapshot and frame files when reopening or sharing recorded results.
+- The current application records native result archives, not VTU or
+  `energy.dat`. Custom Plot can analyze recorded solid-system energy without
+  enabling those file outputs. Plot data refresh uses **Reload**.
+- Contacts and Bonds start hidden in Results; turn on their own checkboxes.
+  A scope can be valid even when it has no saved interaction in one frame.
+- PNG/MP4 exports use the accepted camera, display, legends, enabled box-size
+  overlay and selected Clip guide. Select another node before export if the
+  Clip guide should be omitted. FPS changes encoded timing, not physical data.
+- The packaged [User Manual](USER_MANUAL.md) explains event inheritance,
+  filters, plots, DAT interchange, replay caching and troubleshooting.
+- Version 0.4.0 is documented for Windows x64. No verified new macOS package
+  or cross-platform MP4 support is implied by older releases.

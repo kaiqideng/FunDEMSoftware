@@ -1,38 +1,32 @@
-# FunDEM Workbench on macOS
+# FunDEM macOS release status
 
-## Platform and package
+## Current release: 0.4.0
 
-The macOS package targets Apple Silicon (M-series) Macs running macOS 14 or later. It contains a native ARM64 application, the CPU FunDEMBeta core, Qt frameworks, the OpenMP runtime, and the bundled particle-force modules. CUDA is not used. Intel Macs are not included in this package.
+FunDEM 0.4.0 is currently documented and packaged for **Windows x64**. There
+is **no verified new macOS application package for 0.4.0**. The rebuilt
+Setup / Simulation / Results workflow, event-based file model and new
+analysis features must not be assumed available in an older Mac binary.
 
-Download the Mac ZIP from the [official release page](https://github.com/kaiqideng/FunDEMSoftware/releases/latest). Extract the ZIP, then copy the complete `FunDEM.app` to Applications or another writable folder. Do not copy only the executable from inside the application bundle. No compiler, Qt installation, or Homebrew installation is required to run the package.
+Do not use a latest-release Mac download link for 0.4.0. Current Windows
+CPU/CUDA downloads are on the [release page](https://github.com/kaiqideng/FunDEMSoftware/releases/latest).
+H.264 MP4 export in the rebuilt application currently uses Windows Media
+Foundation and is Windows-only.
 
-## First launch and signing
+## Historical macOS release
 
-This package is ad-hoc signed for bundle integrity, not signed with an Apple Developer ID and not notarized by Apple. The ad-hoc signature does not verify the publisher's identity. macOS may block the first launch.
+The [v0.3.42 release page](https://github.com/kaiqideng/FunDEMSoftware/releases/tag/v0.3.42)
+retains its historical Apple Silicon package and version-specific information.
+This does not claim that old assets were removed, rebuilt or replaced.
+No DMG link is provided here.
 
-Only if you have verified that the download is from the official release page and trust it, follow [Apple's instructions for opening an unnotarized app](https://support.apple.com/en-us/102445): try opening the app, then use **System Settings > Privacy & Security > Open Anyway** if macOS offers that option. Managed Macs may require administrator approval. Do not disable Gatekeeper globally. If macOS reports that the file is damaged or malicious, stop and verify the download instead of bypassing that warning.
+If you use that older application, follow its own packaged manual, project
+format and platform/signing requirements. The current
+[User Manual](USER_MANUAL.md) and [Workflow Guide](WORKFLOW_IMPROVEMENTS.md)
+describe 0.4.0 Windows, not retrofit instructions for the old Mac UI.
+Keep an older application and its projects separate from the new workflow;
+legacy Software files are not generally auto-migrated by 0.4.0.
 
-## Projects, examples, and results
-
-Choose **File > Examples** to open one of the seven bundled projects without starting a calculation, then use **Run** explicitly when ready. The menu reads the installed examples in `FunDEM.app/Contents/Resources/examples`; it does not depend on the current working directory. The application keeps its English documentation in the same Resources directory. In Finder, **Show Package Contents** exposes these folders. Use **File > Save As...** to save edits in a writable, user-owned working folder. Keep the bundled meshes and force modules available, and do not edit files inside the signed application bundle. A missing installed example produces an **Example Not Available** warning without replacing the current project.
-
-The interface and project format are shared with Windows. The platform's matching `.dylib` files are used for the bundled force modules; a Windows `.dll` itself cannot run on macOS. Third-party modules require a native ARM64 macOS build from their author.
-
-On macOS, relative result paths are placed under your **Documents/FunDEM** directory; each fresh calculation creates its own child run directory. Explicit absolute result paths are kept as configured. The actual output path is shown in the project settings; it must be writable. When moving a saved project between computers, review its output directory because a saved absolute path can refer to the previous computer's user account. Results are never meant to be written into `FunDEM.app`.
-
-The main [User Manual](USER_MANUAL.md) describes the model editor, CPU solvers, playback, VTU output, and post-processing. Windows installation instructions and `.dll` examples in that manual should be read together with this macOS-specific guide.
-
-## Build from a private source checkout
-
-Application and solver source code are not published in the public download repository. For an authorized source checkout, install CMake, Ninja, a compatible Qt 6.8+ macOS SDK, and the OpenMP runtime. On a Mac, the shared packaging entry point is:
-
-```bash
-bash FunDEMSoftware/scripts/build-macos.sh \
-  --qt-root /absolute/path/to/Qt/6.8.3/macos \
-  --build-dir /absolute/path/to/build-macos \
-  --package-dir /absolute/path/to/package-macos \
-  --architecture arm64 \
-  --deployment-target 14.0
-```
-
-The packaging script builds and checks the program, deploys dependencies into the bundle, applies ad-hoc signatures, and prepares a ZIP package. The private GitHub Actions workflow runs this same entry point and checks the deployed application; its build artifact contains only the ZIP. Public distribution is a separate, deliberate upload of the binary package and documentation, never a copy of the private source tree.
+A future macOS update requires its own native build, bundle/runtime deployment,
+platform export implementation and regression verification. No delivery date,
+feature parity, Intel-Mac support, notarization or Store publication is implied
+by this status document.
