@@ -1,6 +1,6 @@
 # FunDEM computation core
 
-FunDEM 0.4.2 uses [FunDEMBeta](https://github.com/kaiqideng/FunDEMBeta) as its
+FunDEM 0.4.3 uses [FunDEMBeta](https://github.com/kaiqideng/FunDEMBeta) as its
 in-process numerical computation core. The desktop application maps accepted
 project definitions to native materials, LS geometries, particles, contact
 pairs, Bonds and solver configuration. FunDEMBeta provides geometry generation,
@@ -40,7 +40,11 @@ output. Results plots read those saved records; they do not enable additional
 core file outputs or recalculate interactions. Exact solver restart from a
 rendered/recorded frame is not provided by the desktop DAT interchange workflow.
 
-The external periodic-boundary service supplements sphere seam contacts outside
-the core. The native contact law evaluates the combined pairs once; there is
-no retired benchmark contact-force override. That service is not a claim that
-the core supports arbitrary LS/SPH periodic boundaries.
+The external event-local periodic-boundary service supplements Sphere/LS seam
+contacts and supplies SPH minimum-image neighbor displacements. Native contact
+and SPH laws remain authoritative; combined solid pairs are evaluated once and
+no ghost mass is introduced. SPH internal positions stay continuous while saved
+and displayed observations wrap into the configured domain. The service supports
+CPU, GPU and Hybrid with strict single-image support limits; periodic Bonds are
+not supported. It is not a retired benchmark contact-force override or a promise
+of arbitrary periodic shapes, walls or multiple-image interactions.

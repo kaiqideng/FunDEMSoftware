@@ -1,6 +1,6 @@
 # FunDEM Software
 
-FunDEM 0.4.2 is a Windows desktop application for preparing, running and
+FunDEM 0.4.3 is a Windows desktop application for preparing, running and
 analyzing sphere/level-set DEM and coupled LSDEM–SPH simulations. Three
 workspaces—Setup, Simulation and Results—separate reusable definitions,
 ordered simulation events and recorded-data analysis.
@@ -21,7 +21,7 @@ A deployed application needs no source checkout or compilation.
 These stable links follow the latest **published** release. Check the
 [release page](https://github.com/kaiqideng/FunDEMSoftware/releases/latest)
 for its version, exact asset inventory and checksums. This documentation
-describes 0.4.2; do not assume an earlier downloaded binary has these features.
+describes 0.4.3; do not assume an earlier downloaded binary has these features.
 
 The CPU ZIP is CPU-only. The separate MSVC/CUDA ZIP provides CPU, GPU and
 Hybrid and includes the selected CUDA 13.2 runtime. GPU/Hybrid require a
@@ -35,29 +35,32 @@ The CUDA package is compiled for architectures **75, 80, 86, 89, 90, 100 and
 every listed GPU. GPU visualization and the numerical compute backend are
 different capabilities.
 
-The Microsoft Store update uses package version **1.0.12.0** for application
-0.4.2, preserving the existing product identity. Preparing a local MSIX is not
+The Microsoft Store update uses package version **1.0.13.0** for application
+0.4.3, preserving the existing product identity. Preparing a local MSIX is not
 the same as submitting, certifying or publishing it in the Store; this page
 does not claim those steps are complete.
 
-## New in v0.4.2
+## New in v0.4.3
 
-- **Parameter help:** selected non-obvious fields have a shared circled-question
-  button. Click for concise English explanations, also when values are locked.
-  Help never changes parameter values or opens merely from hovering.
-- **Reliable diagnostics:** result/archive and PNG failures retain the affected
-  path and consistent English text. A failed run's cleanup cannot replace the
-  original calculation or recording error with a second write failure.
-- **Archive memory:** switching Results archives releases inactive project/SDF
-  and initial-state data. Reopening restores references without resetting the
-  existing color, opacity or other display settings.
-- **Editable examples:** all seven installed projects are exercised through
-  shared Configuration, material/mode editing, Undo/Redo and Save As paths.
-  Their physical parameters, poses and event schedules are preserved. Short
-  execution checks are not full-duration physical validation.
+- Template Reconfigure restores editable generation parameters where possible.
+  Imported populations retain a fixed-ordinal data editor; instance material
+  assignments and individual linear/angular velocities stay aligned after edits.
+- DAT version 2 carries prepared LS surface/SDF and mass-property data without
+  a second centroid correction. Solid world poses, materials and per-particle
+  kinematics round-trip; plane-wall geometry is supported.
+- External periodic boundaries cover Sphere, LS and SPH populations, with
+  matching CPU, GPU and Hybrid execution paths and explicit domain checks.
+- Updated SPH/DEM coupling, true Jet emission buffers and boundary apertures
+  replace redundant impulse-correction and prefilled-column behavior.
+- Render View adds a configurable bounded cache for reusable mesh resources;
+  compact shared run controls and event icons improve workbench consistency.
+- All seven built-in Examples retain their physical data and event schedules.
+  Eight impossible Wall-Wall/single-body contact material pairs were removed;
+  coefficients needed by later event populations remain inherited.
 
-FunDEMBeta's numerical algorithms and supported project/result identities
-are unchanged. Rendering capacity still depends on scene detail and hardware.
+Supported project/result format identities remain unchanged. DAT version 1
+and triangle-only LS interchange are deliberately rejected. Release checks
+distinguish bounded execution and archive replay from full physical validation.
 
 ## Workflow
 
@@ -146,8 +149,9 @@ trajectory/energy agreement claim.
   converted.
 - Current recording writes native result archives, not VTU or energy.dat.
   Plots read recorded solid-system energy without enabling those file outputs.
-- DAT is solid-instance interchange, not an exact solver checkpoint; it does
-  not restore SPH or Contact/Bond histories.
+- DAT version 2 is solid-instance interchange, not an exact solver checkpoint;
+  it does not restore SPH or Contact/Bond histories. Version 1 and triangle-only
+  LS interchange are rejected rather than silently reprocessing geometry.
 - Results queries and rendering do not run the solver. Plot object selection
   is explicit; Reload is manual. Playback cache defaults to 512 MiB of reusable
   decoded frames, not a limit on total application/GPU memory.

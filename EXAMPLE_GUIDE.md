@@ -1,4 +1,4 @@
-# FunDEM 0.4.2 example guide
+# FunDEM 0.4.3 example guide
 
 Windows x64 — seven built-in examples and user-supplied benchmark data
 
@@ -48,12 +48,36 @@ Changing only Results colors, opacity, legends or camera does not alter physics.
 
 Before Run/Step, these are ordinary editable projects: change Materials, Event
 parameters, Particle Instance placement/initial motion or compute mode, then
-use Undo/Redo and Save As normally. Converted finite Particle Templates are
-accepted imported samples, so their Reconfigure changes the Name only; it does
-not regenerate their particle positions, orientations or count from a new
-lattice recipe. Single-wall templates retain their geometry/orientation
-configuration. Embedded accepted geometry remains available even if an
-original OBJ path belongs to the example author's machine.
+use Undo/Redo and Save As normally. Recoverable Single/Lattice templates expose
+their generation settings. Restored LS lattices offer the ordinary Uniform or
+Random orientation modes and editable Count XYZ; there is no special built-in
+mode that reuses cached orientations. Recovery does not resample accepted initial data or alter
+the examples' event sequence. Nonprocedural templates remain imported, with a
+fixed-order particle-data editor for individual positions, orientations and
+Sphere radii or LS geometry references. Neither editor silently sorts particles
+or changes stable instance references. Single-wall templates retain their
+geometry/orientation configuration. Embedded accepted geometry remains available
+even if an original OBJ path belongs to the example author's machine.
+
+The refreshed catalog restores ten finite-template recipes without changing
+their accepted initial poses:
+
+| Example | Template editing |
+| --- | --- |
+| Gömböc | Single LS geometry and orientation |
+| Interlocked chain | Two movable LS lattice recipes; existing single wall templates |
+| Cloth | Sphere HCP lattice recipe; existing single box template |
+| Dam break | Existing single tank/column templates and event SPH sources |
+| Brazil nut | Lower/upper LS lattices with ordinary Uniform/Random orientation controls, and a Single LS nut |
+| Mixing drum | Three LS lattice batches with ordinary Uniform/Random orientation controls; existing single drum |
+| Random-shape column | Original explicit arrangement through the imported-particle data editor |
+
+Opening a project or a Reconfigure dialog leaves the accepted cached poses
+unchanged. Explicit successful Reconfigure uses the same generation recipe as
+an ordinary user-created template, including its selected orientation mode,
+angles/seed and Count XYZ. It does not copy prior quaternions by ordinal.
+Stable IDs and references remain unchanged, and normal dependent-state checks
+apply to changes in particle count or correspondence.
 
 Full recomputation may take hours, especially for the cloth and high-resolution
 LS cases. Actual cost depends on the selected backend, hardware, contact count,
@@ -127,5 +151,5 @@ converting or embedding the coordinates does not remove that requirement.
   Clip guide should be omitted. FPS changes encoded timing, not physical data.
 - The packaged [User Manual](USER_MANUAL.md) explains event inheritance,
   filters, plots, DAT interchange, replay caching and troubleshooting.
-- Version 0.4.2 targets Windows x64; H.264 MP4 export uses Windows Media
+- Version 0.4.3 targets Windows x64; H.264 MP4 export uses Windows Media
   Foundation.

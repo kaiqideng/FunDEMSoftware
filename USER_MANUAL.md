@@ -1,6 +1,6 @@
 # FunDEM User Manual
 
-Version 0.4.2 — Windows x64
+Version 0.4.3 — Windows x64
 
 FunDEM prepares, runs and inspects DEM and coupled LSDEM–SPH simulations.
 Its numerical core is [FunDEMBeta](https://github.com/kaiqideng/FunDEMBeta).
@@ -120,6 +120,33 @@ A single LS particle also reports orientation. Color does not change physics.
 Large grids/populations require significant RAM; unsafe requests are rejected,
 not silently generated at lower resolution.
 
+Imported templates use **Reconfigure** to edit Name and individual particle
+data. Select a fixed-order table row, then edit Position, Orientation and Sphere
+Radius or LS Geometry in the common parameter controls. Particle numbers/count
+cannot be exchanged, sorted, inserted or deleted here. Apply recenters changed
+local data and compensates all referring instance positions; it preserves their
+IDs, materials and initial velocities. Cancel makes no changes; Undo/Redo
+restores the complete accepted edit.
+
+Bundled Single/Lattice templates recover generation parameters where possible
+and use the same Reconfigure controls as newly created templates. LS lattices
+offer Uniform or Random orientation and editable Count XYZ. Opening a project
+or Configuration preserves its accepted particles; explicit Reconfigure uses
+the normal generation recipe, not stored per-particle quaternion reuse.
+
+All instances that reference a template use its current accepted data, including
+instances in later events. Their per-particle materials and initial velocities
+remain tied to the original particle numbers. If a procedural rebuild would
+change count or cannot preserve the random-particle correspondence, Apply is
+rejected rather than silently moving those values. The current project remains
+unchanged. Name-only edits never regenerate geometry or particles.
+
+For a Single LS template, Reconfigure changes Geometry and Orientation. Change
+its dimensions or resolution through the selected Geometry's Reconfigure;
+its bounding radius is derived, not an independent sphere-radius parameter.
+Imported single-particle templates use the same editable particle-data row as
+larger imported templates.
+
 ## 4. Simulation
 
 ### Execution, output and events
@@ -146,6 +173,12 @@ angular velocity across events. Only newly added instances use authored
 initial state. Older objects remain under their original event in Work Tree
 but still participate in later cumulative scenes and target selectors.
 Imported heterogeneous per-particle material/state remains heterogeneous.
+In Reconfigure, Velocity and Angular velocity independently offer **Keep imported
+values**, **Set uniform values**, or **Add offset**. Keep is the default; Uniform
+sets every particle's selected vector; Offset adds the entered world-axis vector
+to each particle's existing value. Materials and particle order are unchanged.
+The operations apply once, and reopening resets both choices to Keep. These are
+authored initial-state edits, not changes to an active or archived simulation.
 
 ### Contact Material Pairs
 
@@ -179,9 +212,20 @@ Sphere hydrodynamics selects one sphere instance and sets flow, water density,
 water level and drag coefficient. Particle global damping selects one solid
 instance and sets damping rate (`1/s`) and rotational drag (`N·m·s`). Add
 another entry for another target. Built-ins need no DLL import and do not
-carry forward automatically. The periodic-boundary service supports the
-sphere-only benchmark domain; it is not general LS/SPH periodicity or a
-replacement native contact model.
+carry forward automatically. Periodic boundary is available in both DEM and
+LSDEM + SPH. Add inserts it directly with defaults and selects Property, with
+no Configuration or Reconfigure window. Each event allows one boundary; its
+Add entry is unavailable when one already exists. Undo/Redo retains its ID.
+It defines one event-local shared domain for Sphere, LS and SPH,
+not a per-instance load. Select at least one periodic axis and finite positive
+extents; periodic Bonds are unsupported. Each enabled extent must exceed four
+times the largest solid bounding radius (walls included) and, for SPH, four
+times the smoothing length. Run validates the built populations; large walls
+are not silently exempted or replicated. SPH keeps continuous internal positions
+and uses minimum-image neighbors; display/recorded positions wrap into the
+domain without introducing ghost mass. Later events need their own boundary
+definition. Unchanged domains preserve continuation; changed/removed domains
+rebuild affected state before advancing. This does not replace native force laws.
 
 ### SPH
 
@@ -195,7 +239,8 @@ definitions. Each source has Information and Display.
 
 ## 5. Run control and locking
 
-The Simulation Render toolbar offers Run, Pause, Step and Reset. Pause stops
+The compact row below the Simulation Render viewport offers Run, Pause, Step
+and Reset; the top row contains only inspection tools. Pause stops
 at a safe native boundary; Run resumes the same paused session. Step advances
 one DEM step and returns to a stopped boundary. Inspection does not restart
 SPH clocks or replace calculated state with template positions.
@@ -266,6 +311,17 @@ per-buffer API limits determine capacity; a failed allocation reports an error
 instead of displaying an incomplete population. Hiding an unused population
 can reduce rendering load without modifying saved results.
 
+**View > Render cache...** controls a separate reusable rendering cache.
+Memory limit defaults to 256 MiB (integer range 0–4096; zero disables it),
+split equally between prepared CPU meshes and inactive GPU groups with LRU
+eviction. Used estimate (MiB), Prepared meshes and GPU groups describe retained
+reusable allocations only, excluding the current scene, framebuffer and the
+independent decoded-frame Playback cache. This is not a display-particle cap.
+Apply accepts the session-only budget; Cancel leaves it unchanged. Clear cache
+is immediate and does not remove the current scene or any project/result data;
+Cancel afterward does not restore cleared entries. Geometry replacement cannot
+reuse stale entries, and switching projects or clearing the scene releases them.
+
 Filter + offers disabled-by-default Clip and Threshold. Configure Target,
 plane or data range in Property. Sources are Solid particles, SPH particles,
 Contact instance pairs and Bond recipes. Empty Filter Objects means None:
@@ -294,14 +350,38 @@ definitions, not archived physical objects/files or project parameters.
 ## 7. Interchange and image/animation export
 
 File > Import particle instance... reads DAT materials, sphere positions/radii
-or embedded LS meshes/orientations, plus per-particle velocities/angular
-velocities. Give imported definitions/instance names. Import centers the
-template and stores the matching initial position while preserving world
-geometry and rigid velocities. Failure adds nothing.
+or embedded LS geometry/orientations, plus per-particle velocities/angular
+velocities. Give imported definitions/instance names. Only DAT version 2 is
+accepted: Sphere files declare `GEOMETRY_STATE NONE`, and LS files require
+`GEOMETRY_STATE PREPARED`. Older version-1 and triangle-only LS files are
+rejected; there is no silent conversion or raw-mesh import mode.
+Numeric text uses 17 significant digits, and prepared geometry definitions are
+length-prefixed compact JSON.
+
+Prepared LS data include source-kind/reconfiguration parameters, exactly one
+accepted corrected surface point set and triangles, SDF grid/spacing/padding,
+bounding radius, volume, unit-density inertia and integration flag. DAT stores
+neither original-source points nor a centroid offset. Import does not infer an
+offset: internal source points are empty and the internal offset is zero.
+Their discretization comes from the file; neither import Configuration nor its
+API offers spacing/padding overrides.
+Import adopts the accepted data using FunDEMBeta's data-only prepared-LSInfo
+factory. It does not rebuild the grid, recompute SDF, integrate mass properties,
+or correct the centroid. Surface points, grid origin and particle state remain
+unchanged. Shape/Plane metadata and parameters remain available for explicit
+Reconfigure, not import-time regeneration. Inconsistent prepared data are rejected.
+
+Import centers the resulting template and stores the matching Instance
+translation. This preserves each current world pose, velocity,
+angular velocity and material assignment in the same particle order; quaternion
+normalization can introduce last-bit roundoff but does not change the rotation.
+The import creates fresh IDs. Failure or cancellation adds nothing.
 
 Results exports a complete selected solid instance at the accepted frame to
-DAT, including particles hidden/filtered in Render. DAT is interchange, not
-an exact checkpoint: it does not restore Contact/Bond histories or SPH state.
+version-2 DAT, including particles hidden/filtered in Render. LS export carries
+the accepted PREPARED geometry, not just a surface to be discretized again.
+DAT is interchange, not an exact solver checkpoint: it does not restore
+Contact/Bond histories, material-pair laws, SPH state or the run timeline.
 
 File > Export current frame image... saves PNG. Export animation... saves
 Results as Windows H.264 MP4. Choose frame range, playback speed, path,
