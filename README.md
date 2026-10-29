@@ -17,6 +17,7 @@ A deployed application needs no source checkout or compilation.
 - [Latest Windows x64 CUDA ZIP](https://github.com/kaiqideng/FunDEMSoftware/releases/latest/download/FunDEM-Workbench-Windows-CUDA-x64.zip)
 - [Matching English user manual](https://github.com/kaiqideng/FunDEMSoftware/releases/latest/download/USER_MANUAL.md)
 - [Seven-example guide](https://github.com/kaiqideng/FunDEMSoftware/releases/latest/download/EXAMPLE_GUIDE.md)
+- [English LAMMPS/PFC verification reports](https://github.com/kaiqideng/FunDEMSoftware/releases/latest/download/FunDEM-LAMMPS-PFC-Verification-Reports-English.zip)
 
 These stable links follow the latest **published** release. Check the
 [release page](https://github.com/kaiqideng/FunDEMSoftware/releases/latest)
@@ -35,13 +36,18 @@ The CUDA package is compiled for architectures **75, 80, 86, 89, 90, 100 and
 every listed GPU. GPU visualization and the numerical compute backend are
 different capabilities.
 
-The Microsoft Store update uses package version **1.0.13.0** for application
+The Microsoft Store update uses package version **1.0.14.0** for application
 0.4.3, preserving the existing product identity. Preparing a local MSIX is not
 the same as submitting, certifying or publishing it in the Store; this page
 does not claim those steps are complete.
 
 ## New in v0.4.3
 
+- Expanded and reorganized the level-set geometry catalog, with faceted,
+  rounded and ring-shaped primitives prepared by the numerical core.
+- Simplified contact material-pair settings: a standalone Sphere-related /
+  LS-LS selector, left-hand help and no extra Information frame. Shared sliding
+  friction and normal/sliding damping keep one stored value each.
 - Template Reconfigure restores editable generation parameters where possible.
   Imported populations retain a fixed-ordinal data editor; instance material
   assignments and individual linear/angular velocities stay aligned after edits.
@@ -61,6 +67,26 @@ does not claim those steps are complete.
 Supported project/result format identities remain unchanged. DAT version 1
 and triangle-only LS interchange are deliberately rejected. Release checks
 distinguish bounded execution and archive replay from full physical validation.
+
+## Verification reports
+
+The [English verification collection](validation/README.md) contains **35
+LAMMPS-derived variants and 3 PFC-derived cases**, with PDF/Markdown reports,
+comparison figures, contact-law audits, coverage reviews and diagnostic
+exclusions. The original outcomes are **36 PASS and 2 FAIL**; the two failed
+Mindlin sliding-to-rolling cases remain explicitly reported.
+
+Reports retain their original 28-29 October 2026 run records, source pins,
+acceptance criteria and build limitations. They are independent FunDEM
+comparisons against published examples and analytical targets, not LAMMPS or
+Itasca endorsements. No local PFC execution is claimed. The historical reports
+do not establish byte identity with this updated desktop executable.
+
+The downloadable report archive includes the same English documents and
+figures. Raw result frames, vendor programs/source fixtures, private
+application source and restricted ON-DEM coordinates are not included.
+Omitted local evidence is identified in the collection rather than exposed
+through broken download links.
 
 ## Workflow
 

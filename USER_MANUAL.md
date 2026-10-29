@@ -24,6 +24,21 @@ rail switches between Setup, Simulation and Results. Work Tree selects
 objects, Render View shows them, Property edits the selection, and Console
 records operation milestones.
 
+Before a project is open, Render View briefly states FunDEM's purpose and the
+**Setup → Simulation → Results** workflow. It does not open a welcome dialog.
+After opening a project, the normal workspace-specific selection hints replace
+this introduction.
+
+**Help > User Guide** explains getting started and the three workspaces: Setup
+defines materials, geometries and particle templates; Simulation arranges events
+and runs calculations; Results replays saved frames and supports filters and
+plots. It defines DEM (discrete element method), LS (level set), and SPH
+(smoothed particle hydrodynamics) centrally and identifies FunDEMBeta as the
+numerical core. **Help > About FunDEM** instead shows the running version,
+calculation core, execution modes and the location of license/attribution
+notices. Both entries are available without a project. Parameter-help popovers
+remain focused on the selected parameter rather than repeating the glossary.
+
 ### Examples and benchmark
 
 **File > Open Project > Examples** contains seven converted projects:
@@ -88,11 +103,33 @@ materials. Materials are not classified as sphere-only or LS-only.
 
 ### LS Geometries
 
-Create a superellipsoid/variant, OBJ mesh or built-in wall. Configure surface
-discretization and the SDF grid before generating. FunDEMBeta prepares the
+Triangle mesh (OBJ) is the first Add entry and opens its Configuration
+directly. Other entries are grouped by Curved solids (Superellipsoid,
+Irregular (superellipsoid-based), Cut sphere, Capsule), Polyhedra
+(Tetrahedron, Octahedron, Dodecahedron, Icosahedron, Polygonal prism,
+Pyramid), Rings (Torus, Link), and Walls (Plane, Box, Cylinder, Cone).
+The irregular label changes the menu/dialog and future default names, not
+existing object names or saved references. Configure surface discretization
+and the SDF grid before generating. FunDEMBeta prepares the
 surface/SDF and applicable centroid, volume and unit-density inertia once.
 Wall geometry keeps the original local frame and skips mass/centroid
 integration; unavailable physical properties are not invented.
+
+Except for subdivision-based Superellipsoid/Irregular, closed particle
+shapes use Surface spacing for surface refinement. Grid spacing controls
+the Cartesian SDF independently. Prism circumradius is
+center-to-vertex; Height and pyramid Base size are full lengths. Octahedron
+Half-lengths are the axial distances to its vertices. Torus Major radius is
+measured to the tube centerline and must exceed Tube radius. Capsule Straight
+length excludes the hemispheres; zero makes a sphere. Cut sphere retains
+z ≤ Cut height from the native sphere; zero makes a lower hemisphere,
+and the cut must lie strictly inside the sphere. Link sweeps a tube around
+an XY stadium centerline elongated along Y: Bend radius must exceed Tube
+radius, and zero Straight length makes a torus. Polygonal prism supports
+3–128 sides. Existing Hexagonal/Triangular prism records remain loadable
+and reconfigurable; new equivalents use Polygonal prism with six/three
+sides. Built-in Cylinder and Cone walls include their finite end caps,
+despite their Wall mass policy.
 
 Property shows calculated data, Display and bottom Reconfigure. Display hides
 faces, shows triangle edges through Mesh, enables central X/Y/Z SDF planes
@@ -183,12 +220,32 @@ authored initial-state edits, not changes to an active or archived simulation.
 ### Contact Material Pairs
 
 Choose two materials, including the same one twice. Pairs are unordered;
-duplicate combinations are reported. Configure LS normal/sliding stiffness
-per area, four ordinary stiffnesses, three friction coefficients and four
-dashpots. The linear switch applies to sphere-related contacts; when off,
-native Hertz–Mindlin uses bulk elastic properties. Explicit damping has a
-separate switch; when off the core derives damping from restitution. Required
-LS per-area values must be assigned; blank differs from explicit zero.
+duplicate combinations are reported. Between **Information** and **Stiffness**,
+use the unframed segmented **Contact type** bar to choose which coefficients
+to inspect; the bar is outside both group frames:
+
+- **Sphere-related** covers sphere–sphere and sphere–level-set contacts.
+  **Source** selects **From materials**, which uses Hertz–Mindlin, or
+  **Custom linear**, which shows the four ordinary stiffnesses. Friction
+  has Sliding/Rolling/Torsional, and Damping has all four directions.
+- **LS–LS** covers two level-set (LS) particles and shows Normal
+  and Sliding stiffness per area. Required values must be assigned before
+  calculation; blank differs from explicit zero. Friction shows only Sliding,
+  and Damping shows only Normal and Sliding.
+
+The selector only changes the visible editor, not the solver's contact law.
+Both coefficient sets are retained. Existing particle/material assignments
+choose the initial editor, but either option remains available. Both views
+use the same **Stiffness**, **Friction** and **Damping** groups; no Common
+group is added. Sliding friction and explicit Normal/Sliding damping are
+shared values: editing either view updates the same material pair. The
+circled-question button on the bar's left opens **Shared coefficients**
+to explain this relationship, including during read-only inspection.
+Explicit damping has one shared switch;
+when off, the core derives damping from restitution.
+
+Before a Contact type or Source change, the form commits its current visible
+inputs. An invalid value keeps the current choice and its editor visible.
 
 Pair values carry forward. A later event may explicitly override a pair and
 revert its local override to inherited values.

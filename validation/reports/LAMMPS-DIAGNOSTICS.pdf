@@ -1,0 +1,190 @@
+%PDF-1.4
+%“Œ‹ž ReportLab Generated PDF document (opensource)
+1 0 obj
+<<
+/F1 2 0 R /F2 3 0 R
+>>
+endobj
+2 0 obj
+<<
+/BaseFont /Helvetica /Encoding /WinAnsiEncoding /Name /F1 /Subtype /Type1 /Type /Font
+>>
+endobj
+3 0 obj
+<<
+/BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding /Name /F2 /Subtype /Type1 /Type /Font
+>>
+endobj
+4 0 obj
+<<
+/Contents 21 0 R /MediaBox [ 0 0 595.2756 841.8898 ] /Parent 20 0 R /Resources <<
+/Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>> /Rotate 0 /Trans <<
+
+>> 
+  /Type /Page
+>>
+endobj
+5 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (../tools/all-feasible-lammps-20261029/conditional-cap-proofs/dem04-oblique-grazing-cpu.json)
+>> /Border [ 0 0 0 ] /Rect [ 131.9432 339.3698 171.6456 348.4898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+6 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (../tools/all-feasible-lammps-20261029/conditional-cap-proofs/dem04-oblique-grazing-cpu-all-contact-replay.csv)
+>> /Border [ 0 0 0 ] /Rect [ 177.8472 339.3698 253.0264 348.4898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+7 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (../excluded-diagnostics/dem04-oblique-grazing-cpu-probe-retained.zip)
+>> /Border [ 0 0 0 ] /Rect [ 259.228 339.3698 305.2688 348.4898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+8 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (../tools/all-feasible-lammps-20261029/conditional-cap-proofs/dem06-spin-wall-cpu.json)
+>> /Border [ 0 0 0 ] /Rect [ 109.546 324.1698 149.2484 333.2898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+9 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (../tools/all-feasible-lammps-20261029/conditional-cap-proofs/dem06-spin-wall-cpu-all-contact-replay.csv)
+>> /Border [ 0 0 0 ] /Rect [ 155.45 324.1698 230.6292 333.2898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+10 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (../excluded-diagnostics/dem06-spin-wall-cpu-probe-retained.zip)
+>> /Border [ 0 0 0 ] /Rect [ 236.8308 324.1698 282.8716 333.2898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+11 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (../tools/all-feasible-lammps-20261029/conditional-cap-proofs/dem06-mindlin-spin-heavy-cpu.json)
+>> /Border [ 0 0 0 ] /Rect [ 143.3356 308.9698 183.038 318.0898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+12 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (../tools/all-feasible-lammps-20261029/conditional-cap-proofs/dem06-mindlin-spin-heavy-cpu-all-contact-replay.csv)
+>> /Border [ 0 0 0 ] /Rect [ 189.2396 308.9698 264.4188 318.0898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+13 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (../excluded-diagnostics/dem06-mindlin-spin-heavy-cpu-probe-retained.zip)
+>> /Border [ 0 0 0 ] /Rect [ 270.6204 308.9698 316.6612 318.0898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+14 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (../tools/all-feasible-lammps-20261029/retained-excluded-attempts-ledger.json)
+>> /Border [ 0 0 0 ] /Rect [ 50 293.7698 132.3688 302.8898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+15 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (../reference/lammps/20261029-expanded-suite/wall-modulus-mapping-correction.json)
+>> /Border [ 0 0 0 ] /Rect [ 138.5704 293.7698 202.7676 302.8898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+16 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (../dem11-regionwall-preflight-padding-rejected/PREFLIGHT-REJECTION.json)
+>> /Border [ 0 0 0 ] /Rect [ 208.9692 293.7698 264.3048 302.8898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+17 0 obj
+<<
+/Annots [ 5 0 R 6 0 R 7 0 R 8 0 R 9 0 R 10 0 R 11 0 R 12 0 R 13 0 R 14 0 R 
+  15 0 R 16 0 R ] /Contents 22 0 R /MediaBox [ 0 0 595.2756 841.8898 ] /Parent 20 0 R /Resources <<
+/Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>> /Rotate 0 
+  /Trans <<
+
+>> /Type /Page
+>>
+endobj
+18 0 obj
+<<
+/PageMode /UseNone /Pages 20 0 R /Type /Catalog
+>>
+endobj
+19 0 obj
+<<
+/Author (FunDEM verification) /CreationDate (D:20261029215653+08'00') /Creator (\(unspecified\)) /Keywords () /ModDate (D:20261029215653+08'00') /Producer (ReportLab PDF Library - \(opensource\)) 
+  /Subject (LAMMPS source-history diagnostics and superseded mappings; excluded from official verification results) /Title (LAMMPS diagnostic exclusions - FunDEM) /Trapped /False
+>>
+endobj
+20 0 obj
+<<
+/Count 2 /Kids [ 4 0 R 17 0 R ] /Type /Pages
+>>
+endobj
+21 0 obj
+<<
+/Filter [ /ASCII85Decode /FlateDecode ] /Length 2260
+>>
+stream
+Gau`TgN)%,&:O:Sm%`#a+TgRZR6IEaghA-ZP?R?P?Q]uE&G$Y=[,XnG^'jES3OTeeekF+o>65,tfs:pA>u:%\LUt6'$1QCV(2"=0KB4"b5QY'%LNgq:cUYm:fKMj'EPbiqUd01ao997^39;lMG%9F-_r<r^$n%9Yr;Q*Zq1hVaQ.T'D2C\h),qD$Yl:St/^f'qj1\FAK^jHp2K&n@^ra>-[XVM*qRcDf*-Ja%9,6FFmo-',C8WknrfC/h2;kKp!&8&0k=Oqu:$e>Qlm,EsI#4!g]^<T'[KA^MRTtcZI.==i$0G&[T#RB=omb1?\Kt)]27@#cd.L4ceZIL^s3L$7P<4/-lnifC_8b?hbBLLL/13F]WM&a_qFY+c;bGL@*61#Lnlp6nDAC_V7pJr3+.U_TGaam&$4+H(D;JH9VXh4hbb+<H3F5>Cn>g$0M'n3K47&tE8N@l9U\gf?;EpE=$AP*Z`#d"nYTaI=;<<cNR$X2Oh@3i--f7hpp%:],Y1CFR%l+1b*2"?WCCJ^:Y)gp=&dRH-`bY]9)a`gS(8N9>';Yq>'%3;:gD(?p&Ie_BmX5Xo?'mcf.Dl^7EgY5"'Z[dYc4*CZu8Fg_Y#:YZ5jQB9DMaCI4KX8/&^;!(M5SOA=#JA)Ii17rtT\WQqlWb40'cN%02R5(r8t#M&-Xg&d\D(^lNH1F2Mnq%3auc`;U+TN=(8`$;d`T5gj(;e[Yr<MK&=Md%<@tAE;C[;$Y7Zs<6($5+`E*En&[PNKFO,$)YMa#n$MSZE0T*3FPEj.U9d=]\VfgagDP0>8i.CAWJgfmkQ`>&XJCI&i$Dk3V&@[_pLmo,Yk[Q5o9)L/#KA4<bqD!47[l0BOlQ;-Xb0g8'4%[=<M)bKqK%SsTnhEp'GER=ElT)\3h.p^XLU$(l)?#FijtTVP52gk`F&.@^!#[&"'arFs&GJLEX%-<fOYn/AA8ZgbqAqP6Bgjf]^/%7[g1$#T^m?k-C?)T,/AS2^_V`E1moPQRj8M]=]A/bP_FbZi?-JZDB_l3$c>777h.=(U]X8T>i0d__Q_a&<c=Q5F?B)SbF!j,phZ)Nm33/BuR1=2Bbc2uOG^MPV&*e.>BNk4O6u^?eO.A!Q<CZJYo_`Z/5DQW7'Aj<eT$V#'!lqgs_UqXrF`fCTd2lJd8NJ(IXMbStXiSsnD0\'bcHV73J7`L0545)/'i2keqXUkFF;N5acu2PAOLAX?"XtaE#^FDsIsb$p0cc?h4Q?]f4f9Vf*A%Lo;`Rg":/tLIY&ELL[_pdrM,.bqotP5+E.WuG1ec"tT&`!\@5R#S4804TEYP:dfS_n#ml11CF@6`_@^Q@bM1^oL^YZaJ^L5Y!2g[tskt8,XErhWq8JGYumiT'#j1)/5qJl7L*;>4Shi3#r?Z?9A5lBg=X`Vm9>;5^K]?9Tp(&q2E+BJ0CC[._>F^K14XM@:Y#?1kmN#-mWmHkfS0QeOC@7t1d*bag7_P-/[gH+$10>]W=qSX-)[Me;U-ME#9`n1brFe,I!EGM'>'pde4;RBL./o(.bX38)nm\Es3XtIU1?0-L8@E\X:.,,U`6G'=j3h3_n5!\r>#ODbHX`E)cr)4KfC3`0N@A23:=Wj7%2lA<im"9H3l_,2:D,)OoW3RptiQ'IM`\>a?>eJbU!2kkJh@*Ub"MPuKeB[:T\&H^TU"@rdX_jmp7CH1,'F#k='@C#"Kuq3P%EME!'\0#rja=Rcgd['2Bs2'7kD,4RVFV5E.QoUS6aV@C;0$%iAR^KNCb-eL/pJ;mn]c\60S>)9o5D"Mc-6.HDk8/sAit>S7@7+IfIQA-qI-ghj=sOHa8DnNnaG/sO'f@iQ]J^,6mbR=k6F4I+NKFr)t!k#UI"qWbDG2<":A-Yj0$6g?</8^nhO'Q?-t%,)pFbl'!?V?3UK;(D;A>QN58LA2ij<;CQf77:4G:d[3A\C#$n1I=W&(,>FWdKVH/Ke1Xi`@%be3+)niI+G=lf@h2+30>ge5]/q:Wd%F4E<KY%8qS)@*1jLisb^[+tKFru=9Ra*J2(&[59INq'u)B:RuIo'.!Hk)k9R@CP/P5)7qq6Vbklrfe?I%A;T^dPPqWD$>YSu4$g,5F:8gpk3.O(%Daj3<,,oTuIH20/#-KN1mQZjU5n)bRR47SQl89Xnf?j=^"_bS6YSU;,L&Ff#H<6#L77\%*h11H.Yp(M)r'(`+Z:<+g4J#*dN^FRIQcLBm5">[XI#4H_d7h\R6*.SO`tD;SJtrVZ*=?C"?`^7lX.rW@G4??c~>endstream
+endobj
+22 0 obj
+<<
+/Filter [ /ASCII85Decode /FlateDecode ] /Length 2181
+>>
+stream
+Gb"/(>>s99'Ro4HSB&&O)rG,FgXugt$!fU=;A.^:h<s\:>>@R,4-a>)9Rls]8[`+9EIiGn3j_<&j]oN@F=tE6#Cg"W4';U^2M^)j(L.L5)7Y5<_#+J8o:=2hoh)"q-LJJ5HfH4QgRgHSm"$2PXrmJT(M^]h'+Y06nA#C&*UOjhT?JEhA5SRXZ39BX,d.>$$NXVNMrALsbB(hBF1h!&bV*B'6Lj;:)[?t\o>?<[f@fj-"`<uo&4N`bRD]b<%2Wh.G2,%[gJbDPYb(Z>>?D+eg"c`@APgNq>1Z5c:*j<P9lK98a\l:foTgWWM@tS<&B2-!NA.N9`b:UA(2$[M.2Og08ZkUU_l?B\";4aG]k56X:R!PVm,7E4\98=?$aCJcZU6=e?3.-8P*$aHU:O_Tek=/bA`PW;i/XVoS0g#+L:"&-EtnPbPY9dS.9C0^-nF)NojB]%QPAq^6<]Tg:FM;KKn;j=g#Do<cR);\DRDmrQSk\Xpld&>_#5tcQY+pSe(qdOO3_(3W;c<N56'C,B]XiF-/"._&,&fEG$gf1_)W)AG_M@f7q%K3jd.A+&Zl%B@tho/?@og>+iE,/W(AL>2mcBjWKcEhSqSK41J:9M2QL!&=*e#r2;tJK,bugrQCr-Y8:J)nr0,t-ha;l](R11QNRbP]-'5bjoXU]\M@BW;A.r^?eN1aa.0]RY@[A?Ao%Ld[16-5?dB;J`[WfKe.)\37&LlsZ/J4mIEctb\.PuHCM3:bj)uW):XdfF;%7ZB<+h@e.A](2U^r_j>ncEeH,M8X%+$j3cE2Y_'81f[#;Og0V)-^&GX[5_/XPKqcQ,+'IV"h43X5;]X`=A78Kdsp6C!+qC1ea<K/7Dfl_85!e;*V@8n-!:2a+O?VS/!L7k10i1\?+&Tk_7E`:R(C5idj%n-heP4Ebs>JLFS!_)2i-d$g!5fV.jZr389fa,><dm;I=9C.pOe=i9i./Mkrg<d<jD4Q#pHYVCd?'78n;57BfdWlh-BD_!>N<LlLPW(.T8?L@VWY[lMr!Q'/YrmC"[@'4.EG"JaRAI7lL8r3gbf7o0V^gdI*dM@6!1TgB,./\+oU^@_5DYO@FfnIl>^j#\*'V#jp/gAn8OSeg5T*C#Q+QIZCc!i&>CV]r?-&%r3JcX,tjYnmZ//Ts5d-_ZTn@1YGg6TujB`u^+DN'NFd'9)AlcI&X1.!8tZ(ftY!U'?M]A!8sNEPR"tF6CP"(WM)aVW+N\`;d3D.<q8!0-^=6n,keMD'7ZW+Rjl6_&IHhbUqPk"(Cbj7g>DVS@Qm!V(9TqYgeanQ;iQnNdXrla8:E-9T&4b1nK?i0r_>]fJl3i*tHu>.aN20\Y9qgaGh[TP'(>EVEOBld/h4*H_DIA;)#k3ci\-\)PQ,_%5!.-XmsttJNBG(rLaYBBS=oG&#`tSj6_r$Y-7oC,05;HUu_+CJ`mRl8O'dR1)`lWmE?bQSdiSP0@*@^Y"JC^]iA-QgLIpKG!Ie%^!I81aR_m8\"-_+6eUt)Y&tgmXXcqtipQHuq1!F1NW1YTm"msHJdh!;'T?>q0U,@?mFXU-F_\[VY0+sJLRD:bK4Z/pc)`Ppbd8ELo:^K71@ohEbj1G<bj/[nY7!TOYD:B8;boH#k1r2^E"mLHo7oGg3N@(6_2D8'V;]lLk-OfHZ](jgKF3>ND4_=Ua,Yd\LN1#.3XVq:;92Xugq6eN9\aM9Y`"+^l0RbM5-p:DhAdS1B62lTg$jkLdd?X,6RC:LKPKL-%khcZpng87=/RYPEKTJZSl.^-^fc5ZJ)0=eL*,$sCC`idFf/MG;QuD&AYZU>2M<lN%u8f4Lu,QG0?9`&dBnAM5o>MUgV]Q@lq][er&5E:<9,!NG&4hA41<XG^OR*9G0E-3Lt+eqObi&^A!lN'$sq9:^+h^Y1Ou[d-)QTag.^.lk2]]/XpdQTX"^0qmJ!6.-f:]ODfX15SUl@\<+eE=^B\d,l?)qk6%6:dqhb8Wm(F5ZIPgcQAXh7ZghL0UEgeU/+$f/PqTfbC=4I>-cL.fuSd]3JF^JO+4BJRE=_5]LZ&JAlYU2]Pronmp%iCU-O<E0bh4=MY#K`,UT7dXY*FCO^q'N4Y3d$V(J*Q-X<,u,^-I(Z`G^[^b!LQUO/&,s8F]RWRjY'=T7G%Mm42UNV;.4LL-Fg54VfVGDBt0<UATq'*m/.)t!tfe~>endstream
+endobj
+xref
+0 23
+0000000000 65535 f 
+0000000061 00000 n 
+0000000102 00000 n 
+0000000209 00000 n 
+0000000321 00000 n 
+0000000526 00000 n 
+0000000769 00000 n 
+0000001030 00000 n 
+0000001249 00000 n 
+0000001485 00000 n 
+0000001738 00000 n 
+0000001953 00000 n 
+0000002199 00000 n 
+0000002464 00000 n 
+0000002688 00000 n 
+0000002911 00000 n 
+0000003144 00000 n 
+0000003368 00000 n 
+0000003668 00000 n 
+0000003738 00000 n 
+0000004136 00000 n 
+0000004203 00000 n 
+0000006555 00000 n 
+trailer
+<<
+/ID 
+[<87b6d43da39aee962cb566b711c56ff8><87b6d43da39aee962cb566b711c56ff8>]
+% ReportLab generated PDF document -- digest (opensource)
+
+/Info 19 0 R
+/Root 18 0 R
+/Size 23
+>>
+startxref
+8828
+%%EOF
