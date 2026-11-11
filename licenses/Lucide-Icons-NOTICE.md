@@ -1,7 +1,7 @@
 # Lucide Icons attribution
 
 The following shared Render View action assets are based on Lucide Icons,
-not Microsoft Fluent System Icons or the private user-reference redraws.
+not Microsoft Fluent System Icons.
 
 | Local asset | Upstream icon | Local adaptation |
 | --- | --- | --- |
@@ -15,8 +15,8 @@ on 2026-11-10. Neither icon is in that LICENSE's appended Feather-derived
 icon list; the ISC notice below applies to these two assets.
 
 Both icons use the existing shared DPI-aware vector renderer, common logical
-icon slots and button metrics. This notice grants no rights to unrelated
-private reference redraws; retain their separate provenance restrictions.
+icon slots and button metrics. Their notice applies to these two assets and
+adaptations; Microsoft glyphs and original FunDEM artwork retain their own notices.
 
 ## ISC License
 

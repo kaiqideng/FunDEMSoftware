@@ -47,8 +47,8 @@ and SPH laws remain authoritative; combined solid pairs are evaluated once and
 no ghost mass is introduced. SPH internal positions stay continuous while saved
 and displayed observations wrap into the configured domain. The service supports
 CPU, GPU and Hybrid with strict single-image support limits; periodic Bonds are
-not supported. It is not a retired benchmark contact-force override or a promise
-of arbitrary periodic shapes, walls or multiple-image interactions.
+not supported. The service does not promise arbitrary periodic shapes, walls
+or multiple-image interactions.
 
 ## Core validation
 

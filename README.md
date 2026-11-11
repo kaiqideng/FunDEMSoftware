@@ -16,6 +16,8 @@ element simulations, including coupled LSDEM + SPH fluid–solid problems.
   state continues into later Events.
 - **SPH:** shared fluid properties, regular Blocks and finite-duration Jets
   coupled to level-set solids.
+- **Render View:** named geometry/template previews and clearly labeled Event
+  initial states, plus recorded Frame/Time information in Results.
 - **Results:** recorded-frame playback, particle State tables, independent
   particle/Contact/Bond displays, movable legends, Clip and Threshold filters.
 - **Plot:** time history, XY curve, Scatter, Histogram and uniaxial-compression
@@ -56,8 +58,6 @@ the installation folder.
 7. Random-shape particle column
 
 Each opens as a separate writable copy and does not run automatically.
-The ON-DEM periodic-shear Benchmark importer accepts the user's own authorized
-input; the author's coordinate dataset is not redistributed.
 
 ## Files and documentation
 

@@ -45,7 +45,14 @@ zlib must additionally retain that supplied component's license/notice.
 
 Selected monochrome interface icons are from Microsoft's Fluent System Icons,
 Regular set. Their detailed provenance is maintained in the source asset
-notice. The FunDEM application logo and approved original toolbar artwork
+notice, distributed as `licenses/Fluent-System-Icons-NOTICE.md`. The Event,
+Geometry, Sphere Template, LS Particle Template, SPH and Particle External
+Constraints glyphs are untouched originals from commit
+`83b26348c811f072429427ff48362238656524fe`: Folder Open 20, Shapes 20,
+Grid Circles 24, Cube Multiple 20, Fluid 20 and Link 20 Regular. The notice
+records their original paths and file-byte SHA-256 values. Their pinned
+[official license](https://github.com/microsoft/fluentui-system-icons/blob/83b26348c811f072429427ff48362238656524fe/LICENSE)
+is reproduced below. The FunDEM application logo and approved original toolbar artwork
 are not Microsoft Fluent artwork. The following MIT notice applies to the
 Fluent assets, not to all application/core code.
 
@@ -81,9 +88,7 @@ notice. Source: [Lucide Icons](https://github.com/lucide-icons/lucide);
 license: [official LICENSE](https://raw.githubusercontent.com/lucide-icons/lucide/main/LICENSE).
 
 The following ISC notice applies to these two icons and their adaptations,
-not to the application/core generally or private user-reference redraws.
-Their inclusion does not establish redistribution rights for those separate
-references; review and preserve their applicable provenance restrictions.
+not to the application/core generally, Microsoft glyphs or original FunDEM artwork.
 
 ### ISC License
 
@@ -119,8 +124,9 @@ MSVC kit notices as proof of its dependencies.
 A CUDA-enabled Windows build packages only reviewed redistributable runtime
 files from its selected toolkit, not the toolkit/compiler or NVIDIA driver.
 Include the actual NVIDIA CUDA Runtime and CUDA C++ Core Libraries terms and
-notices where applicable. The current build profile uses CUDA 13.2; users
-still need a compatible installed NVIDIA driver and supported device.
+notices where applicable. The current build profile uses CUDA 13.2; GPU and
+Hybrid modes need a compatible installed NVIDIA driver and supported device.
+CPU mode remains available without an NVIDIA GPU in the CUDA-enabled package.
 CPU-only builds do not require distributing a CUDA runtime.
 
 Compilation architectures and verified physical devices are separate facts.
@@ -134,11 +140,7 @@ FFmpeg executable or codec SDK is bundled by this implementation. The
 current non-Windows implementation explicitly reports MP4 as unavailable.
 
 The seven converted built-in examples are distributed as accepted project
-inputs. Keep any accompanying example-asset attribution. The ON-DEM author's
-coordinate dataset has no stated redistribution license and is **not**
-included in public packages or source commits, nor as an embedded converted
-payload. Users must supply their own authorized copy for the benchmark import
-workflow. A converted data representation does not remove that restriction.
+inputs. Keep any accompanying example-asset attribution.
 
 ParaView, Blender, FEBio Studio and VS Code are workflow/design references,
 not bundled applications. No endorsement by their owners is implied.

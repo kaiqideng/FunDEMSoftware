@@ -9,6 +9,12 @@ not been redrawn or restroked.
 | materials.svg | Layer 20 Regular |
 | material-pairs.svg | Shape Intersect 20 Regular |
 | particle-instances.svg | Cube 20 Regular |
+| events.svg | Folder Open 20 Regular |
+| geometry.svg | Shapes 20 Regular |
+| templates.svg | Grid Circles 24 Regular |
+| ls-particle-templates.svg | Cube Multiple 20 Regular |
+| fluid.svg | Fluid 20 Regular |
+| particle-external-constraints.svg | Link 20 Regular |
 | add.svg | Add 16 Regular |
 | camera.svg | Camera 20 Regular |
 | play.svg | Play 20 Regular |
@@ -36,20 +42,16 @@ Standard checkbox controls use Qt Fusion's original 16 px indicators; no
 duplicate Checkbox SVG assets are bundled or used to redraw checkboxes.
 The Camera action asset and the active Box Edit, Calculator, and
 Data Histogram workspace assets are stock SVGs from the same commit.
-The two Fit actions use Lucide `maximize-2` and `focus` instead; see
-[LUCIDE-NOTICE.md](LUCIDE-NOTICE.md) for their ISC notice and adaptations.
+The two Fit actions use Lucide `maximize-2` and `focus` instead; see the bundled
+`licenses/Lucide-Icons-NOTICE.md` for their ISC notice and adaptations.
 The Shape Intersect asset also preserves its raw stock SVG from that commit.
 Solid Particle Instances reuse the stock Cube 20 Regular previously used for
 Geometry, retaining `particle-instances.svg` and `UiIcon::ParticleInstances`.
-SPH retains its separate fluid-splat reference redraw.
-Events, Geometry, Sphere Templates, LS Particle Templates,
-SPH and Particle External Constraints use
-reference-based FunDEM vector redraws recorded below, through their existing
-shared registry entries. They are not Microsoft Fluent artwork.
-The two template-family redraws retain `templates.svg` and
-`ls-particle-templates.svg` in their existing registry entries, not the former
-Grid Circles/Cube Multiple stock artwork. They draw through the shared registry
-at the same 20 logical-pixel object size.
+SPH Parameters and SPH Block/Jet leaves share the stock Fluid 20 Regular.
+Events, Geometry, Sphere Templates, LS Particle Templates and Particle External
+Constraints also use untouched stock artwork through their existing registry
+entries. Grid Circles is supplied upstream at 24 and 28 units, not 20; the
+24-unit original is rendered in the same shared 20 logical-pixel tree slot.
 Work Tree object glyphs draw at the common 20 logical px size; they are decorative,
 not additional actions or focus targets.
 Workspace artwork uses the shared 20 logical px size inside 40 px buttons,
@@ -88,49 +90,39 @@ cases `singleStep` and `reset`. Their 24-unit view boxes keep
 the original coordinates and round strokes: 2 units for Step and
 1.8 units for Reset. They are scalable SVG ports, not screenshots or redrawn
 Fluent assets. They use the same shared 16 x 16 logical-pixel registry icons
-and 28 x 28 px toolbar controls as other Render tools. Their selection does
+and shared 28 px-high solver buttons with caption-measured widths. Their selection does
 not change the separate workspace-navigation icons.
 The historical path records artwork provenance; it is not a current source dependency.
 
-## User-selected reference vector redraws
+## Pinned domain-asset sources
 
-These six assets are FunDEM vector redraws from user-selected visual
-references. Preserve each reference's composition rather than replacing it
-with an unrelated abstract symbol. They are not stock Microsoft Fluent icons
-or a claim of wholly unrelated original artwork.
+The six assets below are byte-for-byte copies from upstream commit
+`83b26348c811f072429427ff48362238656524fe`. Paths are relative to the official
+[Microsoft Fluent System Icons repository](https://github.com/microsoft/fluentui-system-icons/tree/83b26348c811f072429427ff48362238656524fe).
+Their original view boxes, paths and optical weights are unchanged; only local
+filenames select their established FunDEM registry entries.
 
-| Local asset | Reference composition | Private reference provenance supplied by the user |
+| Local asset | Upstream path | SHA-256 of original SVG bytes |
 | --- | --- | --- |
-| events.svg | Open folder outline with a rear tab and inset back sheet | User-uploaded VectorStock-watermarked reference; no stock identifier or source URL supplied |
-| geometry.svg | Overlapping rear cylinder, left pyramid and right cube | [Flaticon Geometry reference](https://www.flaticon.com/free-icon/geometry_3873950) |
-| templates.svg | Nineteen touching outline circles in centered hexagonal rows of 3/4/5/4/3 | User-uploaded Sphere Template reference; no stock identifier or source URL supplied |
-| ls-particle-templates.svg | Nine rounded irregular rock outlines arranged as a wide pile | User-uploaded LS Particle Template reference; no stock identifier or source URL supplied |
-| fluid.svg | Fluid-splat outline, shared by fixed SPH Parameters and SPH Block/Jet instance leaves | User-uploaded outline reference; no source URL supplied |
-| particle-external-constraints.svg | Two elongated hollow rings with an outlined middle link | [Pngtree Link reference](https://pngtree.com/freepng/link-icon_4467887.html) and the uploaded screenshot |
+| events.svg | `assets/Folder Open/SVG/ic_fluent_folder_open_20_regular.svg` | `c5f8b2db9af20a454c1f05ce6eda4b21c99f1b8677b14b6d7d07d5817140a487` |
+| geometry.svg | `assets/Shapes/SVG/ic_fluent_shapes_20_regular.svg` | `2d244aa8e470790e351518ada676508e0278242880563d235e69720cee951c93` |
+| templates.svg | `assets/Grid Circles/SVG/ic_fluent_grid_circles_24_regular.svg` | `57eb842ec75bd32de3825c1eb114a653de0956cd0d70129f4b71daf960676d7f` |
+| ls-particle-templates.svg | `assets/Cube Multiple/SVG/ic_fluent_cube_multiple_20_regular.svg` | `1bd7e44f7b8a2ab13488c234933ae9cec153f44ff942763fff50f66febfb7849` |
+| fluid.svg | `assets/Fluid/SVG/ic_fluent_fluid_20_regular.svg` | `bca56b461f57c4d34dfe13b48b26d8a8df388390fee1d32d76b7e98b1aad9b4c` |
+| particle-external-constraints.svg | `assets/Link/SVG/ic_fluent_link_20_regular.svg` | `82b1fa623cc2d9c7a757b747ff706e62899ba160c575093ddfb1f38481541bc3` |
 
-The shared icon renderer centers each SVG's actual ink bounds with one common
-87.5%-slot ink envelope and uses neutral enabled/disabled colors at the current
-device pixel ratio. This presentation does not reassign the stock paths'
-authorship or licenses. Reference redraw compositions remain intact; unusually
-thin outlines are adjusted only for their small-size optical weight.
+The pinned upstream [LICENSE](https://github.com/microsoft/fluentui-system-icons/blob/83b26348c811f072429427ff48362238656524fe/LICENSE)
+is reproduced below. Its original file-byte SHA-256 is
+`69bc45dc42b9acb96a69823adbc6ae538374e3c0bde169b855b32c48eaaef52f`.
+The MIT notice covers the listed Microsoft assets, not original FunDEM control
+artwork, Lucide-derived actions or the application logo.
 
-All existing Work Tree domain icons use `UiMetrics::treeIconSize = 20` logical
-px, not asset-specific sizes; ordinary Render/transport glyphs remain 16 px,
-Add remains 14 px in its 24 px target, workspace icons remain 20 px in 40 px
-targets, and tree rows remain 28 px. Raw view boxes and stroke-unit values need
-not match between redraws. Use shared DPI scaling and matched optical weight.
-Solid instance leaves use the particle redraw. Fixed SPH Parameters and SPH
-Block/Jet instance leaves share the same fluid-splat redraw through
-`UiIcon::SPHSources`. Preserve the existing iconless Results nodes.
-
-These redraws remain private source/preview assets for this change. Reference
-images are not bundled and no source watermark is copied into the paths.
-The links above record private provenance, not a license grant or a statement
-that any reference permits redistribution of the redraw.
-This notice does not establish third-party license clearance; review reference
-rights separately before any future redistribution. The Microsoft MIT license
-below covers only the listed stock Microsoft assets, not these redraws,
-original FunDEM control artwork or the application logo.
+The shared DPI-aware renderer retains the common 20 logical-pixel object slot,
+87.5% ink envelope and neutral enabled/disabled colors. Render and transport
+glyphs remain 16 px, Add remains 14 px in a 24 px target, workspace glyphs remain
+20 px in 40 px targets, and tree rows remain 28 px. No source path is restroked
+to change those presentation metrics. Existing iconless Results nodes remain
+iconless.
 
 ## MIT License
 

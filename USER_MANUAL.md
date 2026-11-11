@@ -47,7 +47,7 @@ calculation core, execution modes and the location of license/attribution
 notices. Both entries are available without a project. Parameter-help popovers
 remain focused on the selected parameter rather than repeating the glossary.
 
-### Examples and benchmark
+### Examples
 
 **File > Open Project > Examples** contains seven converted projects:
 
@@ -67,14 +67,6 @@ If opening is cancelled or fails, its task-owned copy and sidecars are removed;
 your current project and installed examples remain unchanged.
 Some full cases take hours; a short-run check is not full physical validation
 and demonstration coefficients are not measured calibration.
-
-The **Benchmarks** menu retains ON-DEM periodic-shear import. Its author's
-original coordinates and converted payload are not included in public
-downloads. Supply your own authorized input when requested. Import does not
-run the solver. The diagnostic is not the complete 200-million-step reference
-campaign or a claim of exact agreement with the reference implementation.
-Cancelled or failed benchmark opening likewise removes only that task's
-generated working copy, never the supplied source data.
 
 ## 2. Files and editing
 
@@ -96,7 +88,7 @@ Bundled assets are mechanically converted without changing their physical
 parameters or accepted numerical arrays. An unsuccessful Open preserves the
 current project.
 
-Longer Open/Save, installed-example extraction and benchmark conversion show
+Longer Open/Save and installed-example extraction show
 the shared compact progress feedback after about half a second. Real stages
 are named; a percentage appears only when there is a measurable total. The
 interface remains responsive while detached file work runs, but conflicting
@@ -110,7 +102,7 @@ application-owned read/extraction loops check during their work. A single
 native geometry, JSON parser or image codec call may still have to finish
 before cancellation can be acknowledged; the interface does not falsely
 report that such a call has already stopped.
-Opening an installed example or benchmark keeps extraction/conversion and
+Opening an installed example keeps extraction and
 project reading in one continuous task. Known percentages appear beside the
 stage; an unknown total uses a moving bar without a fabricated percentage.
 Project Open and manual Open Results complete data reading, tree/Property
@@ -172,6 +164,20 @@ entry point: clicking a rendered geometry, particle or empty viewport space
 does not change the tree, Property or current Event. Ctrl-click in Work Tree
 adds/removes objects, and Shift-selection selects a contiguous range. Multi-selection shows a
 selection summary, not mixed physical parameter editors.
+
+The fixed upper-left Render View information identifies the inspected Setup
+object as **LS Geometry: name**, **Sphere Template: name** or
+**LS Particle Template: name**. Simulation instead lists every Event through
+the current one in project order, for example **Event: Prepare - Settle - Compression**,
+followed by **Initial state** on the second row. Future Events are excluded.
+Long rows are visually shortened while their accessible text remains complete.
+Selecting one solid or SPH instance changes the second row
+to **Initial state · Selected particle instance: name**, without a type prefix.
+This identifies the highlighted instance within the cumulative scene; it does
+not hide the other Event particles. Simulation always previews authored initial
+placements, including inherited definitions, rather than current calculated
+positions. Results continues to show the accepted recorded frame and time.
+All use the same borderless text template.
 
 Selection does not change camera framing. Use **Fit selection** to frame visible
 selected objects, or **Fit all** for the visible scene. Click empty Work Tree
@@ -496,7 +502,7 @@ Event; Results instead lists it once under the flat Particle Instances category.
 Add one or more instances from Setup templates, reusing a template if needed.
 Assign material, initial position and applicable initial velocity/angular
 velocity. Property's **Information** reports **Assigned material** and
-**Source template**, followed by **State...** to inspect the particle table and
+**Source particle template**, followed by **State...** to inspect the particle table and
 summary. Placement, count, mass and velocity/angular-velocity
 extrema are not repeated as Property rows; the underlying particle state is
 unchanged. Wall
@@ -1019,6 +1025,8 @@ Plot reads complete-state samples and offers its own saved-State frame choices;
 it does not infer data from animation images or interpolate missing samples.
 When both intervals sample the same step, one complete snapshot file is shared
 by both indices. Older single-stream archives remain readable by both workflows.
+Console reports each successfully saved Animation frame and its time. State-only
+saves do not print a Console line; their data and Results updates are retained.
 
 Ordinary frame seeks, playback and live archive refresh show no loading bar
 or separate task window, including in the bottom status area. The last

@@ -1,6 +1,6 @@
 # FunDEM 1.0 example guide
 
-Windows x64 — seven built-in examples and user-supplied benchmark data
+Windows x64 — seven built-in examples
 
 ## Open, run and inspect an example
 
@@ -92,6 +92,12 @@ remain explicit data. Procedural Brazil-nut and drum populations rebuild from
 their saved recipes; random orientations need not match an older generator.
 Changing only Results colors, opacity, legends or camera does not alter physics.
 
+The current Brazil-nut input shows all three non-box instances at **100%**
+opacity, while its **Box** remains **18%** opaque. The mixing drum's **Boxy**,
+**Prolate** and **Oblate** geometry recipes use surface subdivision **3**;
+the wall geometry is unchanged. These are approved input updates, retained
+when the installed example catalog is rebuilt.
+
 Before submission, these are ordinary editable projects: change Materials, Event
 parameters, Particle Instance placement/initial motion or compute mode, then
 use Undo/Redo and Save As normally. Recoverable Single/Lattice templates expose
@@ -171,50 +177,6 @@ Keep enough free space for recorded frames and do not start a long run merely
 to test whether the project opens. Short runs verify only the executed prefix,
 not later events, convergence or agreement with experiment. Example material
 coefficients are demonstrations, not measured calibration for another material.
-
-## ON-DEM periodic-shear benchmark
-
-The entry is **File > Open Project > Benchmarks > ON-DEM bumpy-wall shear flow
-(import data)...**. Unlike the seven examples, it requests an external data file.
-The original author coordinates and converted benchmark payload are not
-distributed in the public application package.
-
-1. Read the [ON-DEM benchmark description](https://on-dem.atlassian.net/wiki/spaces/Index/pages/244744204).
-2. Obtain your own authorized copy of the author's original
-   [GranularShearFlow.data](https://raw.githubusercontent.com/dalilavescovi/GranularShearFlows/56b7cfdfd774cf5ae057a1c5c90e5191a0deb97b/InitialGeometricalConfiguration/GranularShearFlow.data),
-   or locate your existing unmodified copy. The application does not download it.
-3. Select that `.data` file through the Benchmark import entry. The importer
-   verifies the original file and ordered coordinates; an edited/reformatted
-   substitute is rejected. Cancellation/failure preserves the open project.
-4. Successful import creates a separate editable project and does not start
-   calculation. Inspect its settings and use Save As before running.
-
-The imported diagnostic uses the following preset:
-
-| Setting | Value |
-| --- | --- |
-| Total sphere count | 3,480, including both bumpy walls |
-| Sphere radius; finite-particle density | 0.5 m; 1 kg/m³ |
-| Gravity | Zero |
-| Periodic directions | X and Y |
-| Bottom/top wall X velocity | −1 / +1 m/s |
-| Time step | 7.192545032e−5 s |
-| Steps; recording interval | 100,000; 1,000 steps |
-| Normal/sliding stiffness | 200,000 / (400,000/7) N/m |
-| Normal/sliding explicit damping | 15 / (30/7) N·s/m |
-| Sliding friction | 0.3 |
-| Rotational stiffness, damping and friction | Zero |
-
-The imported material pairs use **Stiffness source > Custom linear**, and
-**Custom damping coefficient** is checked in their Configuration. The external
-periodic-boundary service wraps the selected directions and supplements seam
-contacts; FunDEMBeta evaluates native contact force/history on the combined
-pairs once. No old external benchmark contact-force override is used.
-
-This 100,000-step diagnostic is **not** the full 200-million-step reference
-campaign, nor a claim of exact trajectory/contact/energy agreement with another
-implementation. Obtain permission before redistributing the author's data;
-converting or embedding the coordinates does not remove that requirement.
 
 ## Result and export reminders
 
