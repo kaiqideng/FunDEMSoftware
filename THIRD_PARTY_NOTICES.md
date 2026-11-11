@@ -1,4 +1,4 @@
-# FunDEM 0.4.4 third-party notices
+# FunDEM 1.0 third-party notices
 
 These notes identify the current desktop dependencies. Preserve the complete
 vendor license texts and notices supplied with the actual binary package.

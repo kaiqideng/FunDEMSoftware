@@ -1,6 +1,6 @@
 # FunDEM computation core
 
-FunDEM 0.4.4 uses [FunDEMBeta](https://github.com/kaiqideng/FunDEMBeta) as its
+FunDEM 1.0 uses [FunDEMBeta](https://github.com/kaiqideng/FunDEMBeta) as its
 in-process numerical computation core. The desktop application maps accepted
 project definitions to native materials, LS geometries, particles, contact
 pairs, Bonds and solver configuration. FunDEMBeta provides geometry generation,
@@ -29,9 +29,10 @@ not this explanatory summary, govern the core.
 ## Backend and output boundaries
 
 CPU is the default. A CUDA-enabled application can also select GPU and Hybrid;
-Hybrid places Sphere/SPH dynamics on GPU and LS dynamics on CPU. Running the
-deployed CUDA application requires a compatible NVIDIA device and driver, not
-a locally installed compilation toolkit. The packaged runtime profile and
+Hybrid places Sphere/SPH dynamics on GPU and LS dynamics on CPU. Using
+GPU or Hybrid requires a compatible NVIDIA device and driver, not a
+locally installed compilation toolkit; CPU execution remains available without
+an NVIDIA GPU. The packaged runtime profile and
 tested hardware, rather than this explanation, establish a binary's actual
 device coverage.
 

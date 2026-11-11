@@ -1,6 +1,6 @@
 # FunDEM User Manual
 
-Version 0.4.4 — Windows x64
+Version 1.0 — Windows x64
 
 FunDEM prepares, runs and inspects DEM and coupled LSDEM–SPH simulations.
 Its numerical core is [FunDEMBeta](https://github.com/kaiqideng/FunDEMBeta).
@@ -693,7 +693,7 @@ finite or Wall materials. One command prescribes all translational and
 rotational degrees of freedom of every target particle. Rotation is about each
 particle's own center, not a shared template center; it adds no orbital
 `angular velocity × offset` velocity. Constant mode keeps its Translation
-Velocity XYZ (`m/s`) and Rotation Angular XYZ (`rad/s`) fields.
+Velocity XYZ (`m/s`) and Rotation Angular velocity XYZ (`rad/s`) fields.
 Harmonic Property is ordered **Information**, **Oscillation**, **Translation**,
 **Rotation**, then **Reconfigure**. Oscillation contains the shared Frequency
 (`Hz`) and Phase (`deg`) for translation and rotation. Translation contains

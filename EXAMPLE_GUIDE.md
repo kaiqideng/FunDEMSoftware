@@ -1,4 +1,4 @@
-# FunDEM 0.4.4 example guide
+# FunDEM 1.0 example guide
 
 Windows x64 — seven built-in examples and user-supplied benchmark data
 
@@ -227,5 +227,5 @@ converting or embedding the coordinates does not remove that requirement.
   Clip guide should be omitted. FPS changes encoded timing, not physical data.
 - The packaged [User Manual](USER_MANUAL.md) explains event inheritance,
   filters, plots, DAT interchange, replay caching and troubleshooting.
-- Version 0.4.4 targets Windows x64; H.264 MP4 export uses Windows Media
+- Version 1.0 targets Windows x64; H.264 MP4 export uses Windows Media
   Foundation.

@@ -1,4 +1,4 @@
-# FunDEM 0.4.4 workflow guide
+# FunDEM 1.0 workflow guide
 
 This guide summarizes the current Windows workflow. It is not a publication
 or physical-validation record. For complete controls and equations read the
@@ -67,7 +67,7 @@ External constraints are Event-local, not inherited. Forces are assembled
 first, with Global damping last among force models. Continuous velocity
 constraints then take precedence and clear target net force/torque before
 integration kicks. A scheduled velocity reset clears loads only on its reset
-steps, not on every step. These presentation controls do not erase saved
+steps, not on every step. These constraint operations do not erase saved
 Contact/Bond observations.
 
 Global damping uses a dimensionless PFC-style local-damping coefficient,
@@ -143,7 +143,7 @@ in [FunDEMBeta validation](https://github.com/kaiqideng/FunDEMBeta/tree/main/val
 Historical evidence retains its own scope and does not establish calibration
 of every Example. No duplicate report ZIP is published with the desktop.
 
-Application 0.4.4 targets Windows x64. A GitHub release is not evidence of
+Application 1.0 targets Windows x64. A GitHub release is not evidence of
 Microsoft Store submission or certification.
 Public downloads contain runtime files, licensed examples and English user
 documents, not private source, SDKs or developer tests. The numerical core is

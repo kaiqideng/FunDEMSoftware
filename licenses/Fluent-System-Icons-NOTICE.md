@@ -36,7 +36,7 @@ duplicate Checkbox SVG assets are bundled or used to redraw checkboxes.
 The Camera action asset and the active Box Edit, Calculator, and
 Data Histogram workspace assets are stock SVGs from the same commit.
 The two Fit actions use Lucide `maximize-2` and `focus` instead; see
-[LUCIDE-NOTICE.md](LUCIDE-NOTICE.md) for their ISC notice and adaptations.
+[Lucide-Icons-NOTICE.md](Lucide-Icons-NOTICE.md) for their ISC notice and adaptations.
 The Shape Intersect asset also preserves its raw stock SVG from that commit.
 Events, Geometry, Sphere Templates, LS Particle Templates, solid Particle Instances,
 SPH, Bonds and Particle External Constraints use
