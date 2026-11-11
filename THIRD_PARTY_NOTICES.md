@@ -1,4 +1,4 @@
-# FunDEM 0.4.3 third-party notices
+# FunDEM 0.4.4 third-party notices
 
 These notes identify the current desktop dependencies. Preserve the complete
 vendor license texts and notices supplied with the actual binary package.
@@ -70,6 +70,36 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+## Lucide Icons
+
+Render View's **Fit all** and **Fit selection** icons derive from Lucide
+`maximize-2` and `focus`, respectively. Both use a 24-unit view box and
+1.75-unit stroke; the local focus center circle has radius 4. Preserve the
+complete distributed `licenses/Lucide-Icons-NOTICE.md` alongside the Fluent
+notice. Source: [Lucide Icons](https://github.com/lucide-icons/lucide);
+license: [official LICENSE](https://raw.githubusercontent.com/lucide-icons/lucide/main/LICENSE).
+
+The following ISC notice applies to these two icons and their adaptations,
+not to the application/core generally or private user-reference redraws.
+Their inclusion does not establish redistribution rights for those separate
+references; review and preserve their applicable provenance restrictions.
+
+### ISC License
+
+Copyright (c) 2026 Lucide Icons and Contributors
+
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted, provided that the above
+copyright notice and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 ## Windows compiler and OpenMP runtimes
 

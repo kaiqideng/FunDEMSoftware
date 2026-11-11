@@ -1,198 +1,95 @@
 # FunDEM Software
 
-FunDEM 0.4.3 is a Windows desktop application for preparing, running and
-analyzing sphere/level-set DEM and coupled LSDEM–SPH simulations. Three
-workspaces—Setup, Simulation and Results—separate reusable definitions,
-ordered simulation events and recorded-data analysis.
+FunDEM 0.4.4 is a Windows x64 desktop workbench for spherical and level-set
+DEM and coupled LSDEM-SPH simulations.
 
-This public repository distributes reviewed application packages and English
-user documentation. The desktop application source remains private. The
-numerical computation core is separately open source:
-[FunDEMBeta](https://github.com/kaiqideng/FunDEMBeta), under Apache License 2.0.
-A deployed application needs no source checkout or compilation.
+- **Setup:** materials, contact material pairs, geometries and reusable particle templates.
+- **Simulation:** ordered Events, particle instances, Bonds, external constraints and native CPU/GPU/Hybrid execution.
+- **Results:** recorded-frame playback, particle-state inspection, independent particle/contact/Bond displays, movable legends, Clip and Threshold filters.
+- **Plot:** time histories, XY curves, scatter plots, histograms and uniaxial-compression measurements, with data tables, CSV and figure export.
+
+Seven editable examples are included. PNG images, MP4 animation and
+current-frame solid-particle DAT export are available.
 
 ## Download
 
-- [Latest Windows x64 CPU ZIP](https://github.com/kaiqideng/FunDEMSoftware/releases/latest/download/FunDEM-Workbench-Windows-x64.zip)
-- [Latest Windows x64 CUDA ZIP](https://github.com/kaiqideng/FunDEMSoftware/releases/latest/download/FunDEM-Workbench-Windows-CUDA-x64.zip)
-- [Matching English user manual](https://github.com/kaiqideng/FunDEMSoftware/releases/latest/download/USER_MANUAL.md)
-- [Seven-example guide](https://github.com/kaiqideng/FunDEMSoftware/releases/latest/download/EXAMPLE_GUIDE.md)
+- [Windows x64 CPU ZIP](https://github.com/kaiqideng/FunDEMSoftware/releases/latest/download/FunDEM-Workbench-Windows-x64.zip)
+- [Windows x64 CUDA ZIP](https://github.com/kaiqideng/FunDEMSoftware/releases/latest/download/FunDEM-Workbench-Windows-CUDA-x64.zip)
+- [SHA-256 checksums](https://github.com/kaiqideng/FunDEMSoftware/releases/latest/download/SHA256SUMS.txt)
+- [User Manual](USER_MANUAL.md) and [Example Guide](EXAMPLE_GUIDE.md)
 
-These stable links follow the latest **published** release. Check the
-[release page](https://github.com/kaiqideng/FunDEMSoftware/releases/latest)
-for its version, exact asset inventory and checksums. This documentation
-describes 0.4.3; do not assume an earlier downloaded binary has these features.
+Download the [latest release](https://github.com/kaiqideng/FunDEMSoftware/releases/latest),
+verify its published SHA-256, extract the complete archive and open
+`Windows/FunDEM.exe`. Keep its matching libraries, plugins, examples,
+documentation and license notices together. No compiler or local CUDA toolkit
+is required. CPU is the default; GPU and Hybrid require the CUDA package and
+a compatible NVIDIA GPU and installed driver. Hybrid runs Sphere/SPH on GPU
+and LS on CPU. An unavailable device mode is reported, not silently replaced
+by CPU.
 
-The CPU ZIP is CPU-only. The separate MSVC/CUDA ZIP provides CPU, GPU and
-Hybrid and includes the selected CUDA 13.2 runtime. GPU/Hybrid require a
-compatible NVIDIA GPU and driver, not a local CUDA toolkit. Hybrid runs
-Sphere/SPH on GPU and LS on CPU; GPU runs both participating families on GPU.
-Requested device modes are never silently replaced by CPU.
+The CUDA package targets architectures 75, 80, 86, 89, 90, 100 and 120 with
+CUDA 13.2. The release test device is an RTX 5060 (sm_120); compilation for
+other architectures is not a claim of hardware testing on every GPU model.
+Current releases support Windows x64; no macOS or DMG download is provided.
 
-The CUDA package is compiled for architectures **75, 80, 86, 89, 90, 100 and
-120**. The physical device used for release execution checks is an RTX 5060
-(sm_120); the architecture list is not a claim of hardware verification on
-every listed GPU. GPU visualization and the numerical compute backend are
-different capabilities.
+## New in v0.4.4
 
-The Microsoft Store update uses package version **1.0.14.0** for application
-0.4.3, preserving the existing product identity. Preparing a local MSIX is not
-the same as submitting, certifying or publishing it in the Store; this page
-does not claim those steps are complete.
+- Ordered Event Submit/Withdraw controls and retained-session continuation.
+- Unified solid/SPH instance definitions and event-local external constraints.
+- Separate State and Animation recording with immutable boundary replacement.
+- Results frame-list refresh during playback without jumping to the latest frame.
+- Updated Bond configuration and pure-data DAT exchange without repeated centroid correction.
+- Shared particle tables, current-frame State inspection and compact playback controls.
+- Updated editable examples and stricter runtime/configuration packaging checks.
 
-## New in v0.4.3
+## Numerical core and validation
 
-- Expanded and reorganized the level-set geometry catalog, with faceted,
-  rounded and ring-shaped primitives prepared by the numerical core.
-- Simplified contact material-pair settings: a standalone Sphere-related /
-  LS-LS selector, left-hand help and no extra Information frame. Shared sliding
-  friction and normal/sliding damping keep one stored value each.
-- Template Reconfigure restores editable generation parameters where possible.
-  Imported populations retain a fixed-ordinal data editor; instance material
-  assignments and individual linear/angular velocities stay aligned after edits.
-- DAT version 2 carries prepared LS surface/SDF and mass-property data without
-  a second centroid correction. Solid world poses, materials and per-particle
-  kinematics round-trip; plane-wall geometry is supported.
-- External periodic boundaries cover Sphere, LS and SPH populations, with
-  matching CPU, GPU and Hybrid execution paths and explicit domain checks.
-- Updated SPH/DEM coupling, true Jet emission buffers and boundary apertures
-  replace redundant impulse-correction and prefilled-column behavior.
-- Render View adds a configurable bounded cache for reusable mesh resources;
-  compact shared run controls and event icons improve workbench consistency.
-- All seven built-in Examples retain their physical data and event schedules.
-  Eight impossible Wall-Wall/single-body contact material pairs were removed;
-  coefficients needed by later event populations remain inherited.
-
-Supported project/result format identities remain unchanged. DAT version 1
-and triangle-only LS interchange are deliberately rejected. Release checks
-distinguish bounded execution and archive replay from full physical validation.
-
-## Core validation
-
-Validation cases, reference comparisons and their recorded limitations are
-maintained in the numerical core repository:
-[FunDEMBeta validation](https://github.com/kaiqideng/FunDEMBeta/tree/main/validation).
+FunDEM uses the separately open-source
+[FunDEMBeta numerical core](https://github.com/kaiqideng/FunDEMBeta).
+Comparison cases, reports and reproducibility instructions are maintained in
+[FunDEMBeta validation](https://github.com/kaiqideng/FunDEMBeta/tree/main/validation):
 
 - [LAMMPS comparisons](https://github.com/kaiqideng/FunDEMBeta/tree/main/validation/LAMMPSComparison)
 - [PFC comparisons](https://github.com/kaiqideng/FunDEMBeta/tree/main/validation/PFCComparison)
 - [ON-DEM comparisons](https://github.com/kaiqideng/FunDEMBeta/tree/main/validation/ONDEMComparison)
 
-Use each case's `REPORT.md` for the maintained report presentation.
-`HISTORICAL-*` files in the core retain original evidence for traceability;
-presentation updates do not constitute a new physical-validation campaign.
-These independent comparisons are not endorsements by LAMMPS or Itasca.
+Use each case's `REPORT.md` for its maintained presentation. Historical
+evidence applies to its documented source revision, parameters and criteria;
+it is not a claim that every current desktop example has been physically
+validated. Duplicate report downloads are no longer maintained here.
 
-## Workflow
+This repository distributes reviewed application packages and user
+documentation, not private desktop source. The core's Apache-2.0 license does
+not license all desktop or third-party components under the same terms.
+Read the [core attribution](FUNDEM_CORE.md) and
+[third-party notices](THIRD_PARTY_NOTICES.md).
 
-- **Setup / Simulation / Results:** a rebuilt three-workspace desktop with
-  compact common controls, transactional Configuration and contextual Property.
-- **Reusable definitions:** unified Materials, LS Geometries generated by the
-  core, and centered Particle Templates separated from material-assigned
-  Particle Instances.
-- **Ordered Events:** calculated particles, material responses and Bond state
-  carry forward; prescribed motion and force modules are event-local.
-- **Native execution:** CPU/GPU/Hybrid Run, Pause, Step and Reset, including
-  regular SPH Blocks and true outlet-driven Jets for LSDEM + SPH.
-- **Recorded results:** immutable particle/Contact/Bond frames, asynchronous
-  replay and a bounded decoded-frame playback cache.
-- **Independent displays:** particle, Contact and Bond tree visibility,
-  cylinder/disk interaction glyphs, proportional value sizing and movable
-  legends. Hidden particles do not hide their interactions.
-- **Visual filters:** Clip and Threshold for particles, Contacts or Bonds,
-  using the same recorded quantities as Plot. Selected Clip planes can be
-  inspected directly in Render View.
-- **Custom Plot:** Time history, XY curve, Scatter and Histogram, explicit
-  object selection, manual Reload, data tables and matching CSV export.
-- **Interchange:** DAT solid-instance import/export with materials, LS meshes,
-  poses and per-particle velocities/angular velocities.
-- **Images and animation:** high-resolution PNG and Windows H.264 MP4 with
-  accepted camera, colors, legends and scene overlays.
-- **Seven examples:** converted projects open as separate writable copies,
-  without changing installed inputs or automatically starting a run.
+## Projects, results and examples
 
-The desktop calls FunDEMBeta for geometry/SDF/mass preparation, contact
-detection, constitutive response and native DEM/SPH dynamics. It does not
-implement a second calculation core. Read the
-[core attribution](FUNDEM_CORE.md) and [third-party notices](THIRD_PARTY_NOTICES.md).
+Projects use `.fundem.json`. Keep required `.fundem-data` siblings when moving
+a project; optional procedural caches can be rebuilt. Retired collection
+layouts and numbered format markers are not automatically converted. Use the
+updated bundled examples rather than relabeling an old project file.
 
-## Start on Windows
+Submit Events in order before Run/Step. Setup and submitted physical inputs
+become read-only, while Display, Results and unsubmitted Events remain editable.
+Reset confirms first and withdraws submissions without deleting saved archives.
 
-1. Download the CPU ZIP, or the CUDA ZIP for a compatible NVIDIA system.
-2. Extract the complete archive. Keep its Windows folder, libraries, plugins,
-   built-ins, documentation and licenses together.
-3. Run **Windows/FunDEM.exe**. No compiler, SDK or separate Qt installation
-   is needed for a deployed package.
-4. Choose **File > New Project**, or
-   **File > Open Project > Examples** to inspect a converted example.
-5. Use **Save As** to retain a user-owned project, review Simulation Execution
-   and Output, then press Run explicitly.
-6. Open Results for committed saved frames, visual analysis and export.
+Results are recorded observations, not resumable solver checkpoints. DAT
+exports solid particles from one accepted Results frame and does not preserve
+Contact/Bond history or SPH state. Plot Reload is manual. Display and Filters
+do not change the recorded physical data.
 
-Do not mix runtime files from the CPU/CUDA ZIPs or an older application.
-Keep projects and results in a writable user-owned location; example opens
-create separate working copies. Each fresh run reserves a new result directory.
-A missing input or failed open leaves the previously accepted project intact.
+Examples open as separate writable projects and never run automatically.
+The ON-DEM Benchmark importer accepts user-supplied authorized input; its
+author's coordinate dataset is not redistributed. Long examples can take
+hours, and short regression runs are not full physical validation.
 
-Once Run/Step begins, all Setup/Simulation editing stays locked until Reset,
-including while Paused and after Completed or Failed. Read-only navigation
-and independent Results editing remain available. Run after completion starts
-fresh from unchanged authored initial data, not from the previous final frame.
-Reset does not delete saved archives.
+See the [User Manual](USER_MANUAL.md), [Example Guide](EXAMPLE_GUIDE.md) and
+[Workflow Guide](WORKFLOW_IMPROVEMENTS.md). Simulation, replay and export run
+locally. Download from the official release page and follow your organization's
+software policy; do not disable security protections to run the application.
 
-## Examples and benchmark
-
-The seven examples are Gömböc self-righting, interlocked chain, cloth box drop,
-dam break around a square column, Brazil nut segregation, superellipsoid mixing
-drum and random-shape particle column. See the
-[example guide](EXAMPLE_GUIDE.md) for opening, staged runs, preserved settings
-and workload warnings. Full cases may take hours; demonstration availability
-and short-run checks do not establish calibration, convergence or experimental
-validation.
-
-The ON-DEM periodic-shear entry remains under
-**File > Open Project > Benchmarks**, but the author's coordinate dataset
-and converted payload are **not distributed**. Users supply their own
-authorized original input. The application verifies that input, creates a
-working project and does not run automatically. Its 100,000-step native-law
-diagnostic is not the full 200-million-step reference campaign, nor an exact
-trajectory/energy agreement claim.
-
-## Files and current boundaries
-
-- Supported existing Next projects keep the technical suffix
-  .fundem-next.json, marker FunDEM-Next-Preprocessor and schema 3. Result
-  archives keep FunDEM-Next-Results and their supported frame versions.
-  Formal branding does not change these user-file identifiers.
-- Legacy Software schema-10 projects and old archives are not generally
-  auto-migrated. Keep the older application for those files; do not relabel
-  JSON schemas to pretend to convert them. The seven examples were explicitly
-  converted.
-- Current recording writes native result archives, not VTU or energy.dat.
-  Plots read recorded solid-system energy without enabling those file outputs.
-- DAT version 2 is solid-instance interchange, not an exact solver checkpoint;
-  it does not restore SPH or Contact/Bond histories. Version 1 and triangle-only
-  LS interchange are rejected rather than silently reprocessing geometry.
-- Results queries and rendering do not run the solver. Plot object selection
-  is explicit; Reload is manual. Playback cache defaults to 512 MiB of reusable
-  decoded frames, not a limit on total application/GPU memory.
-- Public packages contain no desktop source, SDK, tests, private design
-  documents or ON-DEM coordinate data.
-
-Read the [User Manual](USER_MANUAL.md),
-[Example Guide](EXAMPLE_GUIDE.md) and
-[Workflow Guide](WORKFLOW_IMPROVEMENTS.md).
-
-## Local operation and safe downloads
-
-Simulation, replay and export operate locally. The Benchmark importer reads
-user-selected data; it does not automatically fetch the author's coordinates.
-Verify the download source and release checksums, and keep the complete package.
-An unsigned portable download may trigger Windows application-reputation checks;
-local MSIX creation is not Store certification or trusted standalone signing.
-Do not disable antivirus, a firewall or platform security protections to run
-the application. Follow your organization's software policy if execution is
-blocked.
-
-The license texts and component notices shipped with each actual package govern
-its dependencies. FunDEMBeta's Apache-2.0 license does not make all desktop
-application source or third-party components available under that same license.
+Publishing a GitHub release does not establish Microsoft Store submission,
+certification or availability. Each runtime includes its governing license
+texts and original component notices.

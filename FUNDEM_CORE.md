@@ -1,6 +1,6 @@
 # FunDEM computation core
 
-FunDEM 0.4.3 uses [FunDEMBeta](https://github.com/kaiqideng/FunDEMBeta) as its
+FunDEM 0.4.4 uses [FunDEMBeta](https://github.com/kaiqideng/FunDEMBeta) as its
 in-process numerical computation core. The desktop application maps accepted
 project definitions to native materials, LS geometries, particles, contact
 pairs, Bonds and solver configuration. FunDEMBeta provides geometry generation,
@@ -51,15 +51,9 @@ of arbitrary periodic shapes, walls or multiple-image interactions.
 
 ## Core validation
 
-Validation cases, reference comparisons and their recorded limitations are
-maintained in the numerical core repository:
-[FunDEMBeta validation](https://github.com/kaiqideng/FunDEMBeta/tree/main/validation).
-
-- [LAMMPS comparisons](https://github.com/kaiqideng/FunDEMBeta/tree/main/validation/LAMMPSComparison)
-- [PFC comparisons](https://github.com/kaiqideng/FunDEMBeta/tree/main/validation/PFCComparison)
-- [ON-DEM comparisons](https://github.com/kaiqideng/FunDEMBeta/tree/main/validation/ONDEMComparison)
-
-Use each case's `REPORT.md` for the maintained report presentation.
-`HISTORICAL-*` files in the core retain original evidence for traceability;
-presentation updates do not constitute a new physical-validation campaign.
-These independent comparisons are not endorsements by LAMMPS or Itasca.
+Use [FunDEMBeta validation](https://github.com/kaiqideng/FunDEMBeta/tree/main/validation)
+for the maintained LAMMPS, PFC and ON-DEM comparison inputs, reports and scope.
+Each case's `REPORT.md` is the current presentation; `HISTORICAL-*` records
+retain original evidence. A documentation update is not a new solver run or
+physical-validation campaign. No duplicate report ZIP is distributed by the
+desktop repository.
