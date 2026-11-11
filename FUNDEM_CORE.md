@@ -48,3 +48,18 @@ and displayed observations wrap into the configured domain. The service supports
 CPU, GPU and Hybrid with strict single-image support limits; periodic Bonds are
 not supported. It is not a retired benchmark contact-force override or a promise
 of arbitrary periodic shapes, walls or multiple-image interactions.
+
+## Core validation
+
+Validation cases, reference comparisons and their recorded limitations are
+maintained in the numerical core repository:
+[FunDEMBeta validation](https://github.com/kaiqideng/FunDEMBeta/tree/main/validation).
+
+- [LAMMPS comparisons](https://github.com/kaiqideng/FunDEMBeta/tree/main/validation/LAMMPSComparison)
+- [PFC comparisons](https://github.com/kaiqideng/FunDEMBeta/tree/main/validation/PFCComparison)
+- [ON-DEM comparisons](https://github.com/kaiqideng/FunDEMBeta/tree/main/validation/ONDEMComparison)
+
+Use each case's `REPORT.md` for the maintained report presentation.
+`HISTORICAL-*` files in the core retain original evidence for traceability;
+presentation updates do not constitute a new physical-validation campaign.
+These independent comparisons are not endorsements by LAMMPS or Itasca.
