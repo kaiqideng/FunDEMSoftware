@@ -19,7 +19,13 @@ Windows x64 — seven built-in examples and user-supplied benchmark data
    the accepted model unchanged. Ready means native input is prepared,
    not that time or recording has advanced. Use **Run** to start recording and
    calculation. **Pause** waits for a safe boundary;
-   Run then resumes that same session. **Step** advances one DEM step. Submit
+   Run then resumes that same session. Choose **1**, **10** or
+   **100** beside **Step** (default 1); the numbers are native steps per command,
+   and choosing alone does not execute.
+   Step runs up to that native-step budget and pauses automatically, stopping
+   earlier at the submission frontier/end. Step and its selector are disabled
+   while running; requests do not queue. Ordinary recording intervals stay
+   unchanged. Submit
    further Events in order; Run stops at the submitted frontier and later Run
    continues the same native state after the next submission.
 5. Open **Results** to view committed recorded frames. Use the timeline to

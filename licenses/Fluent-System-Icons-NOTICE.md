@@ -8,6 +8,7 @@ not been redrawn or restroked.
 | --- | --- |
 | materials.svg | Layer 20 Regular |
 | material-pairs.svg | Shape Intersect 20 Regular |
+| particle-instances.svg | Cube 20 Regular |
 | add.svg | Add 16 Regular |
 | camera.svg | Camera 20 Regular |
 | play.svg | Play 20 Regular |
@@ -36,10 +37,13 @@ duplicate Checkbox SVG assets are bundled or used to redraw checkboxes.
 The Camera action asset and the active Box Edit, Calculator, and
 Data Histogram workspace assets are stock SVGs from the same commit.
 The two Fit actions use Lucide `maximize-2` and `focus` instead; see
-[Lucide-Icons-NOTICE.md](Lucide-Icons-NOTICE.md) for their ISC notice and adaptations.
+[LUCIDE-NOTICE.md](LUCIDE-NOTICE.md) for their ISC notice and adaptations.
 The Shape Intersect asset also preserves its raw stock SVG from that commit.
-Events, Geometry, Sphere Templates, LS Particle Templates, solid Particle Instances,
-SPH, Bonds and Particle External Constraints use
+Solid Particle Instances reuse the stock Cube 20 Regular previously used for
+Geometry, retaining `particle-instances.svg` and `UiIcon::ParticleInstances`.
+SPH retains its separate fluid-splat reference redraw.
+Events, Geometry, Sphere Templates, LS Particle Templates,
+SPH and Particle External Constraints use
 reference-based FunDEM vector redraws recorded below, through their existing
 shared registry entries. They are not Microsoft Fluent artwork.
 The two template-family redraws retain `templates.svg` and
@@ -70,6 +74,7 @@ toolbar control dimensions.
 | grid.svg | Four straight strokes forming a simple hash grid, without an outer frame |
 | step.svg | Straight right arrow and vertical stop bar from FunDEMSoftware |
 | reset.svg | Cubic reset loop and return arrow from FunDEMSoftware |
+| bonds.svg | User-defined three-cell honeycomb: three hollow hexagons sharing edges, two above and one below; 24-unit view box and neutral #212121 strokes |
 
 Axes and Grid use a 20-unit view box and a 1.5-unit stroke to match the displayed
 optical weight of the adjacent action glyphs. They retain scalable SVG paths and
@@ -89,7 +94,7 @@ The historical path records artwork provenance; it is not a current source depen
 
 ## User-selected reference vector redraws
 
-These eight assets are FunDEM vector redraws from user-selected visual
+These six assets are FunDEM vector redraws from user-selected visual
 references. Preserve each reference's composition rather than replacing it
 with an unrelated abstract symbol. They are not stock Microsoft Fluent icons
 or a claim of wholly unrelated original artwork.
@@ -100,9 +105,7 @@ or a claim of wholly unrelated original artwork.
 | geometry.svg | Overlapping rear cylinder, left pyramid and right cube | [Flaticon Geometry reference](https://www.flaticon.com/free-icon/geometry_3873950) |
 | templates.svg | Nineteen touching outline circles in centered hexagonal rows of 3/4/5/4/3 | User-uploaded Sphere Template reference; no stock identifier or source URL supplied |
 | ls-particle-templates.svg | Nine rounded irregular rock outlines arranged as a wide pile | User-uploaded LS Particle Template reference; no stock identifier or source URL supplied |
-| particle-instances.svg | Approximately 40 small particles with three vertically stacked helical turns, not a three-fold radial swirl | Uploaded Shutterstock-watermarked reference screenshot; no stock identifier or URL supplied |
 | fluid.svg | Fluid-splat outline, shared by fixed SPH Parameters and SPH Block/Jet instance leaves | User-uploaded outline reference; no source URL supplied |
-| bonds.svg | Six-node molecular hexagonal ring, eleven peripheral filled nodes and five small hollow interior particles | [Magnific reference page](https://www.magnific.com/premium-vector/molecular-particle-icon-vector-illustration-symbol-design_86259525.htm), also visible as a [Freepik preview](https://www.freepik.com/premium-vector/molecular-particle-icon-vector-illustration-symbol-design_86259525.htm) |
 | particle-external-constraints.svg | Two elongated hollow rings with an outlined middle link | [Pngtree Link reference](https://pngtree.com/freepng/link-icon_4467887.html) and the uploaded screenshot |
 
 The shared icon renderer centers each SVG's actual ink bounds with one common

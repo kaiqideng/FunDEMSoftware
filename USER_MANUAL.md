@@ -23,6 +23,9 @@ for LS solids and fluid. The latter does not support DEM spheres. The left
 rail switches between Setup, Simulation and Results. Work Tree selects
 objects, Render View shows them, Property edits the selection, and Console
 records operation milestones.
+The top File/Edit/View/Help row also holds global solver controls at its right:
+Submitted n/N beside Run/Pause/Resume, then Step with its count selector and a separated Reset. These
+stay available in every workspace; Results' bottom playback row is independent.
 Work Tree is above Property in one left sidebar, and both always share its
 width. Drag their inner vertical divider to change relative heights, or the
 horizontal divider to resize the sidebar against Render View on the right.
@@ -184,14 +187,28 @@ and highlighted from their tree rows, just like visible particle instances;
 their display glyphs are not object-selection entry points.
 Selection changes no physical data, saved frames, visibility or Undo history.
 
-**Grid** in Render View opens independent **XY**, **XZ** and **YZ** choices.
-All are initially off. Select one or more; clear all to hide the grid. The
-button remains selected whenever any plane is enabled. The planes pass through
+**Grid** in Render View offers **XY**, **XZ** and **YZ**, with at most one
+reference plane active. The grid starts off. Select a plane to show it;
+select another to switch, or click the selected plane again to hide the grid.
+Enabling without an explicit plane uses XY. The button remains selected while
+a plane is active. This does not change geometry SDF slice selection.
+The reference planes pass through
 world zero and do not change geometry, SDF slices, camera, bounds or solver
-settings. The grid adapts to zoom; a compact lower-right overlay gives
-**Grid planes** and **Grid spacing (m)**, the finest cell spacing actually
-visible. It uses ordinary shared text without a background plate and avoids
-legends/other overlays. This is a visual reference, not a simulation search grid.
+settings. The cell spacing adapts to zoom internally; no grid information
+text is displayed. Choose **Lines** or the default **Checkerboard** in the same Grid menu.
+Checkerboard uses neutral gray/white cells on the chosen world planes, with
+the same perspective and opaque-object occlusion as Lines. This is a visual
+reference, not a simulation search grid.
+The active plane also shows its two infinite coordinate-axis lines through the
+origin, using the shared X/Y/Z colors: X/Y on XY, X/Z on XZ and Y/Z on YZ.
+Thin antialiased axis strokes remain clear at the actual display scale.
+Opaque objects occlude these lines as they do the grid. Clearing the plane
+hides both lines. Grid detail and contrast blend smoothly as zoom changes;
+adaptive cell spacing remains internal and adds no information text.
+Wheel zoom moves smoothly toward the requested view; consecutive wheel input
+accumulates. Fit, standard views, projection changes, dragging and restoring
+a workspace camera stop any unfinished transition. Image/video capture uses
+the currently presented camera, without carrying an interactive zoom onward.
 
 ## 3. Setup
 
@@ -510,7 +527,9 @@ authored initial-state edits, not changes to an active or archived simulation.
 Solid-instance **Information** identifies **Assigned material** and **Source
 template**. Imported instances list their actual distinct materials; the template
 name follows the accepted source reference. Results resolves both from its archived
-project. Particle count is not repeated here; SPH source information is unchanged.
+project. Particle count is not repeated here. SPH keeps Particle count and Initial
+velocity in Simulation only; Results omits those summaries and retains State
+inspection and Display.
 
 Use **State...** in the last row of Property's **Information** group to inspect
 particle state. The window title is **State — <instance name>**. The button has no name
@@ -528,10 +547,13 @@ In Simulation, the first Summary row instead reads
 **Placement origin XYZ (m)** and retains the authored template placement
 reference rather than a refitted world-box midpoint. Each maximum includes a clickable one-based
 **Particle** reference that selects the matching table row.
-Sphere instances show ten columns: one-based
-Particle number, Position X/Y/Z (m), Velocity X/Y/Z (m/s), and Angular velocity
-X/Y/Z (rad/s). LS adds Orientation X/Y/Z (deg), using world axes X then Y then Z,
-for thirteen columns. No material, radius or geometry columns are included.
+Sphere and LS instances share thirteen columns, in order: one-based Particle
+number, Position X/Y/Z (m), Orientation X/Y/Z (deg), Velocity X/Y/Z (m/s), and
+Angular velocity X/Y/Z (rad/s). Orientation uses rotations about the world X,
+then Y, then Z axes. Simulation shows the configured initial orientation;
+Results shows the actual orientation recorded in the accepted current frame.
+SPH retains ten columns without Orientation, and angular velocity is
+**Unavailable**. No material, radius or geometry columns are included.
 In **Simulation**, State always shows the configured initial world state,
 including DAT-imported per-particle vectors without double rotation. It never
 replaces those values with recorded poses after a run.
@@ -719,8 +741,11 @@ prescribed motion. Contact/Bond records remain available. Different force models
 may be combined for one target; duplicate same-model entries and a periodic
 velocity reset on a continuously constrained target remain disallowed.
 
-**Reset velocities** selects **Linear velocity**, **Angular velocity**, or
-both in Configuration and clears those vectors for every target particle
+**Reset velocities** Configuration/Reconfigure sets only **Name** and the target
+**Particle instance**. In Property, **Reset** selects **Linear velocity**,
+**Angular velocity**, or both; **Trigger** sets the interval. Information shows
+only **Applies to particle instance**, without repeating those editable values.
+The command clears the selected vectors for every target particle
 every **Reset interval (steps)** completed steps: N, 2N, 3N, and so on
 within its owning Event. The interval is a positive integer, default 1, no
 larger than the Event's step budget. Pause/Resume keeps the cadence; later
@@ -840,10 +865,11 @@ at that placement with zero authored velocity. Jet defines outlet, direction,
 speed and duration with a maintained inlet
 buffer; it is not a prefilled moving fluid column. Before execution its outlet
 is a guide. SPH sources carry forward, but later events cannot edit inherited
-definitions. Each source has Information and Display.
+definitions. In Simulation, each source has Information and Display.
 Information shows Particle count and Initial velocity, not Initial position
-or Bounding box size. Physical placement and serialized positions remain
-unchanged.
+or Bounding box size. Results omits Particle count and Initial velocity while
+retaining State inspection and Display. Physical placement, serialized
+positions and recorded particle data remain unchanged.
 Solid and SPH Simulation Display contains Opacity (%) and Uniform color,
 not a Hide particles checkbox. Opacity 0 makes an object fully transparent
 without removing its definition. Old Simulation snapshot `hidden` values are
@@ -858,8 +884,24 @@ settings. Confirming prepares detached native state asynchronously; successful
 Ready advances no time and writes no archive/frame. Cancel or failure keeps
 accepted input and previous Results.
 
-Run/Resume and Pause share one fixed-size icon button; Step advances one
-native step. Setup and submitted Event physical fields/Add/Reconfigure actions
+Run/Resume and Pause share one stable control in the top menu row. Run, Step
+and Reset use equal-width icon/text buttons, all 28 px high, with their width
+measured from the longest Run/Pause/Resume/Step/Reset caption. Run is dark gray;
+Step and Reset use the light variant of the same template. Submitted n/N stays
+directly beside Run; Reset remains separated from Step.
+Beside Step, choose **1**, **10** or **100** (default **1**); the English tooltip
+explains that these are native steps per command. Buttons and the selector use
+the same shared font and size as File/Edit/View/Help, with compact widths that
+keep the complete option visible.
+Changing this choice does not execute. Click **Step** to advance up to that
+number of native steps, then pause automatically; an unsubmitted frontier or
+run end stops it sooner. Step and its selector are disabled throughout running
+or an active Step request, so repeated input never queues extra work. Submitted
+Event transitions and ordinary output intervals remain unchanged.
+The group remains present in Setup, Simulation and Results, with no solver
+strip below Render View. Event Submit stays on each Event row; there is no
+global Submit. Results' bottom controls only play recorded frames.
+Setup and submitted Event physical fields/Add/Reconfigure actions
 are gray/read-only; unsubmitted Events remain editable. Reaching the accepted
 frontier enters Waiting without discarding native state. Submit the next Event
 and press Run to continue. Display controls, navigation, copying and Results
@@ -898,8 +940,9 @@ Results frame is invented.
 
 Results Work Tree has flat top-level **Particle Instances**, **Bonds**,
 **Contacts**, **Legend**, **Filter**, and **Plot**. Solid instances and applicable
-SPH Block/Jet sources share Particle Instances, with source-specific Property
-and Display; there is no separate SPHs root.
+SPH Block/Jet sources share Particle Instances; there is no separate SPHs root.
+Their Results Property keeps State inspection and Display without Particle count
+or Initial velocity summaries from the authored source.
 Each object appears once in its category, regardless of which Event introduced
 it. There is no Events submenu, Event selection or Event Property/frame-range
 panel. Object selection shows its own read-only information and editable
@@ -911,11 +954,12 @@ Plot has no Event scope selector; its existing time-history and explicit
 single-frame query rules are unchanged.
 
 The timeline visits saved animation frames at saved physical time, stops at the end,
-and supports stepping/seeking. Beside `n / N`, `t = ... s` shows the physical
-time stored with the displayed frame, not playback wall time or an estimate
-from the frame index. Both use the shared Body-text toolbar style. While a
+and supports stepping/seeking. Render View shows **Frame: n / N** and
+**Time: ... s** in a fixed upper-left two-row HUD. Time is stored with the displayed
+frame, not playback wall time or an estimate from the frame index. Both use
+the shared Body text and aligned name/value layout. While a
 replacement is reading, the last accepted frame number and time remain visible;
-failure keeps them unchanged. With no accepted frame, time reads `t = -- s`.
+failure keeps them unchanged. With no accepted frame, this HUD block is hidden.
 **View > Playback cache...** controls the decoded-frame cache. **Automatic
 memory limit** is initially selected: its budget is 25% of currently available
 system memory, capped at 4 GiB (512 MiB fallback when availability cannot be
@@ -939,23 +983,33 @@ settings, but does not undo an explicit Preload or Clear.
 Cache hits avoid another background read. One low-priority decoder prepares
 up to two seconds of upcoming recorded time within budget. User seeks take
 priority and rapid dragging keeps only the newest requested target. If the
-next playback frame is not ready, the picture remains intact and playback
-timing pauses immediately. The row shows **Buffering...** only if that wait
-lasts 250 ms, avoiding flashes for short reads. Playback then continues
+next playback frame is not ready, the picture and accepted HUD values remain
+intact and playback timing pauses immediately, without a Buffering caption.
+Playback then continues
 without skipped frames or a rapid catch-up. Switching workspaces and changing
 colors, transparency or camera do not discard decoded animation frames.
 Scene preparation reuses unchanged frame/filter/range data and particle bounds.
 None of these caches changes recorded precision, frame order or physical data.
 
-The playback row stays compact: five fixed-size buttons, a stretching slider,
-the adjacent `n / N   t = ... s` readout, then optional Buffering text, with
-2 px gaps. The left-aligned readout measures only its actual text; it reserves
-no extra digits or hidden status width. Resizing or longer accepted numbers
-changes the slider's width, not button size or a trailing empty region. Hidden
-Buffering takes no space. Visible time keeps at most five decimal places with
-trailing zeros removed, using scientific notation for very small/large values;
-its tooltip retains seventeen significant digits. Busy or Play/Pause changes
-do not rewrite unchanged accepted text or rebuild the toolbar.
+The playback row contains five fixed-size buttons and a stretching slider,
+with 2 px gaps; the slider reaches the right inset. Frame/time labels and
+Buffering text do not occupy this row. Render View instead shows two fixed
+rows, **Frame: n / N** and **Time: ... s**, using the shared aligned name/value
+layout. Legend bars avoid that block and existing axes/annotations; the
+information anchor does not move. Resizing does not add gaps
+or move controls as accepted numbers change. Visible time keeps at most five
+decimal places with trailing zeros removed, using scientific notation for
+very small/large values. Recorded doubles keep their full precision. Busy or
+Play/Pause changes do not rewrite unchanged accepted text or rebuild the toolbar.
+While calculation saves new records, background frame-list refresh does not
+disable or flash Play/Pause; playback can start during that metadata refresh.
+Opening an archive, reading a requested frame/seek, or having no next saved
+frame still guards Play. During playback, the button remains Pause rather
+than following unrelated background activity.
+PNG images and MP4 animations include these HUD annotations. A current-frame
+image keeps the frozen accepted frame and total count. In an animation, Frame
+identifies the source recorded frame within the source-frame total and Time
+uses that source observation, independently of the encoded video's frame rate.
 
 New Event Configuration records complete State every S steps and Animation
 every K State intervals, with canonical animation cadence A=S*K steps. Older
@@ -969,7 +1023,7 @@ by both indices. Older single-stream archives remain readable by both workflows.
 Ordinary frame seeks, playback and live archive refresh show no loading bar
 or separate task window, including in the bottom status area. The last
 accepted image, frame number and time stay together until the replacement is
-ready; playback uses its delayed inline **Buffering...** text for longer waits. Rapid
+ready; playback waits silently without a Buffering caption. Rapid
 seeks supersede older requests; a failed read keeps the accepted image and
 time and reports its cause in status/Console. Cache hits, background lookahead
 and historical Legend scans remain silent. Opening a run or choosing explicit
@@ -1284,7 +1338,7 @@ their accepted grid and zero-volume properties. All imported LS geometries
 become ordinary Triangle mesh definitions: Reconfigure opens that existing
 Configuration, not the former primitive editor. Opening or cancelling it keeps
 accepted data; explicitly applying changed settings is a separate mesh/grid
-rebuild with normal reference/frame safeguards. Closed-mesh future Reverse SDF
+rebuild with normal reference/frame safeguards. Closed-mesh future Reverse signed-distance field
 is inferred from the accepted signs using the native Triangle mesh query,
 without rebuilding the imported grid. Open planar walls retain their grid for
 import, solve and Name-only Reconfigure; an explicit Triangle mesh grid rebuild

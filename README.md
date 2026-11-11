@@ -12,7 +12,7 @@ element simulations, including coupled LSDEM + SPH fluid–solid problems.
   boundaries and external constraints. Configure motion, force/torque,
   periodic velocity resets, local damping and sphere hydrodynamics.
 - **CPU/GPU/Hybrid:** native execution with sequential Event submission,
-  Run/Pause, single Step and Reset. Existing particle, Contact, Bond and SPH
+  Run/Pause, Step (1/10/100 steps) and Reset. Existing particle, Contact, Bond and SPH
   state continues into later Events.
 - **SPH:** shared fluid properties, regular Blocks and finite-duration Jets
   coupled to level-set solids.
@@ -68,8 +68,7 @@ Results are observations, not solver restart checkpoints. DAT exports one
 accepted Results frame and does not preserve SPH or Contact/Bond histories.
 Display filters do not change physical data, Plot queries or DAT export.
 
-See the [User Manual](USER_MANUAL.md), [Example Guide](EXAMPLE_GUIDE.md) and
-[Workflow Guide](WORKFLOW_IMPROVEMENTS.md).
+See the [User Manual](USER_MANUAL.md), [Example Guide](EXAMPLE_GUIDE.md).
 
 ## Numerical core and notices
 
