@@ -18,18 +18,17 @@ Windows x64 — seven built-in examples
    dialog. Only successful Ready accepts those settings; Cancel/failure leaves
    the accepted model unchanged. Ready means native input is prepared,
    not that time or recording has advanced. Use **Run** to start recording and
-   calculation. **Pause** waits for a safe boundary;
-   Run then resumes that same session. Choose **1**, **10** or
-   **100** beside **Step** (default 1); the numbers are native steps per command,
-   and choosing alone does not execute.
-   Step runs up to that native-step budget and pauses automatically, stopping
-   earlier at the submission frontier/end. Step and its selector are disabled
-   while running; requests do not queue. Ordinary recording intervals stay
-   unchanged. Submit
+   calculation. **Pause** waits for a safe boundary and Run/Resume keeps the
+   same native session. Choose **∞**, **1**, **10** or **100** beside Run
+   (default **∞**), then click Run/Resume: ∞ has no additional command-step
+   limit; a finite budget pauses after its completed native steps or stops
+   at frontier/completion. Changing the choice never executes. While running
+   it is disabled and the same button is Pause; requests never queue. There
+   is no separate Step action. Recording intervals stay unchanged. Submit
    further Events in order; Run stops at the submitted frontier and later Run
    continues the same native state after the next submission.
 5. Open **Results** to view committed recorded frames. Use the timeline to
-   play, step or seek; an early recorded frame is not necessarily the final
+   play, advance one frame or seek; an early recorded frame is not necessarily the final
    state. The run's `run.json` can also be reopened later.
 6. Use Results Work Tree checkboxes to show particles, Contacts or Bonds.
    These populations are independent: hiding particles does not hide their
@@ -49,7 +48,7 @@ and Results editing remain available.
 The supplied examples use ordinary fixed-step Events. To add a relaxation
 stage in a working copy, create another Event with an explicitly chosen fixed
 duration and recording cadence. Submit each Event in order; at least one accepted Event
-is required before Run/Step.
+is required before Run.
 
 Every Event advances time by `timeStep * steps` while preserving integrated
 particle/Contact/Bond/SPH state. Both streams use normal start/interval/end

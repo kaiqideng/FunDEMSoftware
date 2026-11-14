@@ -45,16 +45,19 @@ zlib must additionally retain that supplied component's license/notice.
 
 Selected monochrome interface icons are from Microsoft's Fluent System Icons,
 Regular set. Their detailed provenance is maintained in the source asset
-notice, distributed as `licenses/Fluent-System-Icons-NOTICE.md`. The Event,
-Geometry, Sphere Template, LS Particle Template, SPH and Particle External
-Constraints glyphs are untouched originals from commit
-`83b26348c811f072429427ff48362238656524fe`: Folder Open 20, Shapes 20,
-Grid Circles 24, Cube Multiple 20, Fluid 20 and Link 20 Regular. The notice
-records their original paths and file-byte SHA-256 values. Their pinned
+notice, distributed as `licenses/Fluent-System-Icons-NOTICE.md`. Events use
+Animal Paw Print 20 Regular; LS geometry/templates/instances share Cube
+20 Regular; Particle External Constraints use Link 20 Regular. These are
+untouched originals from commit
+`83b26348c811f072429427ff48362238656524fe`. The notice records their original
+paths and file-byte SHA-256 values. Their pinned
 [official license](https://github.com/microsoft/fluentui-system-icons/blob/83b26348c811f072429427ff48362238656524fe/LICENSE)
-is reproduced below. The FunDEM application logo and approved original toolbar artwork
-are not Microsoft Fluent artwork. The following MIT notice applies to the
-Fluent assets, not to all application/core code.
+is reproduced below. The Sphere icon shared by Sphere templates/instances,
+SPH Parameters and SPH Block/Jet instances is original FunDEM artwork: an
+outline circle with one short internal arc. It, the FunDEM application logo
+and approved original toolbar artwork are not Microsoft Fluent artwork.
+The following MIT notice applies to the Fluent assets, not to all
+application/core code.
 
 ### MIT License
 

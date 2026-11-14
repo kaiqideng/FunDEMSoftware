@@ -23,8 +23,12 @@ for LS solids and fluid. The latter does not support DEM spheres. The left
 rail switches between Setup, Simulation and Results. Work Tree selects
 objects, Render View shows them, Property edits the selection, and Console
 records operation milestones.
-The top File/Edit/View/Help row also holds global solver controls at its right:
-Submitted n/N beside Run/Pause/Resume, then Step with its count selector and a separated Reset. These
+Immediately after Help, the main menu bar holds global solver controls behind
+a vertical separator: Run/Pause/Resume, its run-budget selector and Reset,
+then a gray Submitted n/N link that locates the next pending Event.
+A thin shared divider separates the bar from the panels.
+Original menu widths stay unchanged; no second row
+or screen-right corner widget. These
 stay available in every workspace; Results' bottom playback row is independent.
 Work Tree is above Property in one left sidebar, and both always share its
 width. Drag their inner vertical divider to change relative heights, or the
@@ -145,6 +149,21 @@ names end with one colon, for example `Volume (m³):` or
 `Inherited particle instances:`. Group headings and editable parameter names
 do not acquire this punctuation; locking an ordinary input does not change
 its name. The colon is presentation only and does not change values or units.
+Information values that identify other objects use neutral gray reference
+links: source Materials/Templates, inherited objects, applied Particle
+Instances, Filter targets and Plot-curve sources. Activate a link to select
+its stable-ID target; hovering does not select or change Render View.
+Lists retain one accepted item per line in the common Vertical layout.
+Empty lists remain None and missing items remain plain Unavailable; no
+empty selection means All. Numerical statistics remain ordinary text.
+Text remains selectable/copyable and follows the same single-line layout.
+These inspection links remain usable when physical inputs are locked and do
+not edit data, create Undo history or append Console entries.
+Missing references show plain **Unavailable**. Resolved archived names remain
+visible even if the current project differs. Their links may remain; clicking
+an unmatched target explains its unavailability in English and leaves the
+selection unchanged. Navigation never opens or replaces the current project
+automatically.
 
 Selected non-obvious parameters have a circled-question button immediately after the name.
 Click it for a concise explanation; hovering does not open parameter help.
@@ -164,6 +183,19 @@ entry point: clicking a rendered geometry, particle or empty viewport space
 does not change the tree, Property or current Event. Ctrl-click in Work Tree
 adds/removes objects, and Shift-selection selects a contiguous range. Multi-selection shows a
 selection summary, not mixed physical parameter editors.
+
+Medium-gray semibold rows are collections, such as Materials or Particle
+Instances. They have no Property. Click the title to expand/collapse without
+changing the selected object, Property or Render View. The Events root stays
+open. Dark regular rows are objects with Property; their selection has the
+neutral-gray background. A named Event is one of these objects: use its
+arrow to expand and its name to inspect its Property. Add and visibility
+controls remain separate actions.
+
+Property shows its caption on the left and the selected object's name on
+the header's right. Long names are shortened visually. Collection expansion
+keeps that name; clearing selection or selecting several objects clears the
+single-object name.
 
 The fixed upper-left Render View information identifies the inspected Setup
 object as **LS Geometry: name**, **Sphere Template: name** or
@@ -246,13 +278,17 @@ Materials. Different names cannot create duplicate material combinations.
 
 Select the named pair itself. One Property uses these groups:
 
-- **Information** identifies Material 1 and Material 2.
-- **Shared coefficients** owns Sliding friction.
-- **Sphere-related contact** owns Stiffness source and its four Custom linear
-  coefficients and Rolling/Torsional friction.
+- **Information** identifies **Source material 1** and **Source material 2**.
+  Their shared reference links select the corresponding Setup Materials
+  by stable ID; they remain usable when physical inputs are locked.
+- **Shared coefficients** lists Normal and Sliding damping when custom
+  damping is checked in Configuration, followed by Sliding friction.
+- **Sphere-related contact** lists Stiffness source, its four Custom linear
+  coefficients, custom Rolling/Torsional damping, then Rolling/Torsional
+  friction.
 - **LS–LS contact** owns Normal and Sliding stiffness per area.
-- **Damping** owns all four explicit coefficients and is shown only when
-  Custom damping coefficient is checked in Configuration.
+
+There is no separate Damping group.
 
 Reconfigure changes Name/reference/checkbox drafts while preserving the pair
 ID and accepted coefficients; changing participants does not auto-rename it.
@@ -261,9 +297,11 @@ children or extra navigation menus. The checkbox is edited only through
 Add/Reconfigure Configuration, not duplicated or summarized in Property.
 
 Unchecked (the default) derives damping from material restitution and hides
-the entire Damping group while disabling its editors, without resetting their
-values. Checked shows Normal/Sliding damping for both contact families and
-Rolling/Torsional damping for sphere-related contacts only. Reconfigure
+the four explicit damping rows without resetting their values. Checked
+shows Normal/Sliding damping in Shared coefficients for both contact
+families, and Rolling/Torsional damping in Sphere-related contact.
+Rolling/Torsional friction and custom damping remain available regardless
+of Stiffness source, including From materials. Reconfigure
 retains the pair ID and all coefficients; Cancel leaves accepted settings
 unchanged, and a successful Apply participates in Undo/Redo.
 Sphere-related stiffness From materials
@@ -307,14 +345,19 @@ and reconfigurable; new equivalents use Polygonal prism with six/three
 sides. Built-in Cylinder and Cone walls include their finite end caps,
 despite their Wall mass policy.
 
-Property shows calculated data, Display and bottom Reconfigure. Display hides
-faces, shows triangle edges through Mesh, enables central X/Y/Z SDF planes
-and sets Opacity (%) and Uniform color. Opacity uses the common slider/value
-control, initially 100, range 0–100, for faces and Mesh; 0 makes those layers
-fully transparent. Enabled SDF planes remain opaque even at Opacity 0, with
+Property shows calculated data, Display and bottom Reconfigure. Standalone
+LS Geometry previews actual triangle edges without filled faces or point
+markers. Edges are always enabled without a Mesh checkbox; Signed-distance
+field XY/XZ/YZ checks start off. There is no Surface/Hide surface control.
+Uniform color changes the edge lines, initially black `#000000`. Opacity
+uses the common slider/value control, initially
+100, range 0–100; 0 makes Mesh fully transparent. Enabled SDF planes remain
+opaque even at Opacity 0, with
 unchanged values, colors, range and legend. Alpha-only edits do not regenerate
 or resample SDF. SDF planes share a bar. No separate preview program
-is opened. Confirm Reconfigure to replace accepted generated data.
+is opened. Particle Template/Instance and Simulation/Results filled surfaces
+are unchanged, and Particle Templates keep their gray `#A6A6A6` default.
+Confirm Reconfigure to replace accepted generated data.
 
 ### Particle Templates
 
@@ -463,7 +506,7 @@ and its owned physical settings are read-only; unsubmitted Events remain
 editable, including during execution. Display, navigation and Results remain
 available. Later Submit retains the same global settings and native session.
 
-Run/Step requires at least one submitted Event. It advances only the accepted
+Run requires at least one submitted Event. It advances only the accepted
 prefix, then waits before the first unsubmitted Event. Submit another Event and
 press Run to continue from the retained particle/Contact/Bond/SPH state. This
 also permits adding a later Event after the currently authored prefix finishes;
@@ -531,11 +574,17 @@ The operations apply once, and reopening resets both choices to Keep. These are
 authored initial-state edits, not changes to an active or archived simulation.
 
 Solid-instance **Information** identifies **Assigned material** and **Source
-template**. Imported instances list their actual distinct materials; the template
-name follows the accepted source reference. Results resolves both from its archived
-project. Particle count is not repeated here. SPH keeps Particle count and Initial
-velocity in Simulation only; Results omits those summaries and retains State
-inspection and Display.
+particle template**. Imported instances list their actual materials in particle
+order, deduplicated by stable material ID rather than name. Each material name
+is a separate reference; the template name follows its accepted stable ID.
+Simulation and Results links select the corresponding Setup object only when
+its target and required source definitions match the loaded project. Results
+resolves displayed names from its archived project. Activating an unmatched
+reference explains why navigation is unavailable without discarding its
+archived name or changing the project. Particle count is not repeated here.
+SPH Information contains only
+**State...** in both Simulation and Results, followed by Display; it does not
+repeat Particle count or Initial velocity summaries.
 
 Use **State...** in the last row of Property's **Information** group to inspect
 particle state. The window title is **State — <instance name>**. The button has no name
@@ -543,13 +592,25 @@ label and aligns with the value column. **Reconfigure** remains outside all
 groups at the bottom.
 The resizable read-only dialog uses the common Configuration/table shell,
 with **Close** only, scrollbars and selection/copy. It remains available when
-physical settings are locked. The window contains only the table and a common
-read-only **Summary** showing **Bounding box center XYZ (m)**,
+physical settings are locked. Clicking State again for the same instance in
+the same workspace and recording brings its open window forward instead of
+opening a copy. Different instances can have separate State windows;
+Simulation and Results inspections remain separate. After Reconfigure, clicking
+Simulation State refreshes the existing window with the accepted initial
+state. Close and reopen State for a fresh window. Opening or creating another
+project closes its previous authored State windows.
+The window contains only the table and a common
+read-only **Summary** showing **Initial time (s)** in Simulation or
+**Recorded time (s)** in Results, followed by **Bounding box center XYZ (m)**,
 **Bounding box size XYZ (m)**,
 **Max velocity magnitude (m/s)** and **Max angular velocity magnitude (rad/s)**.
 Recorded box center and size use the selected frame's particle-center extrema expanded
 by the one largest particle bounding radius, not LS surfaces or the SDF grid.
-In Simulation, the first Summary row instead reads
+Simulation's time is its owning Event's planned start; Results uses the
+currently displayed frame's recorded time. This applies to Sphere, LS and SPH.
+The recorded time remains available even when the instance is absent from a
+valid frame, and clears when that recording closes or changes.
+In Simulation, the position Summary row instead reads
 **Placement origin XYZ (m)** and retains the authored template placement
 reference rather than a refitted world-box midpoint. Each maximum includes a clickable one-based
 **Particle** reference that selects the matching table row.
@@ -566,12 +627,14 @@ replaces those values with recorded poses after a run.
 In **Results**, State follows the current frame displayed by Render View.
 Changing the playback frame updates the table and Summary together from that
 already decoded observation. No extra archive read or playback seek is made.
-State has no Frame group, frame selector, timestamp or recording-status header.
+State has no Frame group, frame selector, separate timestamp header or recording-status header.
 An instance absent from the current frame has an empty table and **Unavailable**
 summaries, not another frame's or authored values. New saved frames do not move
 this inspection unless Render View changes; same-index boundary replacement
 refreshes it. Closing/changing recordings clears an old State window; reopen
-State for the new recording. Inspection never changes solver, project, saved results or Undo history;
+State for the new recording. The cleared old window cannot be reused for a
+later recording, including a reopened archive. Inspection never changes solver,
+project, saved results or Undo history;
 archived objects still have no Reconfigure.
 This table uses the same common particle-table presentation and factory as
 imported-template Reconfigure, including centered headers/cells and precise
@@ -769,7 +832,9 @@ Event Property Information remains available, with configured Time step and
 cumulative Start/End; every Event duration is its Time step multiplied by its
 fixed step count.
 Its Inherited particle instances list combines preceding solid instances and
-SPH sources in Event order, one item per line; Bonds retains its own summary.
+SPH sources in Event order, one clickable stable-ID reference per line;
+Bonds retains its own linked summary. These links select the owning
+Work Tree objects without editing the Event or changing submissions.
 There is no separate Inherited SPHs row.
 
 Constant force/torque applies to any solid instance. **Force per particle**
@@ -871,11 +936,11 @@ at that placement with zero authored velocity. Jet defines outlet, direction,
 speed and duration with a maintained inlet
 buffer; it is not a prefilled moving fluid column. Before execution its outlet
 is a guide. SPH sources carry forward, but later events cannot edit inherited
-definitions. In Simulation, each source has Information and Display.
-Information shows Particle count and Initial velocity, not Initial position
-or Bounding box size. Results omits Particle count and Initial velocity while
-retaining State inspection and Display. Physical placement, serialized
-positions and recorded particle data remain unchanged.
+definitions. Both Simulation and Results use Information containing only
+**State...**, followed by Display. Neither repeats Particle count, Initial
+velocity, Initial position or Bounding box size summaries. Configuration
+Count/placement/Jet inputs, physical placement, serialized positions and the
+per-particle State table/recorded data remain unchanged.
 Solid and SPH Simulation Display contains Opacity (%) and Uniform color,
 not a Hide particles checkbox. Opacity 0 makes an object fully transparent
 without removing its definition. Old Simulation snapshot `hidden` values are
@@ -888,25 +953,37 @@ The first Event-row Submit opens Execution, Output and Overview. Overview lists 
 State frames and Animation frames, without Phase, Event schedule or duplicate
 settings. Confirming prepares detached native state asynchronously; successful
 Ready advances no time and writes no archive/frame. Cancel or failure keeps
-accepted input and previous Results.
+accepted input and previous Results. Successful Submit collapses that Event;
+successful Withdraw expands it. Submitted Event rows without retained expansion state start
+collapsed, but you can expand/collapse them manually. Ordinary refresh and
+workspace navigation keep that choice; Cancel or failure does not change expansion.
 
-Run/Resume and Pause share one stable control in the top menu row. Run, Step
-and Reset use equal-width icon/text buttons, all 28 px high, with their width
-measured from the longest Run/Pause/Resume/Step/Reset caption. Run is dark gray;
-Step and Reset use the light variant of the same template. Submitted n/N stays
-directly beside Run; Reset remains separated from Step.
-Beside Step, choose **1**, **10** or **100** (default **1**); the English tooltip
-explains that these are native steps per command. Buttons and the selector use
-the same shared font and size as File/Edit/View/Help, with compact widths that
-keep the complete option visible.
-Changing this choice does not execute. Click **Step** to advance up to that
-number of native steps, then pause automatically; an unsubmitted frontier or
-run end stops it sooner. Step and its selector are disabled throughout running
-or an active Step request, so repeated input never queues extra work. Submitted
-Event transitions and ordinary output intervals remain unchanged.
-The group remains present in Setup, Simulation and Results, with no solver
-strip below Render View. Event Submit stays on each Event row; there is no
-global Submit. Results' bottom controls only play recorded frames.
+Run/Pause/Resume, the run-budget choice and Reset sit inline immediately
+after Help behind the shared vertical separator, followed by subdued status.
+Run and Reset use the shared Submit compact base template: compact framed text,
+24 px height and the menu font, without icons.
+The choice is also 24 px high. Center all three in the unchanged 28 px menu
+bar, keeping the original menu widths and stable Run/Pause/Resume width.
+With at least one submitted Event, the available Run/Pause/Resume action
+uses black-background/white-text emphasis. Reset remains the same-height
+secondary button; disabled controls remain gray. Full withdrawal or confirmed
+Reset clears Run emphasis; cancelled/failed Submit preserves accepted state.
+This feedback is independent of keyboard focus or checked state.
+Click the gray **Submitted n/N** status to locate the next pending Event in
+Simulation. The Event is selected, expanded and scrolled into view; no Submit
+or calculation is started. Normal pending-input validation still applies.
+The status is disabled when no pending Event exists. Waiting/runtime details
+remain available in its tooltip rather than expanding the visible text.
+A thin shared divider separates the menu/controls from the central panels.
+The visible choices are `∞`/`1`/`10`/`100` with item data 0/1/10/100,
+default `∞`. English hover/accessibility explains no native-step limit.
+Changing the choice does not execute or alter Event/output settings.
+Run/Resume uses the chosen budget: zero runs without a command-step limit;
+positive values advance up to that many completed native steps, then pause
+or stop at frontier/completion. While running the same button is Pause and
+the budget is disabled. No separate Step button, action or queued request.
+Reset retains its confirmation; Results playback remains independent.
+
 Setup and submitted Event physical fields/Add/Reconfigure actions
 are gray/read-only; unsubmitted Events remain editable. Reaching the accepted
 frontier enters Waiting without discarding native state. Submit the next Event
@@ -1052,15 +1129,30 @@ Information uses the same **Applies to particle instance 1** and **Applies to pa
 captions as Simulation, without count rows. Geometry, stiffness, Beam, strength
 and damage settings are not
 repeated here; use Simulation to author those parameters before Submit.
+Contact and Bond endpoint names link to their archived Results Particle
+Instances by stable ID. Selecting one preserves the accepted frame, camera,
+visibility and Display settings; it does not open Configuration or seek.
 
 Particles initially show; Contacts/Bonds initially hide. Their Work Tree
 checkboxes are independent and are the only visibility controls. Hiding
 particles does not hide interactions. Results color/opacity initially copy
 the recorded Simulation appearance; later edits are independent.
 
-Particles offer Uniform color, velocity and displacement magnitude. SPH also
-offers pressure, clamped nonnegative for display only; raw archive/physics
-are unchanged. Contacts/Bonds offer available recorded force/energy/stress
+Particle Instance **Display > Shape** selects **Particle** (default) or
+**Arrow** for Sphere, LS and SPH. Particle shape offers Uniform color, velocity
+and displacement magnitude; SPH also offers pressure, clamped nonnegative for
+display only. Arrow offers velocity magnitude (default) or displacement
+magnitude, choosing both direction and color. Each shape remembers its metric.
+
+Arrows begin at recorded particle centers. **Display size** (1–100, default
+50) caps their tail-to-tip length at that percentage of each particle's
+bounding radius; SPH uses half its spacing. Zero or unavailable vectors are
+omitted. **Scale by value** is initially off, giving finite nonzero arrows
+the configured length. Turn it on to scale the complete glyph linearly by
+its magnitude divided by the largest absolute active Legend endpoint, capped
+at 1; an all-zero range draws no arrows. Both shapes obey visibility, opacity
+and filters. These are undoable Results appearance changes; Simulation,
+saved particle state and physics are unchanged. Contacts/Bonds offer available recorded force/energy/stress
 quantities. Bond maximum tensile and compressive section stresses are separate
 nonnegative magnitudes including bending; Maximum shear stress is nonnegative.
 Missing values
@@ -1088,8 +1180,14 @@ a signed compression/tension label. No core failure criterion is changed.
 Legend supports History, Current frame and Custom ranges. Every category
 defaults to Current frame, including solid/SPH particles, Contacts and Bonds;
 explicit History or Custom choices remain unchanged during replay and
-metadata refresh. Each physical category has a distinct palette, shared by
-its scene colors and bar. Current uses actual visible, filter-kept data in
+metadata refresh. Each physical category starts with a distinct palette,
+shared by its scene colors and bar. Set **Low color** and **High color** with
+the existing color panel, HEX or RGB inputs to choose any two endpoint colors.
+All objects using that category share the change; other categories and runs
+keep their own colors. **Restore default colors** restores only the selected
+category's palette, preserving range mode, limits and bar position. Color
+changes use Results Undo/Redo and are frozen for image/animation export.
+Stress keeps its neutral zero color. Current uses actual visible, filter-kept data in
 this frame. History uses all saved
 frames of the currently enabled instance/pair/Bond-recipe scopes and their
 exact selected Color by metrics, not unrelated objects or other quantities.
@@ -1154,8 +1252,11 @@ open the common Configuration with Name and Target > Objects, without Source.
 The selector groups Particle Instances (solid and SPH), Bonds and Contacts.
 Property's read-only Information shows only
 the complete target label (Applies to particle instance, Applies to bonds, or
-Applies to contacts) as selected names one per line or None, using common colon rows
-without target selectors. Change targets through Reconfigure;
+Applies to contacts) as selected names one per line or None, using common
+colon rows without target selectors. Available names are stable-ID links
+to the corresponding Results objects, including SPH sources, Bond recipes
+and Contact pairs. Selecting one preserves the accepted frame, camera and
+visibility and does not enable the Filter. Change targets through Reconfigure;
 plane or data-range settings remain editable in Property.
 Its internal physical families remain solid particles, SPH particles,
 Contact instance pairs and Bond recipes, not additional Source controls.
@@ -1186,7 +1287,12 @@ its Reconfigure changes Name and Data source. All its curves belong to that
 one category. Remove all curves before changing Data source; attempting a
 category change while curves exist shows an inline instruction and leaves
 accepted curves/data unchanged. No automatic deletion or query remapping occurs.
-Select a curve leaf for Color and
+Select a curve leaf for Information and Display. Information lists accepted
+source objects as vertical reference links: **Source objects** for Time
+history/Histogram, **X objects** and **Y objects** for XY/Scatter, or
+**Specimen**, **Upper platen** and **Lower platen** for Uniaxial compression.
+A name selects its Results object without seeking a frame or editing the
+query; missing references are Unavailable. Display owns Color and
 applicable line/marker styles; its Reconfigure edits that curve's Name and
 complete X/Y or Data settings. The native checkbox left of each curve leaf
 controls visibility; shared tree context/Delete removes the curve with

@@ -12,13 +12,13 @@ element simulations, including coupled LSDEM + SPH fluid–solid problems.
   boundaries and external constraints. Configure motion, force/torque,
   periodic velocity resets, local damping and sphere hydrodynamics.
 - **CPU/GPU/Hybrid:** native execution with sequential Event submission,
-  Run/Pause, Step (1/10/100 steps) and Reset. Existing particle, Contact, Bond and SPH
+  Run/Pause/Resume with an unlimited, 1, 10 or 100-step budget, and Reset. Existing particle, Contact, Bond and SPH
   state continues into later Events.
 - **SPH:** shared fluid properties, regular Blocks and finite-duration Jets
   coupled to level-set solids.
 - **Render View:** named geometry/template previews and clearly labeled Event
   initial states, plus recorded Frame/Time information in Results.
-- **Results:** recorded-frame playback, particle State tables, independent
+- **Results:** recorded-frame playback, synchronized particle State tables, independent
   particle/Contact/Bond displays, movable legends, Clip and Threshold filters.
 - **Plot:** time history, XY curve, Scatter, Histogram and uniaxial-compression
   measurements, with configurable curves/axes, data tables, manual Reload,
@@ -58,6 +58,8 @@ the installation folder.
 7. Random-shape particle column
 
 Each opens as a separate writable copy and does not run automatically.
+The included inputs were checked through open/save, short native Event execution
+and recorded-frame replay; this is not full-duration physical validation.
 
 ## Files and documentation
 
@@ -67,6 +69,9 @@ converted. State and Animation have separate recording intervals.
 Results are observations, not solver restart checkpoints. DAT exports one
 accepted Results frame and does not preserve SPH or Contact/Bond histories.
 Display filters do not change physical data, Plot queries or DAT export.
+Information links navigate to the referenced objects. Plot Curves categories
+keep their Chart visible while Property remains empty. Explicitly malformed
+numeric configuration values are rejected instead of silently replaced.
 
 See the [User Manual](USER_MANUAL.md), [Example Guide](EXAMPLE_GUIDE.md).
 
