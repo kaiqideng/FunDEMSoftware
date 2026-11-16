@@ -1,53 +1,50 @@
 # FunDEM 1.0
 
-FunDEM is a Windows x64 desktop workbench for spherical and level-set discrete
-element simulations, including coupled LSDEM + SPH fluid–solid problems.
+FunDEM is a Windows x64 desktop workbench for spherical and level-set DEM,
+including coupled LSDEM + SPH fluid–solid simulations.
 
 ## Features
 
 - **Setup:** materials, contact material pairs, LS geometries and reusable
-  particle templates. Generate single particles, lattices or random populations
-  with radius distributions, multiple shapes and reproducible orientations.
-- **Simulation:** named Events, particle instances, Bonds, free/periodic
-  boundaries and external constraints. Configure motion, force/torque,
-  periodic velocity resets, local damping and sphere hydrodynamics.
-- **CPU/GPU/Hybrid:** native execution with sequential Event submission,
-  Run/Pause/Resume with an unlimited, 1, 10 or 100-step budget, and Reset. Existing particle, Contact, Bond and SPH
-  state continues into later Events.
+  Sphere/LS Particle Templates. Create single-particle, lattice and random
+  populations with reproducible radius, shape and orientation settings.
+- **Simulation:** named Events, particle instances, Bonds, free or periodic
+  boundaries, motion constraints, force/torque, velocity resets, Global damping
+  and sphere hydrodynamics.
+- **Run control:** submit Events in order, select CPU/GPU/Hybrid and an
+  unlimited, 1, 10 or 100-step budget, then Run/Pause/Resume or Reset.
+  Particle, Contact, Bond and SPH state continues across Events.
 - **SPH:** shared fluid properties, regular Blocks and finite-duration Jets
-  coupled to level-set solids.
-- **Render View:** named geometry/template previews and clearly labeled Event
-  initial states, plus recorded Frame/Time information in Results.
-- **Results:** recorded-frame playback, synchronized particle State tables, independent
-  particle/Contact/Bond displays, movable legends, Clip and Threshold filters.
-- **Plot:** time history, XY curve, Scatter, Histogram and uniaxial-compression
-  measurements, with configurable curves/axes, data tables, manual Reload,
-  CSV and figure export.
-- **Exchange/export:** import solid-particle instances from DAT, export the
-  accepted Results frame to DAT, and save PNG images or MP4 animations.
+  coupled to LS solids.
+- **Results:** recorded-frame playback, synchronized particle State tables,
+  independent particle/Contact/Bond displays, movable legends, Clip and Threshold.
+- **Plot:** Time history, XY curve, Scatter, Histogram and uniaxial compression;
+  configurable curves/axes, data tables, manual Reload, CSV and figure export.
+- **Exchange:** solid-particle DAT and complete State transfer. Export State
+  selects a saved State frame and particle instances, with optional Bonds.
+- **Images/video:** recorded Animation-frame PNG and H.264 MP4 export with
+  timestamps and responsive cancellation.
 
-## Windows packages
+## Download
 
 [Download FunDEM 1.0](https://github.com/kaiqideng/FunDEMSoftware/releases/tag/v1.0)
 
 | Portable ZIP | Execution modes |
 | --- | --- |
-| CPU | CPU; no NVIDIA GPU required |
-| CUDA | CPU without an NVIDIA GPU; GPU/Hybrid with a compatible NVIDIA GPU and installed driver |
+| CPU | CPU |
+| CUDA | CPU; GPU/Hybrid with compatible NVIDIA hardware and an installed driver |
 
-CPU is the default in both packages. Hybrid places Sphere/SPH computation on
-GPU and LS on CPU. GPU/Hybrid require the CUDA package and supported hardware;
-unavailable modes report an error instead of silently using CPU. No compiler, source checkout or
-local CUDA toolkit is required.
+CPU is the default. Hybrid advances Sphere/SPH on GPU and LS on CPU.
+The CUDA ZIP includes the application runtime libraries. Unavailable backends
+produce an explicit error.
 
-Verify the supplied SHA-256 checksums, extract the complete ZIP and start
-`Windows/FunDEM.exe`. Keep all matching libraries, plugins, example data,
-documentation and notices together. Save working projects/results outside
-the installation folder.
+Verify `SHA256SUMS.txt`, extract the entire ZIP and run `Windows/FunDEM.exe`.
+Keep matching libraries, plugins, examples, documentation and notices together.
+Save projects and results outside the installation directory.
 
 ## Included examples
 
-**File > Open Project > Examples** opens seven editable projects:
+**File > Open Project > Examples** opens seven independent editable projects:
 
 1. Gömböc self-righting
 2. Interlocked chain
@@ -57,36 +54,44 @@ the installation folder.
 6. Superellipsoid mixing drum
 7. Random-shape particle column
 
-Each opens as a separate writable copy and does not run automatically.
-The included inputs were checked through open/save, short native Event execution
-and recorded-frame replay; this is not full-duration physical validation.
+Opening an example leaves calculation under user control. The inputs have
+open/save, short native execution and recorded-replay checks. Physical
+validation applies to each documented comparison and its stated criteria.
 
-## Files and documentation
+## Files and continuation
 
-Projects use `.fundem.json`; retain their required `.fundem-data` siblings.
-Use the updated projects: retired development fields/layouts are not silently
-converted. State and Animation have separate recording intervals.
-Results are observations, not solver restart checkpoints. DAT exports one
-accepted Results frame and does not preserve SPH or Contact/Bond histories.
-Display filters do not change physical data, Plot queries or DAT export.
-Information links navigate to the referenced objects. Plot Curves categories
-keep their Chart visible while Property remains empty. Explicitly malformed
-numeric configuration values are rejected instead of silently replaced.
+Projects use `.fundem.json`. Retain their required `.fundem-data` siblings.
+JSON stores configuration; sidecars hold required numerical data.
+State and Animation have independent recording intervals.
 
-See the [User Manual](USER_MANUAL.md), [Example Guide](EXAMPLE_GUIDE.md).
+Recorded Results support replay and analysis. Export State creates a separate
+continuation project with selected particles, their dependencies and retained
+interaction histories. Contacts/Bonds require both endpoints within the
+selected instances. Include bonds controls Bond export. Import restores a
+protected, zero-time Imported state Event.
+
+Before the first computing Submit, imported Bond recipes permit Name,
+fracture/damage switches, strengths, internal friction and fracture-energy
+edits. Saved stiffness, geometry, endpoint frames, damage and broken state
+remain fixed. Broken Bonds retain their broken state.
+
+DAT transfers solid-particle geometry, material, pose and velocity data into
+editable authored objects. State also preserves interaction history for
+continuation. Filters control rendering; exports and Plot use explicit
+data selections.
+
+Read the [User Manual](USER_MANUAL.md) and [Example Guide](EXAMPLE_GUIDE.md).
 
 ## Numerical core and notices
 
-The numerical core is the separately open-source
-[FunDEMBeta](https://github.com/kaiqideng/FunDEMBeta).
-Its [validation directory](https://github.com/kaiqideng/FunDEMBeta/tree/main/validation)
-contains comparison cases, reports and reproducibility instructions.
-Each report applies to its documented revision, parameters and criteria;
-examples and regression checks are not universal physical validation.
+[FunDEMBeta](https://github.com/kaiqideng/FunDEMBeta) is the separately open-source
+numerical core. Its
+[validation directory](https://github.com/kaiqideng/FunDEMBeta/tree/main/validation)
+contains comparison inputs, reports and reproducibility instructions.
 
-This repository distributes application packages and user documentation, not
-private desktop source. FunDEMBeta is Apache-2.0 licensed; this does not put
-all desktop and third-party components under the same license. Preserve the
-[core attribution](FUNDEM_CORE.md), [third-party notices](THIRD_PARTY_NOTICES.md)
-and original license texts in each package. A GitHub release does not establish
-Microsoft Store submission, certification or availability.
+This repository distributes application packages and user documentation.
+Desktop source is maintained privately. FunDEMBeta uses Apache-2.0;
+desktop and third-party components retain their respective licenses.
+Preserve the [core attribution](FUNDEM_CORE.md),
+[third-party notices](THIRD_PARTY_NOTICES.md) and original license texts.
+Microsoft Store submission and certification are separate release steps.

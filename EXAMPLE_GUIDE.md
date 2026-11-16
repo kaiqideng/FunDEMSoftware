@@ -32,8 +32,11 @@ Windows x64 — seven built-in examples
    state. The run's `run.json` can also be reopened later.
 6. Use Results Work Tree checkboxes to show particles, Contacts or Bonds.
    These populations are independent: hiding particles does not hide their
-   interactions. Use **File > Export current frame image...** for PNG or
-   **Export animation...** for Windows H.264 MP4.
+   interactions. Use **File > Export image...** for PNG or
+   **Export animation...** for Windows H.264 MP4. Image export explicitly
+   selects an Animation frame and shows its recorded Time (s); video always
+   displays first/last Animation indices with Start/End times. These File
+   commands use the loaded archive from any workspace or selected Plot page.
 
 Submit Events sequentially using the right-hand Event-row actions. Submission
 locks Setup and the accepted Event prefix, not future unsubmitted Events.

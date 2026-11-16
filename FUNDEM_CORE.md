@@ -23,8 +23,7 @@ This product includes software developed by Kaiqi Deng and FunDEM contributors.
 FunDEMBeta is supplied under **Apache License 2.0**. An unmodified copy of its license and
 NOTICE is provided in [licenses/FunDEMBeta-LICENSE.txt](licenses/FunDEMBeta-LICENSE.txt)
 and [licenses/FunDEMBeta-NOTICE.txt](licenses/FunDEMBeta-NOTICE.txt).
-Preserve those files with distributions. The upstream license and notices,
-not this explanatory summary, govern the core.
+Preserve those files with distributions. The upstream license and notices govern the core.
 
 ## Backend and output boundaries
 
@@ -32,9 +31,8 @@ CPU is the default. A CUDA-enabled application can also select GPU and Hybrid;
 Hybrid places Sphere/SPH dynamics on GPU and LS dynamics on CPU. Using
 GPU or Hybrid requires a compatible NVIDIA device and driver, not a
 locally installed compilation toolkit; CPU execution remains available without
-an NVIDIA GPU. The packaged runtime profile and
-tested hardware, rather than this explanation, establish a binary's actual
-device coverage.
+an NVIDIA GPU. Each binary's packaged runtime profile and hardware test record
+define its device coverage.
 
 The desktop currently records native result archives without VTU or energy DAT
 output. Results plots read those saved records; they do not enable additional
@@ -55,6 +53,6 @@ or multiple-image interactions.
 Use [FunDEMBeta validation](https://github.com/kaiqideng/FunDEMBeta/tree/main/validation)
 for the maintained LAMMPS, PFC and ON-DEM comparison inputs, reports and scope.
 Each case's `REPORT.md` is the current presentation; `HISTORICAL-*` records
-retain original evidence. A documentation update is not a new solver run or
-physical-validation campaign. No duplicate report ZIP is distributed by the
+retain original evidence. Execution records identify the solver revision, inputs
+and physical-validation scope. No duplicate report ZIP is distributed by the
 desktop repository.

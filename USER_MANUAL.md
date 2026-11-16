@@ -46,7 +46,7 @@ defines materials, geometries and particle templates; Simulation arranges events
 and runs calculations; Results replays saved frames and supports filters and
 plots. It defines DEM (discrete element method), LS (level set), and SPH
 (smoothed particle hydrodynamics) centrally and identifies FunDEMBeta as the
-numerical core. **Help > About FunDEM** instead shows the running version,
+numerical core. **Help > About FunDEM** shows the running version,
 calculation core, execution modes and the location of license/attribution
 notices. Both entries are available without a project. Parameter-help popovers
 remain focused on the selected parameter rather than repeating the glossary.
@@ -199,7 +199,7 @@ single-object name.
 
 The fixed upper-left Render View information identifies the inspected Setup
 object as **LS Geometry: name**, **Sphere Template: name** or
-**LS Particle Template: name**. Simulation instead lists every Event through
+**LS Particle Template: name**. Simulation lists every Event through
 the current one in project order, for example **Event: Prepare - Settle - Compression**,
 followed by **Initial state** on the second row. Future Events are excluded.
 Long rows are visually shortened while their accessible text remains complete.
@@ -365,16 +365,17 @@ Setup exposes **Sphere Templates** (DEM only) and **LS Particle Templates**
 directly as top-level categories. There is no extra Particle Templates parent.
 Both categories use the same reusable-template model and reference rules.
 
-Templates define centered reusable populations, not material, mass state,
-event placement or initial motion. Sphere templates offer Lattice and Random;
+Templates define centered reusable populations. Simulation assigns
+material, mass state, event placement and initial motion. Sphere templates offer Lattice and Random;
 LS templates also offer Single particle, suited to individual walls/bodies.
 Sphere Random samples each radius independently from the
 configured range using **Radius distribution**: Uniform (default) or Power
 law. Power law uses the number density `p(r) proportional to r^(-q)`, with
 the editable **Exponent** q: zero is Uniform, positive favors smaller
-spheres, and negative favors larger spheres. This is not a particle-volume
-distribution. Exponent initially shows 4 when Power law is selected; that
-value is not fitted to a reference specimen. Uniform hides, but preserves,
+spheres, and negative favors larger spheres. The distribution is weighted by
+particle count. Exponent starts at the
+editable default of 4; choose a value appropriate to the intended distribution.
+Uniform hides, but preserves,
 the exponent. Equal radius bounds give equal spheres with either choice.
 Existing configurations without these fields keep their Uniform sampling
 and random-seed behavior. **Radius random seed** remains independent of
@@ -431,7 +432,7 @@ All instances that reference a template use its current accepted data, including
 instances in later events. Their per-particle materials and initial velocities
 remain tied to the original particle numbers. If a procedural rebuild would
 change count or cannot preserve the random-particle correspondence, Apply is
-rejected rather than silently moving those values. The current project remains
+rejected to preserve those ordinal values. The current project remains
 unchanged. Name-only edits never regenerate geometry or particles.
 
 For a Single LS template, Reconfigure changes Geometry and Orientation. Change
@@ -513,9 +514,11 @@ also permits adding a later Event after the currently authored prefix finishes;
 it does not restart earlier Events. Submitting alone does not resume execution.
 
 Reset asks for confirmation, with Cancel selected by default. Confirmation
-stops computation and withdraws every Event; authored input and saved archives
-remain. Submission status is not saved or reopened as a checkpoint.
-Project/results files are observations and inputs, not resumable checkpoints.
+stops computation and withdraws computing Event submissions; authored input and
+saved archives remain. An imported read-only base Event and its payload are
+retained. Ordinary submission status is not saved as a live-session checkpoint.
+Explicit State export/import provides the separate history-preserving project
+workflow described under State projects below.
 
 Current saves write nine required definition arrays in one unversioned
 layout, including `eventParticleInstances` and `eventVelocityConstraints`.
@@ -540,7 +543,7 @@ their authored initial values. Current and inherited solid instances are
 available for Bonds and constraints under the ordinary
 eligibility rules. Submission locks the accepted Event's physical definitions;
 Display remains editable. Simulation lists each instance under its owning
-Event; Results instead lists it once under the flat Particle Instances category.
+Event; Results lists it once under the flat Particle Instances category.
 
 Add one or more instances from Setup templates, reusing a template if needed.
 Assign material, initial position and applicable initial velocity/angular
@@ -610,7 +613,7 @@ Simulation's time is its owning Event's planned start; Results uses the
 currently displayed frame's recorded time. This applies to Sphere, LS and SPH.
 The recorded time remains available even when the instance is absent from a
 valid frame, and clears when that recording closes or changes.
-In Simulation, the position Summary row instead reads
+In Simulation, the position Summary row reads
 **Placement origin XYZ (m)** and retains the authored template placement
 reference rather than a refitted world-box midpoint. Each maximum includes a clickable one-based
 **Particle** reference that selects the matching table row.
@@ -675,7 +678,7 @@ Property **Information** identifies the two particle instances as
 **Custom** source shows **Stiffness** with Normal, Shear, Bending and Torsional
 coefficients for any particle pairing, including non-spherical ones. Their
 units are N/m, N/m, N·m/rad and N·m/rad.
-**Euler–Bernoulli beam** instead shows **Beam property** containing only
+**Euler–Bernoulli beam** shows **Beam property** containing only
 **Young's modulus** and **Poisson ratio**, for every particle pairing.
 Both stiffness modes have a separate **Geometry** group. For sphere–sphere
 it contains only **Radius factor**; for Sphere–LS or LS–LS it contains
@@ -721,7 +724,7 @@ dimensionless internal friction coefficient. **Progressive damage**, also
 initially off, distinguishes strength-only brittle failure from progressive
 softening. GIc, GIIc (J/m²) and the BK exponent appear only with progressive
 damage; hidden values are retained. Softening requires positive normal and
-shear stiffness. The two flags, rather than area or toughness values, select
+shear stiffness. The two flags select
 unbreakable, brittle and progressive behavior. Property has no duplicate source,
 fracture or damage switch: its Strength group appears only with fracture,
 and its Damage group only with both flags enabled. Reconfigure retains the
@@ -761,11 +764,13 @@ Current Bond records retain the four exact original stiffnesses, accepted
 separation history, damage and the native Bond-point `torque` after damage
 scaling. This moment excludes particle-center force lever arms and is the
 sole moment source for section stresses; missing or invalid torque makes
-stress unavailable, without reconstruction. The `fourModeEnergy` observation
-tag is not a complete identifier of every constitutive source revision.
+stress unavailable, without reconstruction. The `fourModeEnergy` tag
+identifies the observation layout. For a constitutive audit, record the
+software build and FunDEMBeta source revision with the simulation.
 Readers preserve the accepted scientific values, not a recalculated history.
-Result files are observations, not native restart checkpoints. Only the
-current unversioned layout is accepted.
+Ordinary replay does not restore a native solver. Explicit State project
+export/import can preserve these recorded Bond histories in a new initial base;
+only the current unversioned layouts and required available history are accepted.
 
 ### Particle External Constraints
 
@@ -775,7 +780,7 @@ and **Force (Torque)** — direct Constant, **Engineering scenario forces** >
 Sphere hydrodynamics where available, then direct Global damping last.
 These are menu groups, not additional Work Tree categories. Configuration selects
 Name and one available solid Particle Instance; use another entry for another
-target. These commands are Event-local and are not inherited. Their Property
+target. These commands apply within their owning Event. Their Property
 Information identifies the selected target as **Applies to particle instance**; Configuration
 keeps its **Particle instance** selector label.
 
@@ -999,8 +1004,9 @@ Contact/Bond histories and SPH source age are retained, not recreated.
 Reset confirms before stopping and withdrawing all submissions; Cancel leaves
 the current run unchanged. It preserves definitions and saved result
 directories. Paused/Waiting Run resumes the same native state, not an exported
-frame. A fresh calculation from authored initial state requires Reset; saved
-files are not resumable solver checkpoints.
+frame. Reset starts again from the project's authored or imported initial
+state. Use the explicit State project workflow to create a new selected subsystem
+with its saved Contact/Bond histories; ordinary replay alone does not do that.
 
 ## 6. Results
 
@@ -1037,12 +1043,20 @@ Plot has no Event scope selector; its existing time-history and explicit
 single-frame query rules are unchanged.
 
 The timeline visits saved animation frames at saved physical time, stops at the end,
-and supports stepping/seeking. Render View shows **Frame: n / N** and
-**Time: ... s** in a fixed upper-left two-row HUD. Time is stored with the displayed
-frame, not playback wall time or an estimate from the frame index. Both use
+and supports stepping/seeking. Render View shows **State frames: n / N**, **Animation frames: n / N** and
+**Time: ... s** in a fixed upper-left three-row HUD. Time is stored with the displayed
+frame, not playback wall time or an estimate from the frame index. All three rows use
 the shared Body text and aligned name/value layout. While a
 replacement is reading, the last accepted frame number and time remain visible;
 failure keeps them unchanged. With no accepted frame, this HUD block is hidden.
+The Animation counter follows the displayed Animation sample. The State
+counter identifies the same immutable snapshot when shared, otherwise the last
+recorded State at or before it. Equal-time Event boundaries use Event provenance,
+so a future Event's State never describes an earlier Event's picture. A run with
+no State samples shows **State frames: 0 / 0**. These counters use metadata only;
+new records refresh their totals without moving the accepted picture or reading
+another State frame.
+
 **View > Playback cache...** controls the decoded-frame cache. **Automatic
 memory limit** is initially selected: its budget is 25% of currently available
 system memory, capped at 4 GiB (512 MiB fallback when availability cannot be
@@ -1076,8 +1090,8 @@ None of these caches changes recorded precision, frame order or physical data.
 
 The playback row contains five fixed-size buttons and a stretching slider,
 with 2 px gaps; the slider reaches the right inset. Frame/time labels and
-Buffering text do not occupy this row. Render View instead shows two fixed
-rows, **Frame: n / N** and **Time: ... s**, using the shared aligned name/value
+Buffering text do not occupy this row. Render View instead shows three fixed
+rows, **State frames: n / N**, **Animation frames: n / N** and **Time: ... s**, using the shared aligned name/value
 layout. Legend bars avoid that block and existing axes/annotations; the
 information anchor does not move. Resizing does not add gaps
 or move controls as accepted numbers change. Visible time keeps at most five
@@ -1089,10 +1103,10 @@ disable or flash Play/Pause; playback can start during that metadata refresh.
 Opening an archive, reading a requested frame/seek, or having no next saved
 frame still guards Play. During playback, the button remains Pause rather
 than following unrelated background activity.
-PNG images and MP4 animations include these HUD annotations. A current-frame
-image keeps the frozen accepted frame and total count. In an animation, Frame
-identifies the source recorded frame within the source-frame total and Time
-uses that source observation, independently of the encoded video's frame rate.
+PNG images and MP4 animations include these HUD annotations. A selected-frame
+image freezes its explicit source Animation observation and both stream indices/totals. An
+animation resolves State/Animation counters from each source sample and the
+same frozen manifest; Time follows that sample, independently of encoded FPS.
 
 New Event Configuration records complete State every S steps and Animation
 every K State intervals, with canonical animation cadence A=S*K steps. Older
@@ -1428,7 +1442,14 @@ definitions, not archived physical objects/files or project parameters.
 
 File > Import particle instance... reads DAT materials, sphere positions/radii
 or embedded LS geometry/orientations, plus per-particle velocities/angular
-velocities. Give imported definitions/instance names. DAT uses one unversioned
+velocities. It is available from any workspace when an unlocked authoring project
+is open; an archive alone is not an authoring project. Give imported
+definitions/instance names and choose an editable Event. The protected imported
+State base and submitted Events are excluded; if no editable Event exists, import
+creates a default ordinary Event. Cancel or failure preserves unfinished Property
+text, the project and current selection. Success opens Simulation with the new
+instance selected and records one authoring Undo transaction, leaving archived
+Results and Results Undo/Redo unchanged. DAT uses one unversioned
 header, `FUNDEM_INSTANCE` followed immediately by `TYPE`; a numeric version
 token is not accepted. Sphere files declare `GEOMETRY_STATE NONE`, and LS files
 require `GEOMETRY_STATE PREPARED`. Numbered headers, raw triangle-only payloads
@@ -1465,29 +1486,121 @@ angular velocity and material assignment in the same particle order; quaternion
 normalization can introduce last-bit roundoff but does not change the rotation.
 The import creates fresh IDs. Failure or cancellation adds nothing.
 
-Results exports a complete selected solid instance at the accepted frame to
-the same unversioned DAT layout, including particles hidden/filtered in Render.
+In Results, **File > Export particle instance...** lets you choose a complete
+**State frame** by its one-based number. **Time (s)** shows that State's recorded
+time. The initial choice is the State nearest to the displayed Animation time,
+with the earlier State selected on a tie. Choose **Instance** from the eligible
+Sphere/LS instances at that State, then choose the **DAT file**. Changing State
+updates Time and the instance choices; an ineligible selection is cleared and
+must be explicitly selected again. Export includes the whole recorded instance,
+including particles hidden/filtered in Render.
+The dialog keeps a frozen archive snapshot. It does not seek playback, use the
+displayed Animation data, or change its source when new frames arrive.
 LS export carries
 the accepted PREPARED geometry, not just a surface to be discretized again.
 DAT is interchange, not an exact solver checkpoint: it does not restore
 Contact/Bond histories, material-pair laws, SPH state or the run timeline.
 
-File > Export current frame image... saves PNG. Export animation... saves
-Results as Windows H.264 MP4. Choose frame range, playback speed (0.1x–10x,
-default 1x), path,
-1080p/4K resolution and 30/60 fps. FPS changes encoded images, not solver steps
-or physical information. Rendering preserves camera, appearance, legends,
-reference grids/axes and a selected Clip guide; choose another node to omit
-that guide. It captures no selection outlines, menus or panels.
+### State projects
 
-Export uses saved physical times rather than interpolating new physics,
-restores the replay frame and publishes only a complete successful file.
-Cancellation/failure preserves existing destinations and source archives.
+**File > Export State...** exports a new self-contained `.fundem.json` project
+and its required `.fundem-data` file. Select a complete **State frame**, inspect
+its recorded **Time (s)**, and use **Particle instances** to select one or more
+instances actually present at that sample. Nothing is selected implicitly when
+the selection is empty. Hidden/filtered particles remain part of the scientific
+state. The common Configuration contains Source and File groups. Source also
+contains **Include bonds**, checked by default. Retained Contacts must have both
+endpoints selected; the same rule applies to Bonds when Include bonds is checked.
+Uncheck it to export no Bonds, including broken records and their histories or
+saved Bond parameter groups. Selected particle states and Contact histories are
+retained with their normal dependencies. This choice does not change the source
+recording or its project.
 
-PNG capture still uses the application's OpenGL context. Image encoding and
-file writing use detached background work and the common delayed feedback;
-this does not mean every rendering/filter step is asynchronous. Successful
-publication, not a finished capture alone, completes the export.
+The project includes required material definitions and material-pair laws, accepted
+geometry/SDF/mass data, centered snapshot templates, ordinal particle states and
+the retained actual Contact connections/histories and optionally Bonds. Keep
+the JSON and its content-addressed numerical sibling together. Large arrays are stored in the
+sidecar, without a numeric format version. The export is bound to an immutable
+selected State and never seeks Render View or changes the source archive.
+
+Use **File > Import State...** to open the exported JSON. A complete
+validation/loading task publishes a new project only after all required data and
+references are ready. Cancel/failure preserves the previous project. The ordinary
+**Imported state** Event starts and ends at **0 s**, is read-only/accepted, and
+shows the retained Bond groups and their saved parameters when exported.
+An export with Include bonds unchecked has no initial Bond groups or Bond
+connections. Results immediately shows its retained particle/Contact/Bond
+observation. The original recorded time is kept as source information. Add, configure and submit later ordinary Events to compute
+from that imported base; the base itself consumes no steps.
+
+Before submitting the first ordinary computing Event, an imported Bond group's
+Name, strengths, fracture energies/mixity and fracture/damage choices can be
+edited through its normal Property and Reconfigure controls. Stiffness source,
+the four stiffnesses, Beam values, length, area and radius factor stay read-only.
+Strength and Damage groups stay visible, including before their switches are
+enabled, so the required coefficients can be entered first. Its source particle instances are shown as read-only
+Information; connections and generation selection cannot be changed or deleted.
+The imported base Event, particles, materials/material pairs, geometry and
+templates remain protected. Once a computing Event is submitted, the normal
+physical-edit locks apply.
+
+Bond parameter edits preserve the saved endpoint frames, damage and broken
+state. Already broken Bonds retain their broken state when fracture is turned off.
+Existing frozen onset/damage history remains; initialization applies the changed
+fracture/damage settings without regenerating connections or changing recorded
+stiffness/geometry, then rebuilds loads without advancing damage. The new
+settings can change the subsequent failure response. Save/Undo/Redo retain
+the original observation separately from the accepted parameter changes.
+
+Particle positions, quaternions, per-particle material/velocity/angular velocity
+and actual spring/Bond damage histories are retained. Template centering changes
+only the local reference and matching Instance placement; geometry centroid/SDF
+correction is not repeated. Existing Bonds are restored with their saved
+connections and broken states; an export without Bonds resumes the
+selected subsystem without those connections. Removed external interactions
+cannot remain as a false force in the first integration kick.
+
+Restorable SPH State samples additionally carry raw unwrapped fluid state and Jet
+source/supply/release progress. The imported source continues its remaining supply
+at rebased source times. SPH searches and hydraulic loads start a new acoustic
+interval at the represented state, preserving position, velocity, density and
+pressure. This selected-subsystem acoustic rebase is not claimed to be a bitwise
+continuation of a future fluid endpoint evaluated with the old neighbours.
+Older SPH samples lacking the required payload cannot be restored and produce an
+explicit diagnostic rather than resetting density or inventing Jet progress.
+
+### Images and animation
+
+**File > Export image...** and **Export animation...** use the loaded recorded
+run independently of the current workspace, selected Work Tree object, Property
+form or Plot. They never commit unrelated pending edits. Without a committed
+Animation frame they remain unavailable; File does not fall back to capturing
+an authored Setup/Simulation view.
+
+For PNG, **Source** contains **Animation frame** and its read-only **Time (s)**.
+Choose a one-based recorded Animation index; the initial choice is the accepted
+Animation frame when available, otherwise the first saved frame. **Output**
+contains File path/Browse and 1080p/4K Resolution.
+
+For Windows H.264 MP4, **Timeline** always shows **First animation frame**,
+**Start time (s)**, **Last animation frame**, **End time (s)**, Playback speed
+(0.1x–10x, default 1x) and calculated Duration (s). The bounds initially span
+all committed Animation frames and can be edited directly; there is no
+All/Custom range switch. Timestamp previews use frozen metadata without
+changing replay. **Output** contains File path/Browse, 1080p/4K Resolution and
+30/60 fps. FPS affects encoding, not solver steps or physical information.
+
+Both workflows freeze source identity, manifest and Results camera/Display,
+legends, filters, reference grids/axes and the selected Clip guide. Captures omit
+selection outlines, menus and panels. Frame decoding uses background work;
+detached GUI-thread OpenGL capture neither seeks nor resizes the live view.
+File exports publish only a complete successful file. Cancellation/failure
+preserves existing destinations, source archives and authored draft values.
+The internal static-view PNG API remains separate from these File commands.
+
+PNG encoding and file writing use detached background data and common delayed
+feedback; this does not mean every rendering/filter step is asynchronous.
+Successful publication, not a finished capture alone, completes the export.
 
 ## 8. Troubleshooting
 
@@ -1496,7 +1609,7 @@ publication, not a finished capture alone, completes the export.
 - Finite LS instance rejected: integrate a valid positive-volume geometry, or
   use Wall material for zero-volume geometry.
 - Contacts/Bonds invisible: check their own checkbox, opacity, filters, saved
-  data and scalar availability. Particle visibility is not their switch.
+  data and scalar availability. Each interaction category has its own visibility control.
 - Plot empty: choose valid explicit objects/ranges and Reload; missing saved
   values cannot be reconstructed by changing display.
 - Unexpected origin: use core-corrected local geometry plus centered
