@@ -734,8 +734,15 @@ choices. Apply accepts one undoable transaction; Cancel changes nothing.
 The current core body uses undamaged Bond-point force and B3/B4 moment for
 strength. With tension-positive axial stress `sigma_a`, bending magnitude
 `sigma_b=|Mb|R/I` and shear/torsion magnitude `tau=|Fs|/A+|Mt|R/J`, the
-strength normal stress is `sigma_n=sigma_a+sigma_b`. Its tensile ratio and
-the shear ratio with capacity `cohesion-friction*sigma_n` determine onset.
+strength normal stress is `sigma_n=sigma_a+sigma_b` and shear capacity is
+`c_s=cohesion-friction*sigma_n`. With Progressive damage off, the Bond
+breaks when `sigma_n>tensileStrength` or `tau>c_s`.
+With Progressive damage on, onset uses
+`(max(sigma_n,0)/tensileStrength)^2+(tau/c_s)^2>=1`;
+the shear term is evaluated for positive tau. A nonpositive `c_s` reaches the
+strength condition in either mode, including zero shear.
+Progressive mode with both critical energies zero fails immediately at its
+quadratic strength crossing.
 
 The damage opening driver is different: `sigma_o=max(sigma_a,0)+sigma_b`.
 Opening energy is `Uo=(sigma_a>0 ? max(Un,0) : 0)+max(Ub,0)`;
