@@ -64,6 +64,11 @@ Projects use `.fundem.json`. Retain their required `.fundem-data` siblings.
 JSON stores configuration; sidecars hold required numerical data.
 State and Animation have independent recording intervals.
 
+Current Results archives share fixed particle, Bond and SPH definitions across
+frames. Dynamic states and interaction histories remain frame-specific.
+Earlier archives without shared definitions are rejected. Exported State
+projects embed their required definitions.
+
 Recorded Results support replay and analysis. Export State creates a separate
 continuation project with selected particles, their dependencies and retained
 interaction histories. Contacts/Bonds require both endpoints within the

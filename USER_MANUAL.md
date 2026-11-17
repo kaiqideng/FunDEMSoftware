@@ -1022,7 +1022,17 @@ frames contain particle state, Contacts and Bonds with stable instance/local
 index mappings. Replay is immutable: it does not search contacts, rerun forces
 or restore a solver checkpoint. The current technical identity is
 `FunDEM-Results`, with one current unversioned manifest and binary layout.
-Old numbered result formats are rejected.
+The current recording shares fixed particle properties, Bond reference data
+and coefficients across dynamic frames. New objects append fixed definitions;
+each frame keeps motion, forces, spring and damage history, energies and SPH
+evolution. Repeated IDs/types use dictionary references. Reading reconstructs
+the complete accepted observation for Display, State inspection, Filter and
+Plot. Materials, material pairs, geometry/SDF and templates remain in the
+archive's immutable project snapshots.
+Keep the entire result directory, including its required definition files.
+State export embeds its required definitions in the exported project's data
+sibling. Archives from the former per-frame layout and numbered formats are
+rejected; opening keeps supplied files unchanged.
 
 During a run, every successfully saved Animation or State sample automatically
 updates Results' frame lists, even while Setup or Simulation is active. This
