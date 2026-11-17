@@ -73,7 +73,13 @@ protected, zero-time Imported state Event.
 Before the first computing Submit, imported Bond recipes permit Name,
 fracture/damage switches, strengths, internal friction and fracture-energy
 edits. Saved stiffness, geometry, endpoint frames, damage and broken state
-remain fixed. Broken Bonds retain their broken state.
+remain fixed. Broken Bonds retain their broken state. Strength and Damage
+groups follow their fracture and progressive-damage choices.
+
+The first computing Event shares its zero-time indexed frame with the imported
+base. Results binds to the new recording and refreshes saved frame lists while
+keeping the displayed frame selected. Playback and seeking remain available
+during calculation. The decoded-frame cache accounts for retained SPH data.
 
 DAT transfers solid-particle geometry, material, pose and velocity data into
 editable authored objects. State also preserves interaction history for
@@ -95,3 +101,4 @@ desktop and third-party components retain their respective licenses.
 Preserve the [core attribution](FUNDEM_CORE.md),
 [third-party notices](THIRD_PARTY_NOTICES.md) and original license texts.
 Microsoft Store submission and certification are separate release steps.
+

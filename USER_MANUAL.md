@@ -1532,14 +1532,21 @@ An export with Include bonds unchecked has no initial Bond groups or Bond
 connections. Results immediately shows its retained particle/Contact/Bond
 observation. The original recorded time is kept as source information. Add, configure and submit later ordinary Events to compute
 from that imported base; the base itself consumes no steps.
+When the first computing Event starts at 0 s, its start frame replaces the
+indexed imported frame in both State and Animation. Results shows one frame
+at the shared boundary, including any newly entered particles or Bonds.
+The original snapshot files and the project's physical initial State remain
+unchanged for restoration and Reset.
 
 Before submitting the first ordinary computing Event, an imported Bond group's
 Name, strengths, fracture energies/mixity and fracture/damage choices can be
 edited through its normal Property and Reconfigure controls. Stiffness source,
 the four stiffnesses, Beam values, length, area and radius factor stay read-only.
-Strength and Damage groups stay visible, including before their switches are
-enabled, so the required coefficients can be entered first. Its source particle instances are shown as read-only
-Information; connections and generation selection cannot be changed or deleted.
+Use Reconfigure to select Allow fracture and Progressive damage. Property shows
+Strength when Allow fracture is enabled, and Damage when both options are
+enabled. Hidden coefficients retain their configured values. Its source particle
+instances appear as read-only Information; connections and generation selection
+remain fixed.
 The imported base Event, particles, materials/material pairs, geometry and
 templates remain protected. Once a computing Event is submitted, the normal
 physical-edit locks apply.
