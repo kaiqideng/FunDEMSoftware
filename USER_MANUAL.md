@@ -211,9 +211,30 @@ placements, including inherited definitions, rather than current calculated
 positions. Results continues to show the accepted recorded frame and time.
 All use the same borderless text template.
 
-Selection does not change camera framing. Use **Fit selection** to frame visible
-selected objects, or **Fit all** for the visible scene. Click empty Work Tree
-space to clear selection and Property while keeping the scene and camera.
+Render View has eighteen permanent icon buttons in the same order in Setup,
+Simulation and Results:
+
+| Group | Buttons in order |
+| --- | --- |
+| Framing | Fit scene, Fit selection, Reset camera |
+| Standard views | Isometric, Front, Back, Left, Right, Top, Bottom |
+| Projection | Perspective, Orthographic |
+| Reference | Axes, XY plane, XZ plane, YZ plane |
+| Grid style | Lines, Checkerboard |
+
+Selection preserves camera framing. **Fit selection** frames visible selected
+objects; **Fit scene** frames the visible scene. Both preserve the viewing
+direction and projection. **Reset camera** restores the default viewing
+direction, Perspective projection and scene fit. A standard-view button changes
+direction while preserving projection, target and framing scale. Its selected
+state follows the actual camera direction; free rotation clears that preset
+when the camera leaves it. Perspective and Orthographic are exclusive;
+Perspective starts selected. Standard-view icons identify faces with gray
+fills on a shared cube. Plane icons show a horizontal XY grid or mirrored
+vertical XZ/YZ grids. Hovering reveals each action's English name.
+**Axes** toggles the coordinate indicator and starts on.
+Click empty Work Tree space to clear selection and Property while keeping the
+scene and camera.
 An invalid pending Property value blocks a tree-selection change until corrected
 or restored with Esc. Hovering, camera dragging and legend dragging never change
 object selection.
@@ -225,18 +246,15 @@ and highlighted from their tree rows, just like visible particle instances;
 their display glyphs are not object-selection entry points.
 Selection changes no physical data, saved frames, visibility or Undo history.
 
-**Grid** in Render View offers **XY**, **XZ** and **YZ**, with at most one
-reference plane active. The grid starts off. Select a plane to show it;
-select another to switch, or click the selected plane again to hide the grid.
-Enabling without an explicit plane uses XY. The button remains selected while
-a plane is active. This does not change geometry SDF slice selection.
-The reference planes pass through
-world zero and do not change geometry, SDF slices, camera, bounds or solver
-settings. The cell spacing adapts to zoom internally; no grid information
-text is displayed. Choose **Lines** or the default **Checkerboard** in the same Grid menu.
-Checkerboard uses neutral gray/white cells on the chosen world planes, with
-the same perspective and opaque-object occlusion as Lines. This is a visual
-reference, not a simulation search grid.
+**XY plane**, **XZ plane** and **YZ plane** select at most one world-zero
+reference plane. All start off. Click a plane to enable it, another to switch,
+or the selected plane again to hide it. Geometry SDF slices retain their own
+independent choices. The reference plane preserves geometry, camera, bounds
+and solver settings. Its cell spacing adapts internally to zoom.
+**Lines** and **Checkerboard** select the grid style, with Checkerboard selected
+by default. Both style buttons are disabled while all planes are off and
+retain the selected style for the next enabled plane. Checkerboard uses neutral
+gray/white cells with the same perspective and opaque-object occlusion as Lines.
 The active plane also shows its two infinite coordinate-axis lines through the
 origin, using the shared X/Y/Z colors: X/Y on XY, X/Z on XZ and Y/Z on YZ.
 Thin antialiased axis strokes remain clear at the actual display scale.
@@ -1233,8 +1251,9 @@ metric updates the range. History does not rescan earlier frames against filters
 Older archives build their scoped history in the background only when needed,
 without changing files or playback caching. Until ready (or on a nonmodal
 reported read failure), the bar explicitly shows the current-frame fallback.
-Bars are movable. Render View has five fixed tools: **Fit**, **Fit selection**,
-**Camera**, **Axes** and **Grid**. Selected templates, particle instances and
+Bars are movable. Render View retains the shared eighteen-button toolbar
+for framing, standard views, projection, reference planes and grid style.
+Selected templates, particle instances and
 visible interactions use a lightweight outline, with the same perspective as
 the scene; opaque foreground objects hide its rear edges. It is omitted from
 exported images and animations. Standalone LS Geometry inspection has no

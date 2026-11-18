@@ -81,17 +81,14 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-## Lucide Icons
+## Historical Lucide Icons attribution
 
-Render View's **Fit all** and **Fit selection** icons derive from Lucide
-`maximize-2` and `focus`, respectively. Both use a 24-unit view box and
-1.75-unit stroke; the local focus center circle has radius 4. Preserve the
-complete distributed `licenses/Lucide-Icons-NOTICE.md` alongside the Fluent
-notice. Source: [Lucide Icons](https://github.com/lucide-icons/lucide);
-license: [official LICENSE](https://raw.githubusercontent.com/lucide-icons/lucide/main/LICENSE).
-
-The following ISC notice applies to these two icons and their adaptations,
-not to the application/core generally, Microsoft glyphs or original FunDEM artwork.
+Earlier Render View Fit assets used Lucide `maximize-2` and `focus`.
+The current eighteen toolbar glyphs, including **Fit scene** and **Fit selection**,
+use original FunDEM CAD artwork from the approved preview.
+The retained `licenses/Lucide-Icons-NOTICE.md` and ISC text below document
+earlier bundles. Source: [Lucide Icons](https://github.com/lucide-icons/lucide);
+license reference: [official LICENSE](https://raw.githubusercontent.com/lucide-icons/lucide/main/LICENSE).
 
 ### ISC License
 

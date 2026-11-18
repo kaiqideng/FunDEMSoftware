@@ -16,6 +16,8 @@ including coupled LSDEM + SPH fluid–solid simulations.
   Particle, Contact, Bond and SPH state continues across Events.
   Existing LS boundary samples retain their local geometry during Event changes;
   newly introduced LS particles append their own samples on every backend.
+- **Render View:** direct framing, standard-view, projection, coordinate-axis
+  and reference-grid controls, with consistent CAD-style icons.
 - **SPH:** shared fluid properties, regular Blocks and finite-duration Jets
   coupled to LS solids.
 - **Results:** recorded-frame playback, synchronized particle State tables,
@@ -53,7 +55,7 @@ Save projects and results outside the installation directory.
 
 Rocking and settling of a Gömböc-shaped level-set particle on a flat support.
 
-https://github.com/user-attachments/assets/0a8c6e6d-e838-41c7-9a99-582571e41a76
+![Gömböc self-righting](media/examples/gombocSelfRighting.gif)
 
 [Download original MP4 · 2:00](https://github.com/kaiqideng/FunDEMSoftware/releases/download/v1.0/animation1.mp4)
 
@@ -61,7 +63,7 @@ https://github.com/user-attachments/assets/0a8c6e6d-e838-41c7-9a99-582571e41a76
 
 A suspended chain assembled from individual interlocking level-set links.
 
-https://github.com/user-attachments/assets/98c3bd12-fac0-4ed3-9886-09ac107a6b2d
+![Interlocked chain](media/examples/interlockedChain.gif)
 
 [Download original MP4 · 0:15](https://github.com/kaiqideng/FunDEMSoftware/releases/download/v1.0/animation2.mp4)
 
@@ -69,7 +71,7 @@ https://github.com/user-attachments/assets/98c3bd12-fac0-4ed3-9886-09ac107a6b2d
 
 A sheet of bonded particles drops onto a box and bends around its edges.
 
-https://github.com/user-attachments/assets/cfc78935-59ac-45ff-8193-8ec506d9ae61
+![Cloth drop into a box](media/examples/clothBoxDrop.gif)
 
 [Download original MP4 · 0:03](https://github.com/kaiqideng/FunDEMSoftware/releases/download/v1.0/animation3.mp4)
 
@@ -77,7 +79,7 @@ https://github.com/user-attachments/assets/cfc78935-59ac-45ff-8193-8ec506d9ae61
 
 SPH flow passes around a solid column, with particle colors showing velocity magnitude.
 
-https://github.com/user-attachments/assets/b53644d8-9aa8-473b-84c3-5ad70d21fad8
+![Dam break around a square column](media/examples/damBreakSquareColumn.gif)
 
 [Download original MP4 · 0:03](https://github.com/kaiqideng/FunDEMSoftware/releases/download/v1.0/animation4.mp4)
 
@@ -85,7 +87,7 @@ https://github.com/user-attachments/assets/b53644d8-9aa8-473b-84c3-5ad70d21fad8
 
 A large intruder rises through a bed of smaller grains during container vibration.
 
-https://github.com/user-attachments/assets/28c0cbb2-2226-44b6-8220-e52a7ed587f2
+![Brazil nut segregation](media/examples/brazilNut.gif)
 
 [Download original MP4 · 0:07](https://github.com/kaiqideng/FunDEMSoftware/releases/download/v1.0/animation5.mp4)
 
@@ -93,7 +95,7 @@ https://github.com/user-attachments/assets/28c0cbb2-2226-44b6-8220-e52a7ed587f2
 
 Two colored populations of non-spherical particles tumble and redistribute inside a rotating drum.
 
-https://github.com/user-attachments/assets/bb92a307-efca-46f8-b85b-c76a18a3b241
+![Superellipsoid mixing drum](media/examples/superellipsoidDrum.gif)
 
 [Download original MP4 · 0:08](https://github.com/kaiqideng/FunDEMSoftware/releases/download/v1.0/animation6.mp4)
 
