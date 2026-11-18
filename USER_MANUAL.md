@@ -959,6 +959,12 @@ without removing its definition. Old Simulation snapshot `hidden` values are
 ignored; new snapshots carry color/opacity only. Results tree visibility
 remains an independent control, initially checked for particles.
 
+During LSDEM + SPH execution, existing LS particles retain their local boundary
+virtual-particle arrangement across Events. A newly introduced LS particle receives
+its own samples when fluid is available. Those samples move with their LS owner;
+the solver refreshes world geometry, inlet masks and neighbor searches at the
+Event boundary. CPU, GPU and Hybrid use the same sampling lifecycle.
+
 ## 5. Run control and locking
 
 The first Event-row Submit opens Execution, Output and Overview. Overview lists Solver, Steps,

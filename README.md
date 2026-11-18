@@ -14,6 +14,8 @@ including coupled LSDEM + SPH fluid–solid simulations.
 - **Run control:** submit Events in order, select CPU/GPU/Hybrid and an
   unlimited, 1, 10 or 100-step budget, then Run/Pause/Resume or Reset.
   Particle, Contact, Bond and SPH state continues across Events.
+  Existing LS boundary samples retain their local geometry during Event changes;
+  newly introduced LS particles append their own samples on every backend.
 - **SPH:** shared fluid properties, regular Blocks and finite-duration Jets
   coupled to LS solids.
 - **Results:** recorded-frame playback, synchronized particle State tables,
