@@ -49,18 +49,58 @@ Save projects and results outside the installation directory.
 **File > Open Project > Examples** opens seven independent editable projects:
 
 <!-- fundem-example-videos:start -->
-| Example | What it shows | Preview |
-| --- | --- | --- |
-| **Gömböc self-righting** | Rocking and settling of a Gömböc-shaped level-set particle on a flat support. | <a href="https://github.com/kaiqideng/FunDEMSoftware/releases/download/v1.0/animation1.mp4"><img src="media/examples/gombocSelfRighting.jpg" width="220" alt="Gömböc self-righting"></a><br>[MP4 · 2:00](https://github.com/kaiqideng/FunDEMSoftware/releases/download/v1.0/animation1.mp4) |
-| **Interlocked chain** | A suspended chain assembled from individual interlocking level-set links. | <a href="https://github.com/kaiqideng/FunDEMSoftware/releases/download/v1.0/animation2.mp4"><img src="media/examples/interlockedChain.jpg" width="220" alt="Interlocked chain"></a><br>[MP4 · 0:15](https://github.com/kaiqideng/FunDEMSoftware/releases/download/v1.0/animation2.mp4) |
-| **Cloth drop into a box** | A sheet of bonded particles drops onto a box and bends around its edges. | <a href="https://github.com/kaiqideng/FunDEMSoftware/releases/download/v1.0/animation3.mp4"><img src="media/examples/clothBoxDrop.jpg" width="220" alt="Cloth drop into a box"></a><br>[MP4 · 0:03](https://github.com/kaiqideng/FunDEMSoftware/releases/download/v1.0/animation3.mp4) |
-| **Dam break around a square column** | SPH flow passes around a solid column, with particle colors showing velocity magnitude. | <a href="https://github.com/kaiqideng/FunDEMSoftware/releases/download/v1.0/animation4.mp4"><img src="media/examples/damBreakSquareColumn.jpg" width="220" alt="Dam break around a square column"></a><br>[MP4 · 0:03](https://github.com/kaiqideng/FunDEMSoftware/releases/download/v1.0/animation4.mp4) |
-| **Brazil nut segregation** | A large intruder rises through a bed of smaller grains during container vibration. | <a href="https://github.com/kaiqideng/FunDEMSoftware/releases/download/v1.0/animation5.mp4"><img src="media/examples/brazilNut.jpg" width="220" alt="Brazil nut segregation"></a><br>[MP4 · 0:07](https://github.com/kaiqideng/FunDEMSoftware/releases/download/v1.0/animation5.mp4) |
-| **Superellipsoid mixing drum** | Two colored populations of non-spherical particles tumble and redistribute inside a rotating drum. | <a href="https://github.com/kaiqideng/FunDEMSoftware/releases/download/v1.0/animation6.mp4"><img src="media/examples/superellipsoidDrum.jpg" width="220" alt="Superellipsoid mixing drum"></a><br>[MP4 · 0:08](https://github.com/kaiqideng/FunDEMSoftware/releases/download/v1.0/animation6.mp4) |
-| **Random-shape particle column** | Irregular level-set particles settle within a confined column. | — |
-<!-- fundem-example-videos:end -->
+### 1. Gömböc self-righting
 
-Preview images link to the original MP4 files for the first six examples. Durations are approximate playback lengths.
+Rocking and settling of a Gömböc-shaped level-set particle on a flat support.
+
+https://github.com/user-attachments/assets/0a8c6e6d-e838-41c7-9a99-582571e41a76
+
+[Download original MP4 · 2:00](https://github.com/kaiqideng/FunDEMSoftware/releases/download/v1.0/animation1.mp4)
+
+### 2. Interlocked chain
+
+A suspended chain assembled from individual interlocking level-set links.
+
+https://github.com/user-attachments/assets/98c3bd12-fac0-4ed3-9886-09ac107a6b2d
+
+[Download original MP4 · 0:15](https://github.com/kaiqideng/FunDEMSoftware/releases/download/v1.0/animation2.mp4)
+
+### 3. Cloth drop into a box
+
+A sheet of bonded particles drops onto a box and bends around its edges.
+
+https://github.com/user-attachments/assets/cfc78935-59ac-45ff-8193-8ec506d9ae61
+
+[Download original MP4 · 0:03](https://github.com/kaiqideng/FunDEMSoftware/releases/download/v1.0/animation3.mp4)
+
+### 4. Dam break around a square column
+
+SPH flow passes around a solid column, with particle colors showing velocity magnitude.
+
+https://github.com/user-attachments/assets/b53644d8-9aa8-473b-84c3-5ad70d21fad8
+
+[Download original MP4 · 0:03](https://github.com/kaiqideng/FunDEMSoftware/releases/download/v1.0/animation4.mp4)
+
+### 5. Brazil nut segregation
+
+A large intruder rises through a bed of smaller grains during container vibration.
+
+https://github.com/user-attachments/assets/28c0cbb2-2226-44b6-8220-e52a7ed587f2
+
+[Download original MP4 · 0:07](https://github.com/kaiqideng/FunDEMSoftware/releases/download/v1.0/animation5.mp4)
+
+### 6. Superellipsoid mixing drum
+
+Two colored populations of non-spherical particles tumble and redistribute inside a rotating drum.
+
+https://github.com/user-attachments/assets/bb92a307-efca-46f8-b85b-c76a18a3b241
+
+[Download original MP4 · 0:08](https://github.com/kaiqideng/FunDEMSoftware/releases/download/v1.0/animation6.mp4)
+
+### 7. Random-shape particle column
+
+Irregular level-set particles settle within a confined column.
+<!-- fundem-example-videos:end -->
 
 Opening an example leaves calculation under user control. The inputs have
 open/save, short native execution and recorded-replay checks. Physical
