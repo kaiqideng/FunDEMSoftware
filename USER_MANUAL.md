@@ -211,16 +211,15 @@ placements, including inherited definitions, rather than current calculated
 positions. Results continues to show the accepted recorded frame and time.
 All use the same borderless text template.
 
-Render View has eighteen permanent icon buttons in the same order in Setup,
+Render View has sixteen permanent icon buttons in the same order in Setup,
 Simulation and Results:
 
 | Group | Buttons in order |
 | --- | --- |
 | Framing | Fit scene, Fit selection, Reset camera |
 | Standard views | Isometric, Front, Back, Left, Right, Top, Bottom |
-| Projection | Perspective, Orthographic |
-| Reference | Axes, XY plane, XZ plane, YZ plane |
-| Grid style | Lines, Checkerboard |
+| Reference | Orthographic, Axes |
+| Grid | XY grid, XZ grid, YZ grid, Checkerboard |
 
 Selection preserves camera framing. **Fit selection** frames visible selected
 objects; **Fit scene** frames the visible scene. Both preserve the viewing
@@ -228,8 +227,9 @@ direction and projection. **Reset camera** restores the default viewing
 direction, Perspective projection and scene fit. A standard-view button changes
 direction while preserving projection, target and framing scale. Its selected
 state follows the actual camera direction; free rotation clears that preset
-when the camera leaves it. Perspective and Orthographic are exclusive;
-Perspective starts selected. Standard-view icons identify faces with gray
+when the camera leaves it. **Orthographic** toggles projection: checked
+means Orthographic and unchecked means Perspective. It starts unchecked.
+Standard-view icons identify faces with gray
 fills on a shared cube. Plane icons show a horizontal XY grid or mirrored
 vertical XZ/YZ grids. Hovering reveals each action's English name.
 **Axes** toggles the coordinate indicator and starts on.
@@ -246,14 +246,14 @@ and highlighted from their tree rows, just like visible particle instances;
 their display glyphs are not object-selection entry points.
 Selection changes no physical data, saved frames, visibility or Undo history.
 
-**XY plane**, **XZ plane** and **YZ plane** select at most one world-zero
+**XY grid**, **XZ grid** and **YZ grid** select at most one world-zero
 reference plane. All start off. Click a plane to enable it, another to switch,
 or the selected plane again to hide it. Geometry SDF slices retain their own
 independent choices. The reference plane preserves geometry, camera, bounds
 and solver settings. Its cell spacing adapts internally to zoom.
-**Lines** and **Checkerboard** select the grid style, with Checkerboard selected
-by default. Both style buttons are disabled while all planes are off and
-retain the selected style for the next enabled plane. Checkerboard uses neutral
+**Checkerboard** toggles the grid style: checked displays cells and unchecked
+displays lines. It starts checked. The toggle is disabled while all planes are
+off and retains its state for the next enabled plane. Checkerboard uses neutral
 gray/white cells with the same perspective and opaque-object occlusion as Lines.
 The active plane also shows its two infinite coordinate-axis lines through the
 origin, using the shared X/Y/Z colors: X/Y on XY, X/Z on XZ and Y/Z on YZ.
@@ -287,14 +287,14 @@ Create pairs in Setup immediately after Materials. Every object-creation **+**
 opens the common Configuration with an editable Identity > Name, including
 Contact Material Pairs. Set the pair Name (first available `Contact material
 pair0`, `Contact material pair1`, ...), then select Material 1 and
-Material 2 and optionally check **Custom damping coefficient** in the same
-Configuration. This uses the shared checkbox with its caption on the right,
+Material 2 in the **Material pair** group and optionally check
+**Custom damping coefficient**. This uses the shared checkbox with its caption on the right,
 like Material Wall. The same Material may be selected twice. A/B and B/A are one
 unordered combination, so duplicate global pairs are rejected.
 The tree shows the authored Name; Property Information identifies the two
 Materials. Different names cannot create duplicate material combinations.
 
-Select the named pair itself. One Property uses these groups:
+Select the named pair. Its Property panel contains these groups:
 
 - **Information** identifies **Source material 1** and **Source material 2**.
   Their shared reference links select the corresponding Setup Materials
@@ -389,10 +389,10 @@ LS templates also offer Single particle, suited to individual walls/bodies.
 Sphere Random samples each radius independently from the
 configured range using **Radius distribution**: Uniform (default) or Power
 law. Power law uses the number density `p(r) proportional to r^(-q)`, with
-the editable **Exponent** q: zero is Uniform, positive favors smaller
+the editable **Power-law exponent** q: zero is Uniform, positive favors smaller
 spheres, and negative favors larger spheres. The distribution is weighted by
-particle count. Exponent starts at the
-editable default of 4; choose a value appropriate to the intended distribution.
+particle count. **Power-law exponent** starts at the editable default of 4;
+choose a value appropriate to the intended distribution.
 Uniform hides, but preserves,
 the exponent. Equal radius bounds give equal spheres with either choice.
 Existing configurations without these fields keep their Uniform sampling
@@ -475,6 +475,23 @@ later Events. Particles, Contacts, Bonds and SPH source state
 continue from the integrated predecessor state; only new objects receive their
 authored initial state.
 
+### Duplicating Events
+
+Select named Event rows with Ctrl-click or Shift-selection. Right-click a
+selected row and choose **Duplicate event** or **Duplicate events**. Each
+selected Event is appended once in its original order, with a unique name
+suffix, fresh object IDs and an unsubmitted state. A range of Event rows keeps
+the current preview; click one Event to inspect its scene. The new rows open and become
+selected. One Undo removes the complete copy operation.
+
+Each copy includes its owned instances, Bonds, constraints, accepted initial
+data and Simulation Display. References between copied Events follow the new
+objects. Earlier objects outside the selection remain shared references, as do
+Materials, geometries and Particle Templates. Copies use authored definitions;
+the current solver's integrated histories and results stay with the existing
+run. Ordinary submitted or started Events can supply the definitions. The
+imported State base cannot be duplicated.
+
 ### Fixed step schedule and diagnostics
 
 Every Event runs its fixed configured number of steps. Time step, State
@@ -495,6 +512,12 @@ preceding Event durations, and End adds this Event's duration. Integrated
 particle/interaction state and native/source clocks continue across boundaries
 and Pause/Resume; Jet age and SPH multirate state are not restarted.
 
+The GPU backend retains its CUDA context and stream across Events. Unchanged
+materials, geometry/SDF data, surface mappings and valid search layouts are
+reused. Changed controls still refresh the required dynamic state, with
+particle motion and Contact/Bond histories carried forward. New instances and
+changed dependencies trigger their corresponding setup work.
+
 ### Recording and boundary publication
 
 Animation and State use independent Event start/interval/end cadences. The old
@@ -508,16 +531,26 @@ Failure/cancellation preserves an accepted held endpoint where available.
 
 ### Submit, locks and persistence
 
-The first Event's Submit owns Execution, Output and read-only Overview, in the order **Solver,
-Steps, State frames, Animation frames**. There is no Phase row or Event schedule
-table. Planned native Steps sums the accepted Event step counts.
-Planned State/Animation counts are one initial boundary plus Event interval
-counts, with shared boundaries counted once.
+The first ordinary Submit opens the common Configuration with
+**Execution > Compute mode** and **Output > Directory**. It retains the accepted
+device index. This initial window contains those two settings only. Cancelling
+it preserves accepted settings and submissions. After Reset or complete
+withdrawal releases the native session, the next Submit opens the same settings
+window with the retained values. Later Submit actions directly reuse accepted
+settings and accept every unsubmitted Event through the target as one validated
+range.
 
-Use Submit at the right of each Event row, in order. You cannot submit an Event
-before its predecessor. Accepted rows show their submitted state. Withdraw is
-available only for the last submitted Event and only before it starts running.
-Withdraw later unstarted submissions before withdrawing an earlier one.
+Use Submit at the right of the last Event you want to accept. The range starts
+at the first unsubmitted Event and includes that selected Event. Validation and
+acceptance apply to the entire range atomically. Cancel or failure preserves
+the accepted prefix. Use Withdraw on any submitted ordinary Event that has
+yet to start. It withdraws the selected Event and all later submitted Events
+directly as one transaction, retaining the earlier submitted prefix. Rejected
+or failed operations preserve accepted submissions, native state, Results and
+expansion. Preparing, pending prefix updates and Stopping guard repeated
+Submit/Withdraw actions. Started/completed Events
+and the imported base remain protected. Every withdrawn Event expands once
+and becomes editable; submit it again when ready to continue the calculation.
 
 First Submit prepares Ready without advancing time or recording a frame. It
 sets the global Execution/Output draft and locks Setup. Every submitted Event
@@ -668,8 +701,8 @@ The displayed one-based number does not change internal zero-based ordinals.
 Bonds select two available solid particle instances, possibly the same one.
 Configuration contains Name and the two instances:
 
-- Sphere–sphere: enter **Max gap**, the nonnegative maximum surface separation
-  in m. A pair qualifies when `center distance - radius 1 - radius 2 <= Max gap`.
+- Sphere–sphere: enter **Max. gap**, the nonnegative maximum surface separation
+  in m. A pair qualifies when `center distance - radius 1 - radius 2 <= Max. gap`.
   The default zero includes touching and overlapping spheres; a positive value
   also permits separated spheres. It is required for new/reconfigured sphere
   recipes and is not their mechanical length.
@@ -681,7 +714,7 @@ Sphere–sphere Bond geometry always uses **Radius factor**, in [0, 1] and
 initially 1, to set
 `r_b = factor * min(r1, r2)`, `A = pi*r_b*r_b` and `L = norm(x2-x1)`.
 These reference values are calculated separately for every accepted pair
-from its current state when the Bond is created, then remain fixed. Max gap
+from its current state when the Bond is created, then remain fixed. Max. gap
 still selects eligible pairs; it does not supply the length. Sphere–LS and
 LS–LS use manual area and length. There is no Geometry source selector.
 
@@ -703,7 +736,7 @@ it contains only **Radius factor**; for Sphere–LS or LS–LS it contains
 **Bond area** and **Equivalent length**. Custom stiffness keeps the
 authored four coefficients unchanged, whereas Beam derives them for each
 connection's own L/A. Manual geometry uses one stored area A and length L,
-independent of Max gap. Beam requires E > 0, -1 < nu < 0.5, area A > 0 and
+independent of Max. gap. Beam requires E > 0, -1 < nu < 0.5, area A > 0 and
 reference length L > 0:
 `I=A*A/(4*pi)`, `J=2*I`, `G=E/(2*(1+nu))`, `kn=E*A/L`,
 `ks=12*E*I/L^3`, `kb=E*I/L`, `kt=G*J/L`. Beam derives the existing four stiffness
@@ -719,7 +752,7 @@ positive factor/area. Neither automatic length nor area is averaged over pairs.
 New and reconfigured sphere Bond recipes store a surface-gap limit. Older
 recipes containing only a center-distance limit retain that original behavior
 until explicitly reconfigured; opening them does not change their connections.
-Reconfigure accepts the new Max gap criterion while preserving the recipe ID
+Reconfigure accepts the new Max. gap criterion while preserving the recipe ID
 and physical coefficients.
 
 Bond preparation checks Cancel while building and validating the pending
@@ -858,13 +891,20 @@ continuous Constant/Harmonic velocity on the same target.
 
 Every Event Configuration variant contains only the applicable editable
 fields and inline validation, without Information or read-only time previews;
-Event Property Information remains available, with configured Time step and
-cumulative Start/End; every Event duration is its Time step multiplied by its
-fixed step count.
-Its Inherited particle instances list combines preceding solid instances and
-SPH sources in Event order, one clickable stable-ID reference per line;
-Bonds retains its own linked summary. These links select the owning
-Work Tree objects without editing the Event or changing submissions.
+Event Property Information shows configured Time step, Step range,
+State frame range and Animation frame range. Ranges use inclusive
+`start-end` endpoints on one line. Cumulative steps start at 0 and logical
+stream frames start at 1. Adjacent Events share each stream's boundary number,
+including after the successor supersedes the indexed boundary. An imported
+zero-step State shows `0-0` steps and `1-1` in both streams; its successor starts
+at those same indices. A legacy partial interval still records its final
+observation. Every Event duration remains Time step multiplied by its fixed
+step count.
+Its **Inherited particle instances** list combines preceding solid instances
+and SPH sources in Event order, with one clickable stable-ID reference per line.
+**Inherited bonds** lists the inherited Bond definitions using the same reference
+links. These links select the owning Work Tree objects while preserving the
+Event and its submission state.
 There is no separate Inherited SPHs row.
 
 Constant force/torque applies to any solid instance. **Force per particle**
@@ -985,14 +1025,18 @@ Event boundary. CPU, GPU and Hybrid use the same sampling lifecycle.
 
 ## 5. Run control and locking
 
-The first Event-row Submit opens Execution, Output and Overview. Overview lists Solver, Steps,
-State frames and Animation frames, without Phase, Event schedule or duplicate
-settings. Confirming prepares detached native state asynchronously; successful
-Ready advances no time and writes no archive/frame. Cancel or failure keeps
-accepted input and previous Results. Successful Submit collapses that Event;
-successful Withdraw expands it. Submitted Event rows without retained expansion state start
-collapsed, but you can expand/collapse them manually. Ordinary refresh and
-workspace navigation keep that choice; Cancel or failure does not change expansion.
+The first ordinary Event-row Submit opens Execution / Compute mode and
+Output / Directory in the common Configuration, retaining the accepted device
+index. This initial window contains those two settings only. Submit prepares
+detached native state asynchronously; successful Ready advances no time and
+writes no archive/frame. Validation and acceptance cover the complete pending
+range atomically. Later Submit actions directly reuse accepted settings.
+Withdraw directly removes the target unstarted Event and its submitted suffix.
+Shared preparation progress and error feedback remain available.
+Cancel or failure preserves accepted input, Results and expansion state.
+Successful Submit collapses every newly accepted Event once; successful
+Withdraw expands each Event in its withdrawn range once. Manual expansion survives ordinary refresh and
+workspace navigation.
 
 Run/Pause/Resume, the run-budget choice and Reset sit inline immediately
 after Help behind the shared vertical separator, followed by subdued status.
@@ -1098,25 +1142,30 @@ no State samples shows **State frames: 0 / 0**. These counters use metadata only
 new records refresh their totals without moving the accepted picture or reading
 another State frame.
 
-**View > Playback cache...** controls the decoded-frame cache. **Automatic
-memory limit** is initially selected: its budget is 25% of currently available
-system memory, capped at 4 GiB (512 MiB fallback when availability cannot be
-queried). Clear it to enter **Memory limit (MiB)** manually, from 0 to 65536;
-zero disables optional caching. Current/pending frames, decoding temporaries
-and GPU buffers are outside the reported reusable-frame estimate.
+**View > Resource Usage...** contains Overview and Cache. Overview groups the
+measurements into System memory, Graphics memory and Disk space. System memory
+shows FunDEM usage, Peak usage and System available. Graphics memory shows each
+adapter's name in a Device row, followed immediately by its Usage / budget row.
+Both rows update together. This budget is the operating-system allowance for that
+process and device, and can change as other applications run.
+Disk space places Available disk space next to Estimated remaining disk space,
+which gives the additional State/Animation storage still needed. Help identifies
+the output directory, forecast source and uncertainty. Insufficient known disk
+space appears as inline feedback.
 
-Opening Results preloads Animation frames within that budget and prepares the
-first view before its one loading window closes. Small animations can then
-play and seek entirely from memory; larger runs use a rolling working set.
-Complete-State samples for Plot are not eagerly loaded. Geometry stays shared;
-the animation is not uploaded in full to graphics memory.
-
-**Preload animation** applies valid draft cache settings, pauses playback and
-loads reusable Animation frames until complete or the budget is full. It uses
-the common cancellable task window, delayed by 500 ms, with real frame-count
-progress. Cancelling Preload keeps completed cache entries. **Clear cache** is
-immediate and keeps the currently accepted picture. Cancel discards unapplied
-settings, but does not undo an explicit Preload or Clear.
+Cache groups reusable data into Result frames and Render data. Each usage row
+pairs `≈used / budget`; the budget is the current automatic cache target.
+Cached animation frames shows cached / total available Animation frames.
+Preload animation pauses playback and fills the existing bounded cache through
+the common cancellable task window. Clear cache in Result frames retains the
+accepted frame; Clear cache in Render data retains the active scene and camera.
+Refresh and Close stay in the footer on both tabs. Estimated values carry ≈.
+Budgets grow automatically with available capacity while retaining system and
+operation headroom. The RAM/GPU/Files status links open this same window.
+Measurements describe current process use; cache values and future output
+requirements are estimates.
+Opening Results completes bounded preload and first-view preparation before its
+shared loading window closes.
 
 Cache hits avoid another background read. One low-priority decoder prepares
 up to two seconds of upcoming recorded time within budget. User seeks take
@@ -1158,7 +1207,10 @@ it does not infer data from animation images or interpolate missing samples.
 When both intervals sample the same step, one complete snapshot file is shared
 by both indices. Older single-stream archives remain readable by both workflows.
 Console reports each successfully saved Animation frame and its time. State-only
-saves do not print a Console line; their data and Results updates are retained.
+saves retain their archive data and Results updates. GUI delivery batches Console
+records in order and combines frame-list notifications to the latest complete
+counts, so dense output keeps a bounded pending queue and retains every recorded
+sample.
 
 Ordinary frame seeks, playback and live archive refresh show no loading bar
 or separate task window, including in the bottom status area. The last
@@ -1251,7 +1303,7 @@ metric updates the range. History does not rescan earlier frames against filters
 Older archives build their scoped history in the background only when needed,
 without changing files or playback caching. Until ready (or on a nonmodal
 reported read failure), the bar explicitly shows the current-frame fallback.
-Bars are movable. Render View retains the shared eighteen-button toolbar
+Bars are movable. Render View retains the shared sixteen-button toolbar
 for framing, standard views, projection, reference planes and grid style.
 Selected templates, particle instances and
 visible interactions use a lightweight outline, with the same perspective as
@@ -1284,24 +1336,13 @@ per-buffer API limits determine capacity; a failed allocation reports an error
 instead of displaying an incomplete population. Hiding an unused population
 can reduce rendering load without modifying saved results.
 
-**View > Render cache...** controls a separate reusable rendering cache.
-Memory limit defaults to 256 MiB (integer range 0–4096; zero disables it),
-split equally between reusable CPU data (prepared meshes and inactive workspace
-scenes) and inactive GPU groups with LRU eviction. Used estimate (MiB), Prepared meshes and GPU groups describe retained
-reusable allocations only, excluding the current scene, framebuffer and the
-independent decoded-frame Playback cache. This is not a display-particle cap.
-Apply accepts the session-only budget; Cancel leaves it unchanged. Clear cache
-is immediate and does not remove the current scene or any project/result data;
-Cancel afterward does not restore cleared entries. Geometry replacement cannot
-reuse stale entries. Switching between unchanged Setup, Simulation, and Results
-retains each view's camera and can restore its accepted scene without rebuilding
-unchanged geometry. Navigation does not clear this cache. Actual geometry,
-particle state, Display, Filter, and recorded-frame changes refresh the affected
-view. An evicted scene, or one visited with a zero budget, may load cold while
-retaining its camera. Clear also releases inactive workspace scenes, but preserves
-the active scene and all workspace cameras. Opening or creating another project
-resets workspace scenes/cameras. The three workspaces share one live viewport;
-they do not create three independent graphics contexts.
+Reusable CPU meshes, inactive workspace scenes and GPU groups use automatic
+budgets coordinated through **View > Resource Usage... > Cache**. Their estimates
+exclude the active scene and framebuffer. Workspace navigation retains cameras
+and eligible cached scenes; geometry/Display/Filter/frame changes rebuild their
+affected presentation. Clear releases inactive entries and preserves the active
+scene and cameras. Project replacement resets workspace bindings. All workspaces
+share one live viewport/context.
 
 Filter + offers disabled-by-default Clip and Threshold. Add and Reconfigure
 open the common Configuration with Name and Target > Objects, without Source.
@@ -1465,6 +1506,10 @@ requested canvas size without smoothing or changing the samples.
 Save is left of Cancel. Existing-file replacement requires confirmation;
 publication is atomic. Export preserves the accepted samples/current style
 and never reloads results or seeks the scene. Use Save CSV for numerical data.
+Figure export captures the accepted chart once, then performs layout, drawing,
+encoding and writing in the background. Cancel is checked during sample batches
+and streamed PNG output. The live chart stays available and its accepted data
+and appearance remain unchanged.
 
 Longer Reload operations show actual scanned-frame progress and Cancel while
 keeping the last accepted chart/table visible. Cancel waits for a safe read
@@ -1620,7 +1665,7 @@ explicit diagnostic rather than resetting density or inventing Jet progress.
 
 ### Images and animation
 
-**File > Export image...** and **Export animation...** use the loaded recorded
+**File > Export image...** and **Export Animation...** use the loaded recorded
 run independently of the current workspace, selected Work Tree object, Property
 form or Plot. They never commit unrelated pending edits. Without a committed
 Animation frame they remain unavailable; File does not fall back to capturing
@@ -1649,7 +1694,14 @@ The internal static-view PNG API remains separate from these File commands.
 
 PNG encoding and file writing use detached background data and common delayed
 feedback; this does not mean every rendering/filter step is asynchronous.
-Successful publication, not a finished capture alone, completes the export.
+Successful publication completes the export. PNG encoding checks cancellation
+between bounded output writes while retaining the existing destination.
+
+Closing FunDEM confirms the current runtime and unsaved-project choices, then
+finishes an asynchronous shutdown. It requests Reset, cancels background reads
+and drains outstanding work with responsive feedback before closing the window.
+The current native step or Windows encoder operation completes at its safe
+boundary; committed result files remain available.
 
 ## 8. Troubleshooting
 
@@ -1663,9 +1715,11 @@ Successful publication, not a finished capture alone, completes the export.
   values cannot be reconstructed by changing display.
 - Unexpected origin: use core-corrected local geometry plus centered
   template/instance placement, not raw OBJ origin assumptions.
-- Setup/submitted Events remain read-only at the submission frontier: edit an
-  unsubmitted Event, or confirm Reset to withdraw all submissions without
-  deleting saved results.
+- Setup/submitted Events remain read-only at the submission frontier. Edit an
+  unsubmitted Event, or use Withdraw from an awaiting submitted Event to unlock
+  it and every later submission together. Started Events require confirmed
+  Reset, which withdraws ordinary submissions while preserving authored
+  definitions and saved results.
 - Old project rejected: only the current unversioned layout is supported. Do not rename format markers. Keep mandatory binary siblings and all nine required definition arrays, including empty arrays; each solid instance requires its owning eventId.
 
 Read [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) and

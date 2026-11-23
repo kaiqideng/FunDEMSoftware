@@ -84,7 +84,7 @@ SOFTWARE.
 ## Historical Lucide Icons attribution
 
 Earlier Render View Fit assets used Lucide `maximize-2` and `focus`.
-The current eighteen toolbar glyphs, including **Fit scene** and **Fit selection**,
+The current sixteen toolbar glyphs, including **Fit scene** and **Fit selection**,
 use original FunDEM CAD artwork from the approved preview.
 The retained `licenses/Lucide-Icons-NOTICE.md` and ISC text below document
 earlier bundles. Source: [Lucide Icons](https://github.com/lucide-icons/lucide);

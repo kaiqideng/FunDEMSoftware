@@ -11,11 +11,17 @@ including coupled LSDEM + SPH fluid–solid simulations.
 - **Simulation:** named Events, particle instances, Bonds, free or periodic
   boundaries, motion constraints, force/torque, velocity resets, Global damping
   and sphere hydrodynamics.
-- **Run control:** submit Events in order, select CPU/GPU/Hybrid and an
-  unlimited, 1, 10 or 100-step budget, then Run/Pause/Resume or Reset.
+- **Run control:** Submit accepts the pending Event prefix through the selected
+  Event; Withdraw releases its unstarted submitted suffix. The first Submit
+  selects CPU/GPU/Hybrid and an output folder. Choose an unlimited, 1, 10 or
+  100-step budget, then Run/Pause/Resume or Reset.
   Particle, Contact, Bond and SPH state continues across Events.
   Existing LS boundary samples retain their local geometry during Event changes;
   newly introduced LS particles append their own samples on every backend.
+- **Resources:** View > Resource Usage reports system memory, graphics memory
+  and disk space, with automatic Result-frame and Render-data cache budgets.
+  Preload and Clear cache preserve the accepted view. Capacity checks guard
+  supported generation, import, rendering and recording operations.
 - **Render View:** direct framing, standard-view, projection, coordinate-axis
   and reference-grid controls, with consistent CAD-style icons.
 - **SPH:** shared fluid properties, regular Blocks and finite-duration Jets
@@ -136,8 +142,9 @@ base. Results binds to the new recording and refreshes saved frame lists while
 keeping the displayed frame selected. Playback and seeking remain available
 during calculation. The decoded-frame cache accounts for retained SPH data.
 
-DAT transfers solid-particle geometry, material, pose and velocity data into
-editable authored objects. State also preserves interaction history for
+DAT export selects a saved complete State frame and solid-particle instance.
+It transfers geometry, material, pose and velocity data into editable authored
+objects. State also preserves interaction history for
 continuation. Filters control rendering; exports and Plot use explicit
 data selections.
 

@@ -13,9 +13,11 @@ Windows x64 — seven built-in examples
    the ordered Events and use Submit's **Execution**/**Output** draft before running. CPU is the
    default. GPU/Hybrid need the CUDA-enabled package and a compatible NVIDIA
    GPU/driver; unavailable modes are reported, not silently replaced by CPU.
-4. Use the first Event row's **Submit** to edit Execution mode/device and Output directory
-   and review read-only Overview totals, then confirm preparation in the same
-   dialog. Only successful Ready accepts those settings; Cancel/failure leaves
+4. Click **Submit** on the last Event you want to accept. The first ordinary
+   submission opens Compute mode and Output directory, retaining the accepted
+   device index. This initial window contains those two settings only. Later
+   Submit actions directly accept the validated pending prefix through the
+   target. Successful Ready accepts the initial settings; Cancel/failure leaves
    the accepted model unchanged. Ready means native input is prepared,
    not that time or recording has advanced. Use **Run** to start recording and
    calculation. **Pause** waits for a safe boundary and Run/Resume keeps the
@@ -33,7 +35,7 @@ Windows x64 — seven built-in examples
 6. Use Results Work Tree checkboxes to show particles, Contacts or Bonds.
    These populations are independent: hiding particles does not hide their
    interactions. Use **File > Export image...** for PNG or
-   **Export animation...** for Windows H.264 MP4. Image export explicitly
+   **Export Animation...** for Windows H.264 MP4. Image export explicitly
    selects an Animation frame and shows its recorded Time (s); video always
    displays first/last Animation indices with Start/End times. These File
    commands use the loaded archive from any workspace or selected Plot page.
@@ -41,8 +43,14 @@ Windows x64 — seven built-in examples
 Submit Events sequentially using the right-hand Event-row actions. Submission
 locks Setup and the accepted Event prefix, not future unsubmitted Events.
 Failure/cancellation preserves accepted input and Results. Run stops at Waiting
-before an unsubmitted Event; submit the next and press Run to continue the same
-native state/archive. Only the submitted, unentered tail may Withdraw. Reset
+before an unsubmitted Event; submit through a later Event and press Run to continue the same
+native state/archive. Withdraw from any submitted ordinary Event awaiting
+native entry directly removes it and every later submission atomically.
+Rejected or failed operations preserve the accepted prefix. Preparing, pending
+prefix updates and Stopping guard repeated actions.
+Started/completed Events and the imported base remain protected. Each withdrawn
+Event expands once and can be edited and submitted again. Native state and
+saved Results stay unchanged. Reset
 asks for confirmation (default Cancel), then stops calculation and withdraws
 all Events without deleting saved results. Use Reset before starting a fresh
 calculation from unchanged authored initial state. Display, read-only inspection
@@ -50,7 +58,7 @@ and Results editing remain available.
 
 The supplied examples use ordinary fixed-step Events. To add a relaxation
 stage in a working copy, create another Event with an explicitly chosen fixed
-duration and recording cadence. Submit each Event in order; at least one accepted Event
+duration and recording cadence. Submit through the selected Event; at least one accepted Event
 is required before Run.
 
 Every Event advances time by `timeStep * steps` while preserving integrated
