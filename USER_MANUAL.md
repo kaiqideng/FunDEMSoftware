@@ -520,7 +520,7 @@ changed dependencies trigger their corresponding setup work.
 
 ### Recording and boundary publication
 
-Animation and State use independent Event start/interval/end cadences. The old
+Animation and State use coordinated Event start/interval/end cadences. The old
 Event end and the next prepared Event start share one boundary time. Hold them
 before publication so each stream records one right-continuous boundary state
 belonging to the new Event.
@@ -532,9 +532,12 @@ Failure/cancellation preserves an accepted held endpoint where available.
 ### Submit, locks and persistence
 
 The first ordinary Submit opens the common Configuration with
-**Execution > Compute mode** and **Output > Directory**. It retains the accepted
-device index. This initial window contains those two settings only. Cancelling
-it preserves accepted settings and submissions. After Reset or complete
+**Execution > Compute mode**, **GPU device** for GPU/Hybrid, and **Output >
+Directory**. The shared GPU device dropdown lists each CUDA index and model name.
+A valid saved index remains selected. If that index is unavailable, an inline
+message asks you to choose a device explicitly. An empty list blocks GPU/Hybrid
+submission. CPU hides the dropdown and retains the saved index. Cancel or
+preparation failure preserves accepted settings and submissions. After Reset or complete
 withdrawal releases the native session, the next Submit opens the same settings
 window with the retained values. Later Submit actions directly reuse accepted
 settings and accept every unsubmitted Event through the target as one validated
@@ -1025,9 +1028,12 @@ Event boundary. CPU, GPU and Hybrid use the same sampling lifecycle.
 
 ## 5. Run control and locking
 
-The first ordinary Event-row Submit opens Execution / Compute mode and
-Output / Directory in the common Configuration, retaining the accepted device
-index. This initial window contains those two settings only. Submit prepares
+The first ordinary Event-row Submit opens Execution / Compute mode,
+GPU device for GPU/Hybrid, and Output / Directory in the common Configuration.
+The shared device dropdown shows CUDA index and model name and retains a valid
+saved selection. An unavailable index requires explicit selection; an empty
+device list blocks GPU/Hybrid submission. CPU hides the dropdown and retains its
+stored index. Submit prepares
 detached native state asynchronously; successful Ready advances no time and
 writes no archive/frame. Validation and acceptance cover the complete pending
 range atomically. Later Submit actions directly reuse accepted settings.
@@ -1071,7 +1077,7 @@ and press Run to continue. Display controls, navigation, copying and Results
 presentation remain available.
 
 The first Event records its initial boundary. Every Event then records its
-independent Animation/State intervals and final boundary; adjacent old-end/
+coordinated Animation/State intervals and final boundary; adjacent old-end/
 next-start samples share one right-continuous boundary observation. Internal
 integration/source clocks and displayed cumulative time continue. Native
 Contact/Bond histories and SPH source age are retained, not recreated.
@@ -1199,8 +1205,11 @@ animation resolves State/Animation counters from each source sample and the
 same frozen manifest; Time follows that sample, independently of encoded FPS.
 
 New Event Configuration records complete State every S steps and Animation
-every K State intervals, with canonical animation cadence A=S*K steps. Older
-nondivisible canonical schedules retain their original cadence until explicit Reconfigure.
+every K State intervals, with canonical animation cadence A=S*K steps.
+Every Animation frame records complete State at the same step and time.
+State interval is at least one, and the Animation step interval is its positive
+integer multiple. Accepted Events ending between Animation intervals keep their
+exact final step and observation. Existing Results retain their recorded data.
 Playback, animation export and the visible frame counter use animation frames.
 Plot reads complete-state samples and offers its own saved-State frame choices;
 it does not infer data from animation images or interpolate missing samples.

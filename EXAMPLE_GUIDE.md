@@ -14,8 +14,10 @@ Windows x64 — seven built-in examples
    default. GPU/Hybrid need the CUDA-enabled package and a compatible NVIDIA
    GPU/driver; unavailable modes are reported, not silently replaced by CPU.
 4. Click **Submit** on the last Event you want to accept. The first ordinary
-   submission opens Compute mode and Output directory, retaining the accepted
-   device index. This initial window contains those two settings only. Later
+   submission opens Compute mode, GPU device for GPU/Hybrid, and Output directory.
+   The shared device dropdown shows CUDA index and model name. Keep a valid saved
+   index; choose explicitly if it is unavailable. CPU retains the hidden device
+   value. An empty device list blocks GPU/Hybrid submission. Later
    Submit actions directly accept the validated pending prefix through the
    target. Successful Ready accepts the initial settings; Cancel/failure leaves
    the accepted model unchanged. Ready means native input is prepared,
