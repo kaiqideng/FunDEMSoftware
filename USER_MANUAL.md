@@ -74,8 +74,13 @@ and demonstration coefficients are not measured calibration.
 
 ## 2. Files and editing
 
+Configuration, file selection and confirmation windows open centered over
+their owner, within the available screen area. Task progress opens over
+the main workbench after its normal delay.
+
 Projects use `.fundem.json` with format `FunDEM-Preprocessor`, without a schema/version number.
-Open and Save accept only this configuration suffix.
+Open requires that suffix. Save As adds it when needed, then checks the
+resulting path. A confirmation protects an existing file at that path.
 The JSON holds definitions and stable references; bulk data use automatically
 named binary files beside it. A referenced `data-<sha>.fundem-data` file contains
 irreplaceable imported geometry, imported particles and per-particle initial
@@ -1554,7 +1559,8 @@ alignment and tick-label formatting do not reduce numerical export precision.
 Copy is limited to 100,000 cells and 16 MiB of generated text, including the
 bounding rectangle of a sparse selection. An oversized copy shows an inline
 error without changing the clipboard or truncating the data. Use **Save CSV...**
-for larger tables.
+for larger tables. Save CSV adds the CSV suffix when needed and asks
+before replacing an existing file at the resulting path.
 
 Charts share one scientific-figure style and measured renderer with figure
 export: white background, neutral axes, a subtle grid, colorblind-friendly
