@@ -386,8 +386,36 @@ directly as top-level categories. There is no extra Particle Templates parent.
 Both categories use the same reusable-template model and reference rules.
 
 Templates define centered reusable populations. Simulation assigns
-material, mass state, event placement and initial motion. Sphere templates offer Lattice and Random;
-LS templates also offer Single particle, suited to individual walls/bodies.
+material, mass state, event placement and initial motion. Sphere templates
+offer Lattice, Random and Compacted specimen. LS templates also offer Single
+particle, suited to individual walls or bodies.
+
+To create a compression or bending specimen, use **Sphere Templates + >
+Compacted specimen...**. Select **Cylinder** or **Cuboid** in **Mold** and
+enter its dimensions. Set the radius range and seed in **Packing**. For a
+bending beam, enable the Cuboid notch and set its width and depth.
+
+**Auto fill** is the default for new templates. It chooses the particle count,
+then tries to fill less populated areas and rearranges the packing. It keeps
+the densest valid result found for the supplied settings and seed. Select
+**Fixed count** to enter the initial particle count yourself. Earlier
+specimens without a saved mode reopen in Fixed count.
+
+**Relative overlap tolerance (%)** sets the maximum overlap depth as a
+percentage of the midpoint of the radius range. In both modes the default is
+0.08%. For radii from 1.75 to 2.25 mm, this allows 1.6 µm of overlap. Enter
+zero to permit only numerical roundoff.
+
+Property shows **Final particle count**, **Actual specimen size XYZ (m)**,
+**Estimated porosity (%)** and **Max. initial overlap (m)**. The actual size
+uses sphere surface extents. Estimated porosity compares the sum of the
+individual sphere volumes with the mold volume after any notch cut. The
+combined nominal sphere volume must fit within that available volume.
+
+Create the specimen instance, apply Bond and configure fixtures and loading
+in Simulation. A self Bond on a notched specimen excludes candidate links
+that intersect the original notch volume.
+
 Sphere Random samples each radius independently from the
 configured range using **Radius distribution**: Uniform (default) or Power
 law. Power law uses the number density `p(r) proportional to r^(-q)`, with
@@ -410,13 +438,14 @@ Random. Random placement has independent seeds and an Attempts budget.
 Non-overlap uses conservative bounding spheres; nominal porosity is a
 generated-volume target, not the measured void fraction after settling.
 
-All Single/Lattice/Random/imported Templates are centered at `(0, 0, 0)` in
+All generated and imported Templates are centered at `(0, 0, 0)` in
 their accepted local frame. Their **Bounding-sphere cluster bounding box** uses
 componentwise particle-center extrema expanded on every axis by one largest
 particle bounding radius across the population, not individual-radius-tightened
 bounds or wall-surface/SDF bounds. Reconfigure and load preserve this centered
-frame and dependent Instance world placements. Property reports actual particle
-count and Bounding box size. Only LS Random/imported templates also report
+frame and dependent Instance world placements. Compacted specimen Property uses
+the actual surface extents described above. Other templates report **Particle
+count** and **Bounding box size XYZ (m)**. Only LS Random/imported templates also report
 minimum/maximum bounding radius; Sphere Template Information omits both radius
 summaries without changing radius inputs or accepted particle data.
 A single LS particle also reports orientation. Its Display has the same
