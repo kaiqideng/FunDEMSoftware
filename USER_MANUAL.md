@@ -323,9 +323,11 @@ of Stiffness source, including From materials. Reconfigure
 retains the pair ID and all coefficients; Cancel leaves accepted settings
 unchanged, and a successful Apply participates in Undo/Redo.
 Sphere-related stiffness From materials
-uses Hertz–Mindlin; Custom linear uses the entered four stiffnesses. Missing
-LS-LS per-area stiffness differs from zero and must be assigned for relevant
-contacts. The fixed groups edit one global record, not separate contact laws.
+uses Hertz–Mindlin; Custom linear uses the entered four stiffnesses. Its
+question mark covers sphere–sphere and sphere–level-set contacts. The separate
+LS–LS question marks explain each per-area input. Assign both inputs before
+a run involving those pairs. An explicit zero disables its elastic term.
+The fixed groups edit one global record.
 
 The global table applies throughout every Event. There is no pair inheritance,
 Event override or Revert command. Reconfigure preserves stable identity.
@@ -1303,8 +1305,9 @@ All objects using that category share the change; other categories and runs
 keep their own colors. **Restore default colors** restores only the selected
 category's palette, preserving range mode, limits and bar position. Color
 changes use Results Undo/Redo and are frozen for image/animation export.
-Stress keeps its neutral zero color. Current uses actual visible, filter-kept data in
-this frame. History uses all saved
+The stress scale uses neutral at zero. Values outside the selected range
+use the color at its nearest limit. Current uses actual visible, filter-kept
+data in this frame. History uses all saved
 frames of the currently enabled instance/pair/Bond-recipe scopes and their
 exact selected Color by metrics, not unrelated objects or other quantities.
 That scope remains stable across events; hiding an object or changing its
@@ -1397,6 +1400,8 @@ Select a curve leaf for Information and Display. Information lists accepted
 source objects as vertical reference links: **Source objects** for Time
 history/Histogram, **X objects** and **Y objects** for XY/Scatter, or
 **Specimen**, **Upper platen** and **Lower platen** for Uniaxial compression.
+Three-point bending links **Specimen**, **Loading roller**, **Support 1**
+and **Support 2**.
 A name selects its Results object without seeking a frame or editing the
 query; missing references are Unavailable. Display owns Color and
 applicable line/marker styles; its Reconfigure edits that curve's Name and
@@ -1414,8 +1419,9 @@ Plot has no Event Scope selector. Time history evaluates the complete run's
 committed State samples. New recordings have one right-continuous interior
 boundary sample per stream; existing archives may retain distinct same-time
 observations, which remain in their recorded order.
-XY curve, Scatter and Histogram each select one saved **State frame** per curve;
-different curves may use different frames. Every curve uses its Plot's Data
+XY curve, Scatter and Histogram each select one saved **State frame** per curve.
+**Time (s)** displays the selected State sample's recorded time. Each curve
+uses that sample without interpolation. Every curve uses its Plot's Data
 source; XY/Scatter additionally use the same
 object population for X/Y, matching individual samples by stable identity.
 XY connects those points; Scatter uses markers. These three single-frame
@@ -1473,6 +1479,20 @@ they do not modify physical data or rerun the solver.
 Solid-system energy excludes fluid energy; gravitational energy uses each
 Event's gravity and the zero-potential plane Z = 0. Reload is manual; playback/incoming frames do not reload
 charts. Table/CSV and chart use the same accepted data.
+
+### Three-point bending Plot
+
+Choose **Plot + > Three-point bending**, select the specimen, the loading
+roller and two distinct supports. Choose the positive world axis from the
+supports toward the central roller and set the inclusive State time range.
+For a roller moving down in Z, choose **Z**. The first complete State in the
+range sets zero deflection. The X axis measures travel toward the supports
+relative to their mean position in mm. The Y axis shows the compressive
+reaction at the loading roller in N. Both support reactions are available
+in the Data table and CSV. Results come from recorded specimen–fixture
+contacts and intact Bonds. A missing specimen or fixture produces a gap.
+
+### Plot axes and appearance
 
 Each **X axis**/**Y axis** group provides Title, Automatic/Custom Range and
 Logarithmic scaling. Leave Title blank to use the recorded quantity and unit;
