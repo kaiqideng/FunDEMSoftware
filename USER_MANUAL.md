@@ -406,9 +406,12 @@ percentage of the midpoint of the radius range. In both modes the default is
 0.08%. For radii from 1.75 to 2.25 mm, this allows 1.6 µm of overlap. Enter
 zero to permit only numerical roundoff.
 
-Property shows **Final particle count**, **Actual specimen size XYZ (m)**,
-**Estimated porosity (%)** and **Max. initial overlap (m)**. The actual size
-uses sphere surface extents. Estimated porosity compares the sum of the
+**Property > Information** shows **Particle count** and **Bounding box size
+XYZ (m)**. For a Compacted specimen, it also shows **Actual specimen size XYZ
+(m)**, **Estimated porosity (%)** and **Max. initial overlap (m)**. The bounding
+box expands the center extrema by the largest radius along each local axis.
+The actual specimen size measures the extents of the individual sphere surfaces.
+Estimated porosity compares the sum of the
 individual sphere volumes with the mold volume after any notch cut. The
 combined nominal sphere volume must fit within that available volume.
 
@@ -443,8 +446,7 @@ their accepted local frame. Their **Bounding-sphere cluster bounding box** uses
 componentwise particle-center extrema expanded on every axis by one largest
 particle bounding radius across the population, not individual-radius-tightened
 bounds or wall-surface/SDF bounds. Reconfigure and load preserve this centered
-frame and dependent Instance world placements. Compacted specimen Property uses
-the actual surface extents described above. Other templates report **Particle
+frame and dependent Instance world placements. All templates report **Particle
 count** and **Bounding box size XYZ (m)**. Only LS Random/imported templates also report
 minimum/maximum bounding radius; Sphere Template Information omits both radius
 summaries without changing radius inputs or accepted particle data.
@@ -670,9 +672,8 @@ its target and required source definitions match the loaded project. Results
 resolves displayed names from its archived project. Activating an unmatched
 reference explains why navigation is unavailable without discarding its
 archived name or changing the project. Particle count is not repeated here.
-SPH Information contains only
-**State...** in both Simulation and Results, followed by Display; it does not
-repeat Particle count or Initial velocity summaries.
+SPH Information includes **State...** in Simulation and Results. A Jet also
+shows **Jet duration (s)** and **Nozzle position XYZ (m)** when available.
 
 Use **State...** in the last row of Property's **Information** group to inspect
 particle state. The window title is **State — <instance name>**. The button has no name
@@ -1007,44 +1008,45 @@ accepted project; other force records and stable target IDs are preserved.
 
 ### SPH
 
-In LSDEM + SPH, the shared SPH Parameters node sets spacing, smoothing length,
-reference density, viscosity and **Artificial speed of sound (m/s)**. Runtime
-derives the maximum design-velocity scale as sound speed / 10; it is not a
-separate input or an imposed fluid velocity. Event
-Particle Instances + offers **Solid particle...**, **SPH block...** and **SPH
-jet...**. Only the two fluid actions require **Lock**; Solid particle... remains
-available while shared fluid settings are unlocked. DEM uses the same Add
-action to open solid-instance Configuration directly. Start with
-the unlocked fluid settings, enter the intended values, then lock them before
-adding sources. The button occupies the common Property footer action position,
-like Reconfigure, and changes to **Unlock** when locked. Lock validates any
-pending edits; invalid input remains editable instead of being accepted.
-Locked physical values are gray and read-only.
+In LSDEM + SPH, select **SPH Parameters** beside Events. Set spacing
+and smoothing length in **Discretization**, and reference density and dynamic
+viscosity in **Fluid**. Click **Lock source parameters** to validate these
+settings and make the two groups read-only. The same footer action becomes
+**Unlock source parameters**. In **Particle Instances +**, this lock enables
+**SPH block...** and **SPH jet...**. **Solid particle...** is available in
+either lock state. In DEM the Add action opens solid-instance Configuration
+directly.
 
-To change the fluid settings later, click **Unlock**. If SPH
-sources exist, confirm removal of **all Blocks and Jets in all events** and
-their generated particle arrays. Choose Yes to confirm or Cancel to retain
-the accepted state; Cancel is the default. Cancel leaves the parameters locked
-and all sources unchanged. Confirming removal and unlocking is one undoable project
-operation; solids, events, materials and saved result archives are untouched.
-Edit the settings, lock them again, and add the replacement sources explicitly.
-Changing spacing no longer rebuilds existing sources automatically. Older
-projects containing SPH sources load with the parameters locked. A retained
-submitted/native session disables this footer button until Reset; Reset itself does
-not remove authored sources or release their SPH parameter lock.
-Existing sources can still be Reconfigured while shared parameters are
-locked; their own distribution settings use the same locked shared spacing.
+To change Discretization or Fluid later, click **Unlock source parameters**.
+If the project contains SPH sources, this action asks for confirmation before
+removing **all Blocks and Jets in all Events** and their generated arrays.
+Choose **Yes** to confirm the undoable change or **Cancel** to retain the
+accepted state. After editing, lock the source parameters before adding
+replacement sources. An editable Block or Jet can be Reconfigured using
+the locked shared spacing.
+
+**Solver → Artificial speed of sound (m/s)** stays editable after the source
+lock. Adjusting it preserves every Block and Jet. The solver derives its
+maximum design-velocity scale as sound speed divided by ten. The first
+successful ordinary **Submit** locks the sound speed and the footer for
+the retained session. **Reset** restores sound-speed editing for ordinary
+projects and preserves the existing source lock and instances. A project with
+retained SPH from an imported State uses the saved sound speed read-only
+for continuation, including after Reset.
 
 Block sets Count XYZ and Position XYZ and generates a regular array centered
 at that placement with zero authored velocity. Jet defines outlet, direction,
 speed and duration with a maintained inlet
 buffer; it is not a prefilled moving fluid column. Before execution its outlet
 is a guide. SPH sources carry forward, but later events cannot edit inherited
-definitions. Both Simulation and Results use Information containing only
-**State...**, followed by Display. Neither repeats Particle count, Initial
-velocity, Initial position or Bounding box size summaries. Configuration
-Count/placement/Jet inputs, physical placement, serialized positions and the
-per-particle State table/recorded data remain unchanged.
+definitions. In Simulation and Results, Jet Information shows **Jet duration
+(s)** and **Nozzle position XYZ (m)** when available, above **State...**. The
+duration is the configured emission period. For an authored Jet, Placement
+and Jet settings determine the outlet center in world coordinates. A Jet
+restored from State shows the saved physical outlet even when its imported
+particle cloud has a different center. Block Information contains the
+**State...** action. Display
+follows Information for both sources.
 Solid and SPH Simulation Display contains Opacity (%) and Uniform color,
 not a Hide particles checkbox. Opacity 0 makes an object fully transparent
 without removing its definition. Old Simulation snapshot `hidden` values are

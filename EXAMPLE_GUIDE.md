@@ -13,6 +13,9 @@ Windows x64 — seven built-in examples
    the ordered Events and use Submit's **Execution**/**Output** draft before running. CPU is the
    default. GPU/Hybrid need the CUDA-enabled package and a compatible NVIDIA
    GPU/driver; unavailable modes are reported, not silently replaced by CPU.
+   In an SPH example, **SPH Parameters > Solver** lets you adjust artificial
+   speed of sound before the first accepted Submit while keeping the supplied
+   Block or Jet. Use a writable copy for parameter studies.
 4. Click **Submit** on the last Event you want to accept. The first ordinary
    submission opens Compute mode, GPU device for GPU/Hybrid, and Output directory.
    The shared device dropdown shows CUDA index and model name. Keep a valid saved
