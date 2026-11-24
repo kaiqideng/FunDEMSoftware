@@ -41,15 +41,17 @@ Before a project is open, Render View briefly states FunDEM's purpose and the
 After opening a project, the normal workspace-specific selection hints replace
 this introduction.
 
-**Help > User Guide** explains getting started and the three workspaces: Setup
-defines materials, geometries and particle templates; Simulation arranges events
-and runs calculations; Results replays saved frames and supports filters and
-plots. It defines DEM (discrete element method), LS (level set), and SPH
+**Help > User Guide** opens a compact, read-only guide. Scroll through the full
+text while the **Close** button stays visible. Setup defines materials,
+geometries and particle templates. Simulation arranges events and runs
+calculations. Results replays saved frames and supports filters and plots.
+The guide defines DEM (discrete element method), LS (level set), and SPH
 (smoothed particle hydrodynamics) centrally and identifies FunDEMBeta as the
 numerical core. **Help > About FunDEM** shows the running version,
 calculation core, execution modes and the location of license/attribution
-notices. Both entries are available without a project. Parameter-help popovers
-remain focused on the selected parameter rather than repeating the glossary.
+notices. Both entries are available without a project. Opening Help or using
+View menu controls keeps any unfinished Property edit available when you return
+to it. Parameter-help popovers stay focused on the selected parameter.
 
 ### Examples
 
