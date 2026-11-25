@@ -53,7 +53,7 @@ native state/archive. Withdraw from any submitted ordinary Event awaiting
 native entry directly removes it and every later submission atomically.
 Rejected or failed operations preserve the accepted prefix. Preparing, pending
 prefix updates and Stopping guard repeated actions.
-Started/completed Events and the imported base remain protected. Each withdrawn
+Withdrawal excludes started/completed Events and the imported checkpoint. Each withdrawn
 Event expands once and can be edited and submitted again. Native state and
 saved Results stay unchanged. Reset
 asks for confirmation (default Cancel), then stops calculation and withdraws

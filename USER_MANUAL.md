@@ -591,8 +591,7 @@ yet to start. It withdraws the selected Event and all later submitted Events
 directly as one transaction, retaining the earlier submitted prefix. Rejected
 or failed operations preserve accepted submissions, native state, Results and
 expansion. Preparing, pending prefix updates and Stopping guard repeated
-Submit/Withdraw actions. Started/completed Events
-and the imported base remain protected. Every withdrawn Event expands once
+Submit/Withdraw actions. Withdrawal excludes started/completed Events and the imported checkpoint. Every withdrawn Event expands once
 and becomes editable; submit it again when ready to continue the calculation.
 
 First Submit prepares Ready without advancing time or recording a frame. It
@@ -609,7 +608,7 @@ it does not restart earlier Events. Submitting alone does not resume execution.
 
 Reset asks for confirmation, with Cancel selected by default. Confirmation
 stops computation and withdraws computing Event submissions; authored input and
-saved archives remain. An imported read-only base Event and its payload are
+saved archives remain. An imported State checkpoint and its saved observation are
 retained. Ordinary submission status is not saved as a live-session checkpoint.
 Explicit State export/import provides the separate history-preserving project
 workflow described under State projects below.
@@ -1036,20 +1035,20 @@ the locked shared spacing.
 lock. Adjusting it preserves every Block and Jet. The solver derives its
 maximum design-velocity scale as sound speed divided by ten. The first
 successful ordinary **Submit** locks the sound speed and the footer for
-the retained session. **Reset** restores sound-speed editing for ordinary
-projects and preserves the existing source lock and instances. A project with
-retained SPH from an imported State uses the saved sound speed read-only
-for continuation, including after Reset.
+the retained session. **Reset** restores sound-speed editing and preserves the
+source lock and instances. An imported State also accepts a sound-speed edit
+before computing Submit. Its retained fluid populations keep their saved
+positions, velocities and density. Their restored solver pressure scales by
+the square of the new-to-saved sound-speed ratio.
 
-Block sets Count XYZ and Position XYZ and generates a regular array centered
-at that placement with zero authored velocity. Jet defines outlet, direction,
-speed and duration with a maintained inlet
-buffer; it is not a prefilled moving fluid column. Before execution its outlet
-is a guide. SPH sources carry forward, but later events cannot edit inherited
+Block sets Count XYZ and Placement → Position XYZ and generates a regular
+array centered at that placement with zero authored velocity. Jet groups
+Position XYZ, Direction XYZ, Radius, Speed and Duration under Outlet. It emits
+fluid from a maintained inlet buffer. Before execution its outlet is a guide. SPH sources carry forward, but later events cannot edit inherited
 definitions. In Simulation and Results, Jet Information shows **Jet duration
 (s)** and **Nozzle position XYZ (m)** when available, above **State...**. The
-duration is the configured emission period. For an authored Jet, Placement
-and Jet settings determine the outlet center in world coordinates. A Jet
+duration is the configured emission period. For an authored Jet, Position XYZ and the other Outlet settings determine
+the outlet center in world coordinates. A Jet
 restored from State shows the saved physical outlet even when its imported
 particle cloud has a different center. Block Information contains the
 **State...** action. Display
@@ -1297,11 +1296,13 @@ checkboxes are independent and are the only visibility controls. Hiding
 particles does not hide interactions. Results color/opacity initially copy
 the recorded Simulation appearance; later edits are independent.
 
-Particle Instance **Display > Shape** selects **Particle** (default) or
-**Arrow** for Sphere, LS and SPH. Particle shape offers Uniform color, velocity
-and displacement magnitude; SPH also offers pressure, clamped nonnegative for
-display only. Arrow offers velocity magnitude (default) or displacement
-magnitude, choosing both direction and color. Each shape remembers its metric.
+Particle Instance **Display > Shape** offers **Particle** (default) and
+**Arrow** for Sphere, LS and SPH. For SPH, **Smoothing-length sphere** uses the
+archived smoothing length h as the sphere radius, including in captures and
+view fitting. Surface shapes offer Uniform color, velocity and displacement
+magnitude. SPH also offers pressure, clamped nonnegative for display only.
+Arrow offers velocity magnitude (default) or displacement magnitude, choosing
+both direction and color. Surface and Arrow modes remember separate metrics.
 
 Arrows begin at recorded particle centers. **Display size** (1–100, default
 50) caps their tail-to-tip length at that percentage of each particle's
@@ -1309,7 +1310,7 @@ bounding radius; SPH uses half its spacing. Zero or unavailable vectors are
 omitted. **Scale by value** is initially off, giving finite nonzero arrows
 the configured length. Turn it on to scale the complete glyph linearly by
 its magnitude divided by the largest absolute active Legend endpoint, capped
-at 1; an all-zero range draws no arrows. Both shapes obey visibility, opacity
+at 1; an all-zero range draws no arrows. All shapes obey visibility, opacity
 and filters. These are undoable Results appearance changes; Simulation,
 saved particle state and physics are unchanged. Contacts/Bonds offer available recorded force/energy/stress
 quantities. Bond maximum tensile and compressive section stresses are separate
@@ -1679,6 +1680,9 @@ the selection is empty. Hidden/filtered particles remain part of the scientific
 state. The common Configuration contains Source and File groups. Source also
 contains **Include bonds**, checked by default. Retained Contacts must have both
 endpoints selected; the same rule applies to Bonds when Include bonds is checked.
+The new project builds its own consecutive particle numbers from the retained
+populations. Contact and Bond endpoints follow those numbers. Retained
+interaction records also receive consecutive indices within their own family.
 Uncheck it to export no Bonds, including broken records and their histories or
 saved Bond parameter groups. Selected particle states and Contact histories are
 retained with their normal dependencies. This choice does not change the source
@@ -1691,41 +1695,28 @@ the JSON and its content-addressed numerical sibling together. Large arrays are 
 sidecar, without a numeric format version. The export is bound to an immutable
 selected State and never seeks Render View or changes the source archive.
 
-Use **File > Import State...** to open the exported JSON. A complete
-validation/loading task publishes a new project only after all required data and
-references are ready. Cancel/failure preserves the previous project. The ordinary
-**Imported state** Event starts and ends at **0 s**, is read-only/accepted, and
-shows the retained Bond groups and their saved parameters when exported.
-An export with Include bonds unchecked has no initial Bond groups or Bond
-connections. Results immediately shows its retained particle/Contact/Bond
-observation. The original recorded time is kept as source information. Add, configure and submit later ordinary Events to compute
-from that imported base; the base itself consumes no steps.
-When the first computing Event starts at 0 s, its start frame replaces the
-indexed imported frame in both State and Animation. Results shows one frame
-at the shared boundary, including any newly entered particles or Bonds.
-The original snapshot files and the project's physical initial State remain
-unchanged for restoration and Reset.
+Use **File > Import State...** to open the exported JSON. The project opens
+after its required data and references validate. The **Imported state** row is
+a named checkpoint at **0 s** with a **State** indicator. You can rename it.
+Add, configure and submit later ordinary Events to start computing at 0 s.
+Results immediately shows the saved observation. The first computing Event
+replaces the indexed zero-time frame in both recording streams. The original
+observation stays in the project for inspection and Reset.
 
-Before submitting the first ordinary computing Event, an imported Bond group's
-Name, strengths, fracture energies/mixity and fracture/damage choices can be
-edited through its normal Property and Reconfigure controls. Stiffness source,
-the four stiffnesses, Beam values, length, area and radius factor stay read-only.
-Use Reconfigure to select Allow fracture and Progressive damage. Property shows
-Strength when Allow fracture is enabled, and Damage when both options are
-enabled. Hidden coefficients retain their configured values. Its source particle
-instances appear as read-only Information; connections and generation selection
-remain fixed.
-The imported base Event, particles, materials/material pairs, geometry and
-templates remain protected. Once a computing Event is submitted, the normal
-physical-edit locks apply.
+Before the first computing Submit, edit materials, Contact Material Pairs,
+geometries, templates and instances as you would after an Instance import.
+Imported Bond recipes also allow stiffness source and coefficients, Beam
+parameters, section geometry, fracture and damage edits. Reconfigure shows
+the recorded endpoint references. Changes that would remove a saved endpoint
+or Bond recipe, or move an LS surface node that identifies a saved Contact,
+are rejected. Normal submission locks apply once computing preparation begins,
+and Reset restores editing.
 
-Bond parameter edits preserve the saved endpoint frames, damage and broken
-state. Already broken Bonds retain their broken state when fracture is turned off.
-Existing frozen onset/damage history remains; initialization applies the changed
-fracture/damage settings without regenerating connections or changing recorded
-stiffness/geometry, then rebuilds loads without advancing damage. The new
-settings can change the subsequent failure response. Save/Undo/Redo retain
-the original observation separately from the accepted parameter changes.
+The solver uses the accepted inputs and reconnects retained Contact springs and
+Bond histories by stable particle identities. Recorded Bond endpoint frames,
+damage and broken state carry forward. Edited settings govern future response;
+unchanged Bond parameters retain their recorded per-connection values. Save,
+Undo and Redo preserve the original observation separately from current settings.
 
 Particle positions, quaternions, per-particle material/velocity/angular velocity
 and actual spring/Bond damage histories are retained. Import restores Contact
@@ -1738,12 +1729,17 @@ connections and broken states; an export without Bonds resumes the
 selected subsystem without those connections. Removed external interactions
 cannot remain as a false force in the first integration kick.
 
-Restorable SPH State samples additionally carry raw unwrapped fluid state and Jet
-source/supply/release progress. The imported source continues its remaining supply
-at rebased source times. SPH searches and hydraulic loads start a new acoustic
-interval at the represented state, preserving position, velocity, density and
-pressure. This selected-subsystem acoustic rebase is not claimed to be a bitwise
-continuation of a future fluid endpoint evaluated with the old neighbours.
+Restorable SPH State samples also carry raw unwrapped fluid state and Jet
+source/supply/release progress. An unchanged imported source continues its
+remaining supply at rebased source times, including after a sound-speed edit.
+A reconfigured source starts from its current Block or Jet definition.
+Confirmed **Unlock source parameters** retains its ordinary behavior of removing
+SPH sources from the editable setup. The saved State observation retains the
+original fluid data. For a retained population, SPH searches and hydraulic
+loads start a new acoustic interval from the recorded position, velocity and
+density. A sound-speed edit scales the starting solver pressure by the square
+of the new-to-saved speed ratio. The new interval uses the selected
+subsystem's neighbours.
 Older SPH samples lacking the required payload cannot be restored and produce an
 explicit diagnostic rather than resetting density or inventing Jet progress.
 
