@@ -182,6 +182,12 @@ Undo/Redo retains up to 100 accepted project states. Reconfigure preserves
 object identity. References protect unsafe deletion. Same-category duplicate
 names receive a suffix such as ` (1)`.
 
+Right-click a Particle Template in Setup and choose **References…** to see
+the Particle Instances that use it and their owning Events. Click a row to
+locate that instance in Simulation. The same action is available from the
+warning when existing instances block template deletion. Inspection remains
+available while Setup is locked.
+
 ### Selecting objects through Work Tree
 
 Select a geometry, template or Particle Instance in Work Tree to highlight it
@@ -549,8 +555,9 @@ has ratio zero. The calculation does not shorten an Event.
 
 Every Event advances run time by `timeStep * steps`. Start is the sum of all
 preceding Event durations, and End adds this Event's duration. Integrated
-particle/interaction state and native/source clocks continue across boundaries
-and Pause/Resume; Jet age and SPH multirate state are not restarted.
+particle and interaction state continue across boundaries and Pause/Resume.
+Jet age follows the native clock. Each LSDEM + SPH Event boundary has a
+synchronized solid and fluid state.
 
 The GPU backend retains its CUDA context and stream across Events. Unchanged
 materials, geometry/SDF data, surface mappings and valid search layouts are
@@ -979,12 +986,16 @@ Independent constant and hydrodynamic loads accumulate before local damping,
 regardless of menu/add order. The Average unbalanced force ratio uses the
 undamped loads. If the target also has a continuous velocity constraint,
 kinematic enforcement follows force assembly on CPU, GPU and Hybrid.
-For coupled SPH/solid steps, the adapter remembers only its own previous
-artificial-load increment. After the core refreshes the wall reaction, it
-removes that increment, measures the undamped force ratio and recomputes
-damping before the solid kick. An unchanged Event handoff retains this scratch
-history; changed controls, Reset or a full force assembly replace it. This is
-internal working data, not project, archive or recorded State data.
+In coupled SPH/solid steps, the solver combines the Contact and Bond loads
+with the fluid force and torque held for the acoustic interval, then adds
+constant external loads. A new acoustic interval repeats this composition
+with the refreshed fluid reaction. The desktop adapter measures the undamped
+force ratio, applies damping and enforces velocity constraints before the
+next solid kick. SPH boundary samples on solids under **Constant** or
+**Harmonic** velocity constraints follow the imposed motion even when the solid
+has finite mass. A later Event with no continuous constraint uses the body's
+computed acceleration again. Scheduled **Reset velocities** acts only at its
+configured steps.
 Built-ins need no DLL import; none applies a velocity constraint to SPH particles.
 
 ### Boundary
@@ -1016,8 +1027,11 @@ accepted project; other force records and stable target IDs are preserved.
 
 In LSDEM + SPH, select **SPH Parameters** beside Events. Set spacing
 and smoothing length in **Discretization**, and reference density and dynamic
-viscosity in **Fluid**. Click **Lock source parameters** to validate these
-settings and make the two groups read-only. The same footer action becomes
+viscosity in **Fluid**. Set smoothing length between one and two times the
+spacing. Set reference density above 1e-12 kg/m³. Initial particle mass is
+reference density times spacing cubed and must be finite and greater than
+1e-12 kg. Click **Lock source parameters** to validate the settings and make
+the two groups read-only. The same footer action becomes
 **Unlock source parameters**. In **Particle Instances +**, this lock enables
 **SPH block...** and **SPH jet...**. **Solid particle...** is available in
 either lock state. In DEM the Add action opens solid-instance Configuration
@@ -1097,16 +1111,21 @@ This feedback is independent of keyboard focus or checked state.
 Click the gray **Submitted n/N** status to locate the next pending Event in
 Simulation. The Event is selected, expanded and scrolled into view; no Submit
 or calculation is started. Normal pending-input validation still applies.
-The status is disabled when no pending Event exists. Waiting/runtime details
-remain available in its tooltip rather than expanding the visible text.
+The header status is disabled when no pending Event exists. At the Waiting
+frontier, the application status bar shows the first unsubmitted Event by name.
+Use **Go to Event** to select, expand, and scroll to its Work Tree row. Use the
+row's **Submit** and the header's **Resume** to continue the retained session.
+If no Event remains, add and submit an Event to continue.
 A thin shared divider separates the menu/controls from the central panels.
 The visible choices are `∞`/`1`/`10`/`100` with item data 0/1/10/100,
 default `∞`. English hover/accessibility explains no native-step limit.
 Changing the choice does not execute or alter Event/output settings.
 Run/Resume uses the chosen budget: zero runs without a command-step limit;
 positive values advance up to that many completed native steps, then pause
-or stop at frontier/completion. While running the same button is Pause and
-the budget is disabled. No separate Step button, action or queued request.
+or stop at the submission frontier or completion. For LSDEM + SPH, a known
+run limit ends an acoustic interval at that step. During a run, a Pause request
+finishes the active acoustic interval before displaying **Paused**. The run
+budget stays disabled while the solver is running.
 Reset retains its confirmation; Results playback remains independent.
 
 Setup and submitted Event physical fields/Add/Reconfigure actions
@@ -1119,7 +1138,10 @@ The first Event records its initial boundary. Every Event then records its
 coordinated Animation/State intervals and final boundary; adjacent old-end/
 next-start samples share one right-continuous boundary observation. Internal
 integration/source clocks and displayed cumulative time continue. Native
-Contact/Bond histories and SPH source age are retained, not recreated.
+Contact/Bond histories and SPH source age continue across the boundary.
+Scheduled LSDEM + SPH frames contain the integrated solid and fluid state at
+the same time. Shorter recording intervals can shorten acoustic steps and
+change the numerical trajectory.
 
 Reset confirms before stopping and withdrawing all submissions; Cancel leaves
 the current run unchanged. It preserves definitions and saved result
@@ -1594,10 +1616,11 @@ Longer Reload operations show actual scanned-frame progress and Cancel while
 keeping the last accepted chart/table visible. Cancel waits for a safe read
 boundary and does not publish a partial chart. Save CSV uses the accepted
 table snapshot, full numeric precision and atomic background writing, with
-the same delayed feedback. Playback and incoming frames still do not reload
-the Plot automatically.
-Reload reuses results from unchanged State frames. It detects a replaced event
-boundary even when the frame count stays the same. Editing a curve reuses
+the same delayed feedback. The Plot status shows the accepted State recording
+horizon, for example **Through 0.75 s**. **New data available** appears when a
+committed State record is added or the last record is replaced at the same
+frame index and time. Select **Reload** to refresh the chart and Data table.
+Reload reuses results from unchanged State frames. Editing a curve reuses
 accepted results for the other unchanged queries. Histogram curves still use
 a common bin range. Data Table prepares its view when opened. Dense charts use
 screen-resolution drawing while the table, CSV and figure exports retain the
@@ -1735,7 +1758,9 @@ remaining supply at rebased source times, including after a sound-speed edit.
 A reconfigured source starts from its current Block or Jet definition.
 Confirmed **Unlock source parameters** retains its ordinary behavior of removing
 SPH sources from the editable setup. The saved State observation retains the
-original fluid data. For a retained population, SPH searches and hydraulic
+original fluid data and source definitions. **Export State...** can still select
+those recorded sources after deletion or unlocking, including after reopening
+the saved project. For a retained population, SPH searches and hydraulic
 loads start a new acoustic interval from the recorded position, velocity and
 density. A sound-speed edit scales the starting solver pressure by the square
 of the new-to-saved speed ratio. The new interval uses the selected
@@ -1765,7 +1790,8 @@ changing replay. **Output** contains File path/Browse, 1080p/4K Resolution and
 30/60 fps. FPS affects encoding, not solver steps or physical information.
 
 Both workflows freeze source identity, manifest and Results camera/Display,
-legends, filters, reference grids/axes and the selected Clip guide. Captures omit
+legends, filters, reference grids/axes and the selected Clip guide. Legend
+titles, units, ticks and X/Y/Z labels retain their thin text outlines. Captures omit
 selection outlines, menus and panels. Frame decoding uses background work;
 detached GUI-thread OpenGL capture neither seeks nor resizes the live view.
 File exports publish only a complete successful file. Cancellation/failure
